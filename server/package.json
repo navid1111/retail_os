@@ -15,11 +15,14 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@sentry/node": "^10.53.1",
+    "@sentry/profiling-node": "^10.53.1",
     "express": "^5.2.1",
     "mongodb": "^7.2.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@types/mongodb": "^4.0.6",
     "@types/node": "^25.9.1",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
