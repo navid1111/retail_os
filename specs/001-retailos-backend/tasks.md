@@ -12,10 +12,10 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Navid: Create backend/src/ and backend/tests/ directories in backend/
-- [ ] T002 Shadman: Add backend/package.json with dependencies per plan
-- [ ] T003 [P] Navid: Add TypeScript config in backend/tsconfig.json
-- [ ] T004 [P] Shadman: Add backend/.env.example, backend/Dockerfile, backend/docker-compose.yml
+- [X] T001 Navid: Create backend/src/ and backend/tests/ directories in backend/
+- [X] T002 Shadman: Add backend/package.json with dependencies per plan
+- [X] T003 [P] Navid: Add TypeScript config in backend/tsconfig.json
+- [X] T004 [P] Shadman: Add backend/.env.example, backend/Dockerfile, backend/docker-compose.yml
 
 ---
 
