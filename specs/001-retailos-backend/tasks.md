@@ -23,11 +23,11 @@
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-- [ ] T005 Navid: Implement env validation in backend/src/config/env.ts
-- [ ] T006 [P] Shadman: Implement MongoDB connection in backend/src/config/db.ts
-- [ ] T007 [P] Shadman: Implement Redis and Cloudinary clients in backend/src/config/redis.ts and backend/src/config/cloudinary.ts
-- [ ] T008 [P] Navid: Implement structured logger in backend/src/config/logger.ts
-- [ ] T009 Navid: Implement Express app and router base in backend/src/app.ts and backend/src/api/router.ts
+- [X] T005 Navid: Implement env validation in backend/src/config/env.ts
+- [X] T006 [P] Shadman: Implement MongoDB connection in backend/src/config/db.ts
+- [X] T007 [P] Shadman: Implement Redis and Cloudinary clients in backend/src/config/redis.ts and backend/src/config/cloudinary.ts
+- [X] T008 [P] Navid: Implement structured logger in backend/src/config/logger.ts
+- [X] T009 Navid: Implement Express app and router base in backend/src/app.ts and backend/src/api/router.ts
 - [ ] T010 [P] Navid: Implement BetterAuth integration in backend/src/auth/better-auth.ts and backend/src/auth/middleware.ts
 - [ ] T011 [P] Shadman: Define User/Store schemas in backend/src/models/User.model.ts, backend/src/models/Store.model.ts, backend/src/models/StoreSku.model.ts
 - [ ] T012 [P] Shadman: Define Visit/Image/Analysis schemas in backend/src/models/Visit.model.ts, backend/src/models/VisitImage.model.ts, backend/src/models/AiAnalysis.model.ts

@@ -1,0 +1,110 @@
+import { Router, Request, Response } from "express";
+import * as Sentry from "@sentry/node";
+import { getDB } from "../db/mongo";
+import { getRedis } from "../db/redis";
+import { CloudinaryService } from "../cloudinary/service";
+
+const router = Router();
+
+router.get("/test", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const db = getDB();
+    const redis = getRedis();
+
+    const cachedUsers = await redis.get("users");
+
+    if (cachedUsers) {
+      res.json(JSON.parse(cachedUsers));
+      return;
+    }
+
+    const users = await db.collection("users").findOne({});
+    await redis.setEx("users", 3600, JSON.stringify(users));
+
+    res.json(users);
+  } catch (err) {
+    Sentry.captureException(err);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
+
+router.post("/upload/image", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { filePath, publicId: publicIdRaw } = req.body;
+    const publicId = typeof publicIdRaw === "string" ? publicIdRaw : undefined;
+
+    if (!filePath) {
+      res.status(400).json({ error: "filePath is required" });
+      return;
+    }
+
+    const result = await CloudinaryService.uploadImage(filePath, {
+      public_id: publicId,
+    });
+
+    res.json(result);
+  } catch (err) {
+    Sentry.captureException(err);
+    res.status(500).json({ error: `Upload failed: ${err}` });
+  }
+});
+
+router.post("/upload/url", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { url, publicId: publicIdRaw } = req.body;
+    const publicId = typeof publicIdRaw === "string" ? publicIdRaw : undefined;
+
+    if (!url) {
+      res.status(400).json({ error: "url is required" });
+      return;
+    }
+
+    const result = await CloudinaryService.uploadFromUrl(url, {
+      public_id: publicId,
+    });
+
+    res.json(result);
+  } catch (err) {
+    Sentry.captureException(err);
+    res.status(500).json({ error: `Upload failed: ${err}` });
+  }
+});
+
+router.post("/upload/video", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { filePath, publicId: publicIdRaw } = req.body;
+    const publicId = typeof publicIdRaw === "string" ? publicIdRaw : undefined;
+
+    if (!filePath) {
+      res.status(400).json({ error: "filePath is required" });
+      return;
+    }
+
+    const result = await CloudinaryService.uploadVideo(filePath, {
+      public_id: publicId,
+    });
+
+    res.json(result);
+  } catch (err) {
+    Sentry.captureException(err);
+    res.status(500).json({ error: `Upload failed: ${err}` });
+  }
+});
+
+router.delete("/assets/:publicId", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { publicId: publicIdRaw } = req.params;
+    const publicId = Array.isArray(publicIdRaw) ? publicIdRaw[0] : publicIdRaw;
+    const result = await CloudinaryService.deleteAsset(publicId);
+    res.json(result);
+  } catch (err) {
+    Sentry.captureException(err);
+    res.status(500).json({ error: `Delete failed: ${err}` });
+  }
+});
+
+router.get("/error", (req: Request, res: Response): void => {
+  throw new Error("Test error");
+});
+
+export { router };
