@@ -29,10 +29,10 @@
 - [X] T008 [P] Navid: Implement structured logger in backend/src/config/logger.ts
 - [X] T009 Navid: Implement Express app and router base in backend/src/app.ts and backend/src/api/router.ts
 - [ ] T010 [P] Navid: Implement BetterAuth integration in backend/src/auth/better-auth.ts and backend/src/auth/middleware.ts
-- [ ] T011 [P] Shadman: Define User/Store schemas in backend/src/models/User.model.ts, backend/src/models/Store.model.ts, backend/src/models/StoreSku.model.ts
-- [ ] T012 [P] Shadman: Define Visit/Image/Analysis schemas in backend/src/models/Visit.model.ts, backend/src/models/VisitImage.model.ts, backend/src/models/AiAnalysis.model.ts
-- [ ] T013 [P] Shadman: Define Fraud/Notification/Audit/Job schemas in backend/src/models/FraudFlag.model.ts, backend/src/models/Notification.model.ts, backend/src/models/AuditLog.model.ts, backend/src/models/Job.model.ts
-- [ ] T014 Navid: Implement audit helper in backend/src/services/audit.service.ts
+- [X] T011 [P] Shadman: Define User/Store schemas in backend/src/models/User.model.ts, backend/src/models/Store.model.ts, backend/src/models/StoreSku.model.ts
+- [X] T012 [P] Shadman: Define Visit/Image/Analysis schemas in backend/src/models/Visit.model.ts, backend/src/models/VisitImage.model.ts, backend/src/models/AiAnalysis.model.ts
+- [X] T013 [P] Shadman: Define Fraud/Notification/Audit/Job schemas in backend/src/models/FraudFlag.model.ts, backend/src/models/Notification.model.ts, backend/src/models/AuditLog.model.ts, backend/src/models/Job.model.ts
+- [X] T014 Navid: Implement audit helper in backend/src/services/audit.service.ts
 - [ ] T015 Navid: Implement BullMQ setup in backend/src/queues/queues.ts and backend/src/queues/scheduler.ts
 - [ ] T016 Navid: Implement server bootstrap in backend/src/server.ts
 
