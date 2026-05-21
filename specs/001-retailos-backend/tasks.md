@@ -53,7 +53,7 @@
 ### Implementation for User Story 1
 
 - [x] T020 [P] Navid: Implement visit logic in backend/src/services/visit.service.ts
-- [ ] T021 [P] Shadman: Implement image upload + queue enqueue in backend/src/services/image.service.ts
+- [x] T021 [P] Shadman: Implement image upload + queue enqueue in backend/src/services/image.service.ts
 - [ ] T022 [P] Navid: Implement validators in backend/src/api/validators/visit.validators.ts and backend/src/api/validators/store.validators.ts
 - [ ] T023 [P] Shadman: Implement validators in backend/src/api/validators/image.validators.ts
 - [ ] T024 Navid: Implement visit routes in backend/src/api/routes/visit.routes.ts
