@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/node";
 import { ZodError } from "zod";
 import { uploadVisitImage } from "../../services/image.service";
 import { uploadImageBodySchema, uploadImageParamsSchema } from "../validators/image.validators";
+import { upload } from "../../middleware/upload";
 
 export const imageRouter = Router();
 
@@ -41,4 +42,4 @@ export const uploadImageHandler = async (req: Request, res: Response): Promise<v
   }
 };
 
-imageRouter.post("/:visitId/images", uploadImageHandler);
+imageRouter.post("/:visitId/images", upload, uploadImageHandler);

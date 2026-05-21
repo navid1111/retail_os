@@ -56,9 +56,10 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
   const visitId = toObjectId(input.visitId, "visitId");
   const repId = toObjectId(input.repId, "repId");
 
-  const visit = await db
-    .collection("visits")
-    .findOne({ _id: visitId, repId, deletedAt: null });
+  const visitsCollection = db.collection<{ _id: ObjectId; repId: ObjectId; storeId?: ObjectId; status?: VisitStatus; deletedAt?: Date | null; images?: ObjectId[] }>(
+    "visits"
+  );
+  const visit = await visitsCollection.findOne({ _id: visitId, repId, deletedAt: null });
 
   if (!visit) {
     throw new Error("Visit not found");
@@ -89,10 +90,11 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
     uploadedAt: now,
   };
 
-  const insertResult = await db.collection("visit_images").insertOne(image);
+  const imagesCollection = db.collection<VisitImageRecord>("visit_images");
+  const insertResult = await imagesCollection.insertOne(image);
   image._id = insertResult.insertedId;
 
-  await db.collection("visits").updateOne(
+  await visitsCollection.updateOne(
     { _id: visitId, repId, deletedAt: null },
     { $push: { images: image._id } }
   );

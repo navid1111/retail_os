@@ -7,6 +7,7 @@ export const QUEUE_NAMES = {
   PROCESS_IMAGE: 'process-image',
   GENERATE_REPORT: 'generate-report',
   CLEANUP_TASKS: 'cleanup-tasks',
+  WRITE_AUDIT_LOG: 'write-audit-log',
 } as const;
 
 type QueueKey = keyof typeof QUEUE_NAMES;
@@ -37,6 +38,7 @@ const createQueues = () => {
     imageQueue: new Queue(QUEUE_NAMES.PROCESS_IMAGE, { connection }),
     reportQueue: new Queue(QUEUE_NAMES.GENERATE_REPORT, { connection }),
     cleanupQueue: new Queue(QUEUE_NAMES.CLEANUP_TASKS, { connection }),
+    auditLogQueue: new Queue(QUEUE_NAMES.WRITE_AUDIT_LOG, { connection }),
   };
 };
 
@@ -47,6 +49,7 @@ const queueByName: Record<QueueKey, QueueInstance> = {
   PROCESS_IMAGE: queues.imageQueue,
   GENERATE_REPORT: queues.reportQueue,
   CLEANUP_TASKS: queues.cleanupQueue,
+  WRITE_AUDIT_LOG: queues.auditLogQueue,
 };
 
 // Helper function to add jobs to queues
@@ -105,6 +108,7 @@ export const closeQueues = async () => {
       queues.imageQueue.close(),
       queues.reportQueue.close(),
       queues.cleanupQueue.close(),
+      queues.auditLogQueue.close(),
     ]);
     console.log('All queues closed successfully');
   } catch (error) {

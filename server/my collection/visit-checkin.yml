@@ -1,0 +1,24 @@
+info:
+  name: visit-checkin
+  type: http
+
+http:
+  method: POST
+  url: http://localhost:5000/api/visits/check-in
+  body:
+    type: json
+    data: |2-
+        {
+          "storeId": "507f1f77bcf86cd799439011",
+          "gpsLat": 23.7806,
+          "gpsLng": 90.2794,
+          "gpsAccuracyM": 12,
+          "repNotes": "Arrived on time"
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

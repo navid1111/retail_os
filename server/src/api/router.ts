@@ -7,8 +7,14 @@ import { requireAuth } from "../middleware/auth";
 import { visitRouter } from "./routes/visit.routes";
 import { imageRouter } from "./routes/image.routes";
 import { storeRouter } from "./routes/store.routes";
+import { upload } from "../middleware/upload";
 
 const router = Router();
+
+// Register sub-routers under authenticated path
+router.use("/visits", requireAuth, visitRouter);
+router.use("/visits", requireAuth, imageRouter);
+router.use("/stores", requireAuth, storeRouter);
 
 router.get("/test", async (req: Request, res: Response): Promise<void> => {
   try {
@@ -32,7 +38,7 @@ router.get("/test", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-router.post("/upload/image", async (req: Request, res: Response): Promise<void> => {
+router.post("/upload/image", upload, async (req: Request, res: Response): Promise<void> => {
   try {
     const { filePath, publicId: publicIdRaw } = req.body;
     const publicId = typeof publicIdRaw === "string" ? publicIdRaw : undefined;
@@ -119,9 +125,5 @@ router.get("/me",requireAuth, (req: Request, res: Response): void => {
 router.get("/error", (req: Request, res: Response): void => {
   throw new Error("Test error");
 });
-
-router.use("/visits", requireAuth, visitRouter);
-router.use("/visits", requireAuth, imageRouter);
-router.use("/stores", requireAuth, storeRouter);
 
 export { router };

@@ -35,8 +35,10 @@ export const checkInHandler = async (req: Request, res: Response): Promise<void>
       res.status(400).json({ error: "Validation error", details: error.issues });
       return;
     }
+    const message = error instanceof Error ? error.message : "Failed to check in visit";
+    const status = message.toLowerCase().includes("not found") ? 404 : 400;
     Sentry.captureException(error);
-    res.status(500).json({ error: "Failed to check in visit" });
+    res.status(status).json({ error: message });
   }
 };
 
@@ -60,8 +62,10 @@ export const submitVisitHandler = async (req: Request, res: Response): Promise<v
       res.status(400).json({ error: "Validation error", details: error.issues });
       return;
     }
+    const message = error instanceof Error ? error.message : "Failed to submit visit";
+    const status = message.toLowerCase().includes("not found") ? 404 : 400;
     Sentry.captureException(error);
-    res.status(500).json({ error: "Failed to submit visit" });
+    res.status(status).json({ error: message });
   }
 };
 

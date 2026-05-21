@@ -1,6 +1,7 @@
 import { Worker } from "bullmq";
 import * as Sentry from "@sentry/node";
 import { QUEUE_NAMES } from "./queues";
+import { AuditLog } from "../models/AuditLog.model";
 
 const buildConnectionOptions = () => {
 	const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
@@ -20,6 +21,7 @@ const buildConnectionOptions = () => {
 
 export interface QueueScheduler {
 	imageWorker: Worker;
+	auditLogWorker: Worker;
 }
 
 export const startQueueScheduler = (): QueueScheduler => {
@@ -39,9 +41,24 @@ export const startQueueScheduler = (): QueueScheduler => {
 		Sentry.captureException(err);
 	});
 
-	return { imageWorker };
+	const auditLogWorker = new Worker(
+		QUEUE_NAMES.WRITE_AUDIT_LOG,
+		async (job) => {
+			console.log("Processing audit log job", job.id, job.data);
+			await AuditLog.create(job.data);
+		},
+		{ connection }
+	);
+
+	auditLogWorker.on("failed", (job, err) => {
+		console.error("Audit log worker failed", job?.id, err);
+		Sentry.captureException(err);
+	});
+
+	return { imageWorker, auditLogWorker };
 };
 
 export const closeQueueScheduler = async (scheduler: QueueScheduler): Promise<void> => {
 	await scheduler.imageWorker.close();
+	await scheduler.auditLogWorker.close();
 };

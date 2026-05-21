@@ -32,4 +32,22 @@ describe("image routes integration", () => {
       publicId: undefined,
     });
   });
+
+  it("uploads a visit image via direct multipart file upload", async () => {
+    vi.mocked(uploadVisitImage).mockResolvedValue({ _id: "image-2" } as any);
+
+    const response = await request(app)
+      .post("/api/visits/507f1f77bcf86cd799439011/images")
+      .attach("image", Buffer.from("dummy-file-content"), "test.jpg")
+      .field("publicId", "test-public-id");
+
+    expect(response.status).toBe(201);
+    expect(uploadVisitImage).toHaveBeenCalledWith({
+      repId: "507f1f77bcf86cd799439012",
+      visitId: "507f1f77bcf86cd799439011",
+      filePath: expect.any(String),
+      sourceUrl: undefined,
+      publicId: "test-public-id",
+    });
+  });
 });
