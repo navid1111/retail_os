@@ -31,6 +31,7 @@ const startServer = async (): Promise<void> => {
 
     app.listen(5000, (): void => {
       console.log("Server running on port 5000");
+      console.log("Better Auth endpoints available at http://localhost:5000/api/auth");
     });
   } catch (err) {
     console.error("Failed to start server", err);
