@@ -26,3 +26,20 @@ export async function requireAuth(
     res.status(401).json({ error: "Unauthorized" });
   }
 }
+
+export function requireRole(...allowedRoles: string[]) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const user = (req as any).user;
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized - No session found" });
+      return;
+    }
+
+    if (!allowedRoles.includes(user.role)) {
+      res.status(403).json({ error: "Forbidden - Insufficient permissions" });
+      return;
+    }
+
+    next();
+  };
+}

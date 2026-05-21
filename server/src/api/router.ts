@@ -7,6 +7,7 @@ import { requireAuth } from "../middleware/auth";
 import { visitRouter } from "./routes/visit.routes";
 import { imageRouter } from "./routes/image.routes";
 import { storeRouter } from "./routes/store.routes";
+import { dashboardRouter } from "./routes/dashboard.routes";
 import { upload } from "../middleware/upload";
 
 const router = Router();
@@ -15,6 +16,7 @@ const router = Router();
 router.use("/visits", requireAuth, visitRouter);
 router.use("/visits", requireAuth, imageRouter);
 router.use("/stores", requireAuth, storeRouter);
+router.use("/dashboard", requireAuth, dashboardRouter);
 
 router.get("/test", async (req: Request, res: Response): Promise<void> => {
   try {

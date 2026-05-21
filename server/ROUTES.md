@@ -288,3 +288,72 @@ Fetch a store record.
   ```json
   { "error": "Failed to fetch store" }
   ```
+
+---
+
+## Dashboard
+
+### GET /api/dashboard/feed
+
+Retrieve a chronological feed of visits for a specific date.
+
+- Auth: required
+- Query Parameters:
+  - `date`: (Optional) String representing a date (e.g. `2026-05-21` or ISO timestamp). Defaults to today.
+- Response (200):
+  ```json
+  [
+    {
+      "visitId": "507f1f77bcf86cd799439012",
+      "repId": "507f1f77bcf86cd799439013",
+      "repName": "Rep One",
+      "storeId": "507f1f77bcf86cd799439011",
+      "storeName": "Dhaka Outlet",
+      "storeCode": "DHK-001",
+      "checkInTime": "2026-05-21T11:00:00.000Z",
+      "checkOutTime": "2026-05-21T11:15:00.000Z",
+      "complianceScore": 85,
+      "status": "completed",
+      "hasFraudFlags": true,
+      "fraudFlagCount": 1
+    }
+  ]
+  ```
+- Response (400):
+  ```json
+  { "error": "Validation error", "details": [] }
+  ```
+- Response (500):
+  ```json
+  { "error": "Failed to fetch dashboard feed" }
+  ```
+
+### GET /api/dashboard/chart
+
+Retrieve visits that have compliance scores within a given date range.
+
+- Auth: required
+- Query Parameters:
+  - `startDate`: (Optional) String representing a start date (e.g. `2026-05-19` or ISO timestamp).
+  - `endDate`: (Optional) String representing an end date (e.g. `2026-05-22` or ISO timestamp).
+- Response (200):
+  ```json
+  [
+    {
+      "visitId": "507f1f77bcf86cd799439012",
+      "storeId": "507f1f77bcf86cd799439011",
+      "storeName": "Dhaka Outlet",
+      "storeCode": "DHK-001",
+      "complianceScore": 85,
+      "checkInTime": "2026-05-21T11:00:00.000Z"
+    }
+  ]
+  ```
+- Response (400):
+  ```json
+  { "error": "Validation error", "details": [] }
+  ```
+- Response (500):
+  ```json
+  { "error": "Failed to fetch dashboard chart" }
+  ```
