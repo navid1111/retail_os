@@ -54,12 +54,12 @@
 
 - [x] T020 [P] Navid: Implement visit logic in backend/src/services/visit.service.ts
 - [x] T021 [P] Shadman: Implement image upload + queue enqueue in backend/src/services/image.service.ts
-- [ ] T022 [P] Navid: Implement validators in backend/src/api/validators/visit.validators.ts and backend/src/api/validators/store.validators.ts
-- [ ] T023 [P] Shadman: Implement validators in backend/src/api/validators/image.validators.ts
-- [ ] T024 Navid: Implement visit routes in backend/src/api/routes/visit.routes.ts
-- [ ] T025 Shadman: Implement image routes in backend/src/api/routes/image.routes.ts
-- [ ] T026 [P] Navid: Implement store routes in backend/src/api/routes/store.routes.ts
-- [ ] T027 Navid: Wire visit/image/store routes and audit calls in backend/src/api/router.ts and backend/src/services/visit.service.ts
+- [x] T022 [P] Navid: Implement validators in backend/src/api/validators/visit.validators.ts and backend/src/api/validators/store.validators.ts
+- [x] T023 [P] Shadman: Implement validators in backend/src/api/validators/image.validators.ts
+- [x] T024 Navid: Implement visit routes in backend/src/api/routes/visit.routes.ts
+- [x] T025 Shadman: Implement image routes in backend/src/api/routes/image.routes.ts
+- [x] T026 [P] Navid: Implement store routes in backend/src/api/routes/store.routes.ts
+- [x] T027 Navid: Wire visit/image/store routes and audit calls in backend/src/api/router.ts and backend/src/services/visit.service.ts
 
 ---
 
