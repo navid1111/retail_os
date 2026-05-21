@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/node";
 import { getDB } from "../db/mongo";
 import { getRedis } from "../db/redis";
 import { CloudinaryService } from "../cloudinary/service";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
@@ -101,6 +102,15 @@ router.delete("/assets/:publicId", async (req: Request, res: Response): Promise<
     Sentry.captureException(err);
     res.status(500).json({ error: `Delete failed: ${err}` });
   }
+});
+
+router.get("/me",requireAuth, (req: Request, res: Response): void => {
+    const user = (req as any).user;
+    if (!user) {
+        res.status(401).json({ error: "Unauthorized - No user found" });
+        return;
+    }
+    res.json({ user });
 });
 
 router.get("/error", (req: Request, res: Response): void => {
