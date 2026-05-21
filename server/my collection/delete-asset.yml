@@ -1,0 +1,15 @@
+info:
+  name: Delete Asset
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: http://localhost:5000/api/assets/optional-public-id
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
