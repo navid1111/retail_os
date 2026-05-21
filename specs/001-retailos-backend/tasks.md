@@ -12,10 +12,10 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [X] T001 Navid: Create backend/src/ and backend/tests/ directories in backend/
-- [X] T002 Shadman: Add backend/package.json with dependencies per plan
-- [X] T003 [P] Navid: Add TypeScript config in backend/tsconfig.json
-- [X] T004 [P] Shadman: Add backend/.env.example, backend/Dockerfile, backend/docker-compose.yml
+- [x] T001 Navid: Create backend/src/ and backend/tests/ directories in backend/
+- [x] T002 Shadman: Add backend/package.json with dependencies per plan
+- [x] T003 [P] Navid: Add TypeScript config in backend/tsconfig.json
+- [x] T004 [P] Shadman: Add backend/.env.example, backend/Dockerfile, backend/docker-compose.yml
 
 ---
 
@@ -23,16 +23,16 @@
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-- [X] T005 Navid: Implement env validation in backend/src/config/env.ts
-- [X] T006 [P] Shadman: Implement MongoDB connection in backend/src/config/db.ts
-- [X] T007 [P] Shadman: Implement Redis and Cloudinary clients in backend/src/config/redis.ts and backend/src/config/cloudinary.ts
-- [X] T008 [P] Navid: Implement structured logger in backend/src/config/logger.ts
-- [X] T009 Navid: Implement Express app and router base in backend/src/app.ts and backend/src/api/router.ts
+- [x] T005 Navid: Implement env validation in backend/src/config/env.ts
+- [x] T006 [P] Shadman: Implement MongoDB connection in backend/src/config/db.ts
+- [x] T007 [P] Shadman: Implement Redis and Cloudinary clients in backend/src/config/redis.ts and backend/src/config/cloudinary.ts
+- [x] T008 [P] Navid: Implement structured logger in backend/src/config/logger.ts
+- [x] T009 Navid: Implement Express app and router base in backend/src/app.ts and backend/src/api/router.ts
 - [ ] T010 [P] Navid: Implement BetterAuth integration in backend/src/auth/better-auth.ts and backend/src/auth/middleware.ts
-- [X] T011 [P] Shadman: Define User/Store schemas in backend/src/models/User.model.ts, backend/src/models/Store.model.ts, backend/src/models/StoreSku.model.ts
-- [X] T012 [P] Shadman: Define Visit/Image/Analysis schemas in backend/src/models/Visit.model.ts, backend/src/models/VisitImage.model.ts, backend/src/models/AiAnalysis.model.ts
-- [X] T013 [P] Shadman: Define Fraud/Notification/Audit/Job schemas in backend/src/models/FraudFlag.model.ts, backend/src/models/Notification.model.ts, backend/src/models/AuditLog.model.ts, backend/src/models/Job.model.ts
-- [X] T014 Navid: Implement audit helper in backend/src/services/audit.service.ts
+- [x] T011 [P] Shadman: Define User/Store schemas in backend/src/models/User.model.ts, backend/src/models/Store.model.ts, backend/src/models/StoreSku.model.ts
+- [x] T012 [P] Shadman: Define Visit/Image/Analysis schemas in backend/src/models/Visit.model.ts, backend/src/models/VisitImage.model.ts, backend/src/models/AiAnalysis.model.ts
+- [x] T013 [P] Shadman: Define Fraud/Notification/Audit/Job schemas in backend/src/models/FraudFlag.model.ts, backend/src/models/Notification.model.ts, backend/src/models/AuditLog.model.ts, backend/src/models/Job.model.ts
+- [x] T014 Navid: Implement audit helper in backend/src/services/audit.service.ts
 - [ ] T015 Navid: Implement BullMQ setup in backend/src/queues/queues.ts and backend/src/queues/scheduler.ts
 - [ ] T016 Navid: Implement server bootstrap in backend/src/server.ts
 
@@ -46,13 +46,13 @@
 
 ### Tests for User Story 1
 
-- [ ] T017 [P] Navid: Add unit tests for visit workflow in backend/tests/unit/visit.service.test.ts
+- [x] T017 [P] Navid: Add unit tests for visit workflow in backend/tests/unit/visit.service.test.ts
 - [ ] T018 [P] Shadman: Add integration tests for visit routes in backend/tests/integration/visit.routes.test.ts
 - [ ] T019 [P] Shadman: Add integration tests for image upload in backend/tests/integration/image.routes.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T020 [P] Navid: Implement visit logic in backend/src/services/visit.service.ts
+- [x] T020 [P] Navid: Implement visit logic in backend/src/services/visit.service.ts
 - [ ] T021 [P] Shadman: Implement image upload + queue enqueue in backend/src/services/image.service.ts
 - [ ] T022 [P] Navid: Implement validators in backend/src/api/validators/visit.validators.ts and backend/src/api/validators/store.validators.ts
 - [ ] T023 [P] Shadman: Implement validators in backend/src/api/validators/image.validators.ts
@@ -146,7 +146,7 @@
 **Purpose**: Improvements that affect multiple user stories
 
 - [ ] T050 [P] Navid: Add local dev guide in specs/001-retailos-backend/quickstart.md
-- [ ] T051 Shadman: Ensure schema indexes are declared in backend/src/models/*.model.ts
+- [ ] T051 Shadman: Ensure schema indexes are declared in backend/src/models/\*.model.ts
 
 ---
 
