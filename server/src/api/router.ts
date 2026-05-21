@@ -1,9 +1,13 @@
 import { Router, Request, Response } from "express";
 import * as Sentry from "@sentry/node";
+import multer from "multer";
 import { getDB } from "../db/mongo";
 import { getRedis } from "../db/redis";
 import { CloudinaryService } from "../cloudinary/service";
 import { requireAuth } from "../middleware/auth";
+import { YoloService } from "../yolo/service";
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = Router();
 
@@ -113,8 +117,28 @@ router.get("/me",requireAuth, (req: Request, res: Response): void => {
     res.json({ user });
 });
 
-router.get("/error", (req: Request, res: Response): void => {
-  throw new Error("Test error");
+router.get("/yolo/health", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await YoloService.healthCheck();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: `YOLO health check failed: ${err}` });
+  }
+});
+
+router.post("/yolo/predict", upload.single("file"), async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: "No image file provided. Use form-data with key 'file'" });
+      return;
+    }
+
+    const result = await YoloService.predict(req.file.buffer, req.file.originalname);
+    res.json(result);
+  } catch (err) {
+    Sentry.captureException(err);
+    res.status(500).json({ error: `YOLO prediction failed: ${err}` });
+  }
 });
 
 export { router };

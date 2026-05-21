@@ -18,6 +18,8 @@
     "@better-auth/infra": "^0.2.8",
     "@sentry/node": "^10.53.1",
     "@sentry/profiling-node": "^10.53.1",
+    "@types/multer": "^2.1.0",
+    "axios": "^1.16.1",
     "better-auth": "^1.6.11",
     "cloudinary": "^2.10.0",
     "cors": "^2.8.6",
@@ -25,6 +27,7 @@
     "express": "^5.2.1",
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.2",
+    "multer": "^2.1.1",
     "redis": "^5.12.1"
   },
   "devDependencies": {
