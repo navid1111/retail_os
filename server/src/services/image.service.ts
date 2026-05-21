@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import sharp from "sharp";
 import { getDB } from "../db/mongo";
 import { CloudinaryService, CloudinaryUploadResponse } from "../cloudinary/service";
 import { addJobToQueue } from "../queues/queues";
@@ -124,3 +125,117 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
 
   return image;
 };
+
+// Laplacian kernel for edge detection
+const LAPLACIAN_KERNEL = [0, -1, 0, -1, 4, -1, 0, -1, 0];
+
+/**
+ * Calculate variance of pixel values
+ */
+function calculateVariance(data: Buffer): number {
+  const values = Array.from(data);
+  const mean = values.reduce((a, b) => a + b, 0) / values.length;
+  const squaredDiffs = values.map((x) => Math.pow(x - mean, 2));
+  return squaredDiffs.reduce((a, b) => a + b, 0) / values.length;
+}
+
+/**
+ * Calculate Laplacian variance to detect blur
+ * Higher variance = sharp image, Lower variance = blurry image
+ */
+export async function detectBlur(imagePath: string): Promise<{
+  variance: number;
+  isBlurry: boolean;
+  confidence: number;
+}> {
+  // Convert image to grayscale, apply Laplacian kernel, get raw pixel data
+  const { data } = await sharp(imagePath)
+    .grayscale()
+    .resize(300, 300, { fit: "cover" }) // Resize for faster processing
+    .convolve({
+      width: 3,
+      height: 3,
+      kernel: LAPLACIAN_KERNEL,
+    })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  // Calculate variance of the Laplacian response
+  const variance = calculateVariance(data);
+
+  // Threshold: typically 100 is a good cutoff
+  // Adjust based on your image dataset
+  const BLUR_THRESHOLD = 100;
+  const isBlurry = variance < BLUR_THRESHOLD;
+
+  // Confidence: how far from threshold (0-1 scale)
+  const confidence = Math.min(Math.abs(variance - BLUR_THRESHOLD) / BLUR_THRESHOLD, 1);
+
+  return {
+    variance,
+    isBlurry,
+    confidence,
+  };
+}
+
+export async function computePHash(input: Buffer | string): Promise<string> {
+  // 1. Downsample to 32x32 greyscale — standard pHash prep
+  const pixels = await sharp(input)
+    .resize(32, 32, { fit: 'fill' })
+    .greyscale()
+    .raw()
+    .toBuffer()
+
+  // 2. Compute 8x8 DCT over the 32x32 pixel grid (low-frequency extraction)
+  const dct = computeDCT(pixels, 32)
+
+  // 3. Take top-left 8x8 block
+  const block: number[] = []
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      block.push(dct[y * 32 + x])
+    }
+  }
+
+  // 4. Compute mean (excluding the first DC component), encode each value as above/below mean → 64-bit hash
+  const sum = block.reduce((s, v) => s + v, 0) - block[0]
+  const mean = sum / 63
+  const bits = block.map(v => (v > mean ? 1 : 0))
+
+  // 5. Convert bit array to 16-char hex string
+  let hash = ''
+  for (let i = 0; i < 64; i += 4) {
+    hash += (bits[i] * 8 + bits[i+1] * 4 + bits[i+2] * 2 + bits[i+3]).toString(16)
+  }
+  return hash  // e.g. "f884c4d8d1193c07"
+}
+
+function computeDCT(pixels: Buffer, size: number): number[] {
+  const N = size
+  const out = new Array(N * N).fill(0)
+
+  for (let u = 0; u < N; u++) {
+    for (let v = 0; v < N; v++) {
+      let sum = 0
+      for (let x = 0; x < N; x++) {
+        for (let y = 0; y < N; y++) {
+          sum += pixels[y * N + x]
+            * Math.cos(((2 * x + 1) * u * Math.PI) / (2 * N))
+            * Math.cos(((2 * y + 1) * v * Math.PI) / (2 * N))
+        }
+      }
+      out[u * N + v] = sum
+    }
+  }
+  return out
+}
+
+export function hammingDistance(hash1: string, hash2: string): number {
+  if (hash1.length !== hash2.length) return Infinity
+  let dist = 0
+  for (let i = 0; i < hash1.length; i++) {
+    const xor = parseInt(hash1[i], 16) ^ parseInt(hash2[i], 16)
+    dist += xor.toString(2).split('1').length - 1  // count set bits
+  }
+  return dist
+}

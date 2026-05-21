@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ObjectId } from "mongodb";
-import { uploadVisitImage } from "./image.service";
+import { uploadVisitImage, detectBlur, computePHash, hammingDistance } from "./image.service";
+import path from "path";
 import { getDB } from "../db/mongo";
 import { CloudinaryService } from "../cloudinary/service";
 import { addJobToQueue } from "../queues/queues";
@@ -191,5 +192,42 @@ describe("image.service", () => {
         repId: repId.toHexString(),
       })
     ).rejects.toThrow("Image source is required");
+  });
+});
+
+describe("detectBlur", () => {
+  it("should detect that media/blury.jpg is blurry", async () => {
+    // Determine the absolute path to the blurry image
+    const imagePath = path.resolve(__dirname, "../../media/blury.jpg");
+    
+    const result = await detectBlur(imagePath);
+
+    expect(result).toBeDefined();
+    expect(typeof result.variance).toBe("number");
+    expect(result.isBlurry).toBe(true);
+    expect(result.variance).toBeLessThan(100);
+    expect(typeof result.confidence).toBe("number");
+  });
+});
+
+describe("duplicate image detection", () => {
+  it("should compute pHash and detect duplicates with low hamming distance", async () => {
+    const dup1Path = path.resolve(__dirname, "../../media/dup1.jpeg");
+    const dup2Path = path.resolve(__dirname, "../../media/dup2.jpeg");
+
+    const hash1 = await computePHash(dup1Path);
+    const hash2 = await computePHash(dup2Path);
+
+    expect(hash1).toBeDefined();
+    expect(hash2).toBeDefined();
+    expect(hash1.length).toBe(16);
+    expect(hash2.length).toBe(16);
+
+    const distance = hammingDistance(hash1, hash2);
+    
+    // For duplicates, the hamming distance should be very low (we'll assert <= 20)
+    expect(distance).toBeLessThanOrEqual(20);
+    
+    console.log(`Hash1: ${hash1}, Hash2: ${hash2}, Distance: ${distance}`);
   });
 });
