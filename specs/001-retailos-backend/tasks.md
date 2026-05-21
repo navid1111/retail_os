@@ -33,7 +33,7 @@
 - [x] T012 [P] Shadman: Define Visit/Image/Analysis schemas in backend/src/models/Visit.model.ts, backend/src/models/VisitImage.model.ts, backend/src/models/AiAnalysis.model.ts
 - [x] T013 [P] Shadman: Define Fraud/Notification/Audit/Job schemas in backend/src/models/FraudFlag.model.ts, backend/src/models/Notification.model.ts, backend/src/models/AuditLog.model.ts, backend/src/models/Job.model.ts
 - [x] T014 Navid: Implement audit helper in backend/src/services/audit.service.ts
-- [ ] T015 Navid: Implement BullMQ setup in backend/src/queues/queues.ts and backend/src/queues/scheduler.ts
+- [x] T015 Navid: Implement BullMQ setup in backend/src/queues/queues.ts and backend/src/queues/scheduler.ts
 - [ ] T016 Navid: Implement server bootstrap in backend/src/server.ts
 
 ---
@@ -47,8 +47,8 @@
 ### Tests for User Story 1
 
 - [x] T017 [P] Navid: Add unit tests for visit workflow in backend/tests/unit/visit.service.test.ts
-- [ ] T018 [P] Shadman: Add integration tests for visit routes in backend/tests/integration/visit.routes.test.ts
-- [ ] T019 [P] Shadman: Add integration tests for image upload in backend/tests/integration/image.routes.test.ts
+- [x] T018 [P] Shadman: Add integration tests for visit routes in backend/tests/integration/visit.routes.test.ts
+- [x] T019 [P] Shadman: Add integration tests for image upload in backend/tests/integration/image.routes.test.ts
 
 ### Implementation for User Story 1
 
