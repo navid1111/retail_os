@@ -156,7 +156,8 @@ router.post("/yolo/predict", yoloUpload.single("file"), async (req: Request, res
 
 router.post("/yolo/report", async (req: Request, res: Response): Promise<void> => {
   try {
-    const report = await GeminiService.generateSupervisorReport(req.body);
+    const inputData = req.body?.rawResponse || req.body;
+    const report = await GeminiService.generateSupervisorReport(inputData);
     res.json({ report });
   } catch (err: any) {
     Sentry.captureException(err);

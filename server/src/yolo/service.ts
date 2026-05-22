@@ -4,14 +4,27 @@ import FormData from "form-data";
 
 const YOLO_SERVER_URL = process.env.YOLO_SERVER_URL || "http://localhost:8000";
 
-export interface YoloDetection {
-  label: string;
+export interface YoloProductDetection {
+  name: string;
+  brand: string;
   confidence: number;
-  bbox: number[];
+}
+
+export interface YoloCompetitorDetection {
+  brand: string;
+  count: number;
 }
 
 export interface YoloPredictResponse {
-  detections: YoloDetection[];
+  provider: string;
+  modelName: string;
+  complianceScore: number;
+  productsDetected: YoloProductDetection[];
+  competitorsDetected: YoloCompetitorDetection[];
+  missingSkus: string[];
+  issues: string[];
+  rawResponse: Record<string, any>;
+  processingMs: number;
 }
 
 export class YoloService {
