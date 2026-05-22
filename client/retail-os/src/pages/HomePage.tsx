@@ -52,6 +52,10 @@ export function HomePage() {
           <a className="home-login-link" href="/login">
             Go to login
           </a>
+        ) : user ? (
+          <a className="home-login-link" href="/shop-dashboard">
+            Open store dashboard
+          </a>
         ) : null}
       </section>
     </main>
