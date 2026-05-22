@@ -74,7 +74,7 @@ function TargetProducts({ skus }: { skus: StoreSku[] }) {
   )
 }
 
-function CheckInPanel({ createdAt }: { createdAt: string }) {
+function CheckInPanel({ createdAt, storeId }: { createdAt: string; storeId: string }) {
   const lastVisitLabel = new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: '2-digit',
@@ -98,7 +98,7 @@ function CheckInPanel({ createdAt }: { createdAt: string }) {
         <span>Optional Notes</span>
         <textarea id="visit-notes" placeholder="Arrived on time..." rows={4} />
       </label>
-      <DashboardButton icon="login" tone="primary">
+      <DashboardButton href={`/stores/${storeId}/visit`} icon="login" tone="primary">
         Check In
       </DashboardButton>
       <p>Data will be synced upon check-in.</p>
@@ -177,7 +177,7 @@ export function SingleShopPage({ storeId }: SingleShopPageProps) {
                 <TargetProducts skus={store.skus} />
               </div>
 
-              <CheckInPanel createdAt={store.createdAt} />
+              <CheckInPanel createdAt={store.createdAt} storeId={store._id} />
             </div>
           </>
         ) : null}
