@@ -1,0 +1,57 @@
+{
+  "image": "Only present in /predict/{image_num}. The filename of the dataset image that was used for inference, e.g. 'olympic_poc_image_191.jpg'.",
+
+  "image_size": {
+    "width": "Width of the input image in pixels.",
+    "height": "Height of the input image in pixels."
+  },
+
+  "image_taken_time": "ISO 8601 timestamp of when the image was captured. Resolved in order of priority: (1) EXIF DateTimeOriginal/DateTimeDigitized/DateTime tag from the image metadata, (2) filesystem last-modified time if the image is a dataset file on disk, (3) current server datetime as a fallback for uploaded images without EXIF data.",
+
+  "inference_time_ms": "Wall-clock time in milliseconds that the ONNX model took to run inference on the image (preprocessing + model forward pass + NMS postprocessing).",
+
+  "num_detections": "Total number of bounding boxes returned after confidence filtering and Non-Maximum Suppression (NMS). Includes both Olympic Noodles (class 0) and Competitor (class 1).",
+
+  "shelf_analysis": {
+    "no_objects_of_interest": "Boolean flag. True when zero 'foodie_noodles_olympics' (class 0) detections are found in the image. When True, the compliance block is omitted entirely and the LLM report generator should treat this image as having no company product presence. When False, full compliance and per-class analytics are provided below.",
+
+    "compliance": {
+      "_note": "This entire block is OMITTED when no_objects_of_interest is true.",
+      "facing_score_pct": "Count-based compliance score. Formula: (olympic_facing_count / total_facing_count) * 100. Measures what percentage of all detected product facings belong to Olympic Noodles.",
+      "area_score_pct": "Area-based compliance score. Formula: (olympic_total_area_px / total_detected_area_px) * 100. Measures what percentage of total detected shelf area is occupied by Olympic Noodles. More meaningful than facing count because a single large facing can dominate shelf visibility over multiple small competitor facings."
+    },
+
+    "foodie_noodles_olympics": {
+      "_note": "This block is OMITTED when no_objects_of_interest is true.",
+      "facing_count": "Number of individual Olympic Noodles product facings detected in the image.",
+      "total_area_px": "Sum of bounding box areas (in pixels²) across all Olympic Noodles detections. Computed as sum of (x2-x1)*(y2-y1) for each detection.",
+      "avg_confidence": "Mean model confidence score across all Olympic Noodles detections, rounded to 4 decimal places. Range: 0.0 to 1.0.",
+      "min_confidence": "Lowest model confidence score among all Olympic Noodles detections, rounded to 4 decimal places. A very low value may indicate a partially occluded, poorly lit, or damaged product on shelf.",
+      "low_visibility_risk": "Boolean flag. True when avg_confidence falls below 0.50, suggesting that the model is struggling to confidently identify Olympic Noodles in this image — potentially due to poor shelf placement angles, partial occlusion, or damaged packaging."
+    },
+
+    "mr_noodles_competitor": {
+      "_note": "This block is OMITTED when no competitors are detected in the image.",
+      "facing_count": "Number of individual competitor product facings detected in the image.",
+      "total_area_px": "Sum of bounding box areas (in pixels²) across all competitor detections.",
+      "avg_confidence": "Mean model confidence score across all competitor detections, rounded to 4 decimal places.",
+      "min_confidence": "Lowest model confidence score among all competitor detections, rounded to 4 decimal places.",
+      "low_visibility_risk": "Boolean flag. True when avg_confidence falls below 0.50 for competitor detections."
+    },
+
+    "adjacency": {
+      "_note": "This block is OMITTED when no_objects_of_interest is true.",
+      "competitor_adjacency_count": "Number of Olympic Noodles facings that are physically adjacent to at least one competitor facing. Two bounding boxes are considered adjacent if the gap between their nearest edges is <= 40 pixels in both horizontal and vertical axes. Each Olympic facing is counted at most once even if it neighbors multiple competitors. High adjacency means the products are placed side-by-side on the shelf, which can indicate direct competitive pressure or shared category planogram placement."
+    }
+  },
+
+  "detections": [
+    {
+      "class_id": "Integer class identifier. 0 = foodie_noodles_olympics (Olympic Noodles, our product), 1 = mr_noodles_competitor (competitor product).",
+      "class_name": "Human-readable class label as defined in the training annotations. One of: 'foodie_noodles_olympics' or 'mr_noodles_competitor'.",
+      "confidence": "Model's confidence score for this specific detection, ranging from 0.0 to 1.0. Only detections above the confidence threshold (default 0.25) are returned.",
+      "bbox": "[x1, y1, x2, y2] — bounding box coordinates in the original image's pixel space. (x1, y1) is the top-left corner and (x2, y2) is the bottom-right corner. These are mapped back from the 640x640 letterboxed ONNX input to the original image resolution.",
+      "bbox_area_px": "Area of this detection's bounding box in pixels², computed as (x2 - x1) * (y2 - y1). Added by the shelf analysis engine to allow per-item area comparisons."
+    }
+  ]
+}
