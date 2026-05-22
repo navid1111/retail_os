@@ -19,6 +19,6 @@ export const validateParams = (schema: ZodSchema) => (req: Request, res: Respons
     return;
   }
 
-  req.params = result.data;
+  req.params = result.data as any;
   next();
 };
