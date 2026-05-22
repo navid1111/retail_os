@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ObjectId } from "mongodb";
-import { uploadVisitImage, detectBlur, computePHash, hammingDistance } from "./image.service";
+import { uploadVisitImage } from "./image.service";
+import { detectBlur, computePHash, hammingDistance } from "./fraud.service";
 import path from "path";
 import { getDB } from "../db/mongo";
 import { CloudinaryService } from "../cloudinary/service";

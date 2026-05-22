@@ -254,7 +254,133 @@ Upload an image for a visit and enqueue processing. Supports both standard JSON 
 
 ---
 
+## Images
+
+### GET /api/images
+
+List visit images. Can filter by fraud status, rejection status, visit, public id, or rejection reason.
+
+- Auth: required
+- Query Parameters:
+  - `fraud`: (Optional) `true` or `false`. Filters by whether the image has fraud flags.
+  - `fraude`: (Optional) Alias for `fraud`.
+  - `isRejected`: (Optional) `true` or `false`. Filters by the image rejection status.
+  - `visitId`: (Optional) Visit ObjectId.
+  - `publicId`: (Optional) Cloudinary public id stored on the visit image.
+  - `rejectionReason`: (Optional) One of `blurry`, `duplicate`, `exif_old`.
+- Response (200):
+  ```json
+  [
+    {
+      "_id": "507f1f77bcf86cd799439099",
+      "visitId": "507f1f77bcf86cd799439012",
+      "publicId": "visit_507f1f77bcf86cd799439012_1779467569816",
+      "imageUrl": "https://res.cloudinary.com/...",
+      "isRejected": true,
+      "rejectionReason": "blurry",
+      "uploadedAt": "2026-05-21T00:10:00.000Z",
+      "hasFraudFlag": true,
+      "fraudFlags": []
+    }
+  ]
+  ```
+- Response (400):
+  ```json
+  { "error": "Validation error", "details": [] }
+  ```
+- Response (500):
+  ```json
+  { "error": "Failed to fetch visit images" }
+  ```
+
+### GET /api/images/:imageId/fraud
+
+Check whether a visit image has fraud flags.
+
+- Auth: required
+- Response (200):
+  ```json
+  {
+    "publicId": "visit_507f1f77bcf86cd799439012_1779467569816",
+    "imageId": "507f1f77bcf86cd799439099",
+    "hasFraudFlag": true,
+    "fraudFlags": [
+      {
+        "_id": "507f1f77bcf86cd799439088",
+        "visitId": "507f1f77bcf86cd799439012",
+        "imageId": "507f1f77bcf86cd799439099",
+        "fraudType": "blurry_image",
+        "confidence": 0.8,
+        "detail": { "blurScore": 20 },
+        "resolution": "pending",
+        "createdAt": "2026-05-21T00:11:00.000Z"
+      }
+    ]
+  }
+  ```
+- Response (404):
+  ```json
+  { "error": "Image not found" }
+  ```
+- Response (400):
+  ```json
+  { "error": "Validation error", "details": [] }
+  ```
+- Response (500):
+  ```json
+  { "error": "Failed to fetch fraud flags" }
+  ```
+
+### GET /api/images/public/:publicId/fraud
+
+Check whether a visit image has fraud flags by its public id.
+
+- Auth: required
+- Response (200): same shape as `/api/images/:imageId/fraud`
+- Response (404):
+  ```json
+  { "error": "Image not found for the given publicId" }
+  ```
+- Response (500):
+  ```json
+  { "error": "Failed to fetch fraud flags" }
+  ```
+
+---
+
 ## Stores
+
+### GET /api/stores
+
+List stores. By default, returns active stores only.
+
+- Auth: required
+- Query Parameters:
+  - `region`: (Optional) Exact region filter.
+  - `storeCode`: (Optional) Exact store code filter.
+  - `search`: (Optional) Case-insensitive search across store name, store code, address, and region.
+  - `isActive`: (Optional) `true` or `false`. Defaults to `true`.
+- Response (200):
+  ```json
+  [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "storeCode": "DHK-001",
+      "storeName": "Dhaka Outlet",
+      "address": "123 Main St",
+      "region": "Dhaka",
+      "isActive": true
+    }
+  ]
+  ```
+- Response (400):
+  ```json
+  { "error": "Validation error", "details": [] }
+  ```
+- Response (500):
+  ```json
+  { "error": "Failed to fetch stores" }
+  ```
 
 ### GET /api/stores/:storeId
 

@@ -5,7 +5,7 @@ import { getRedis } from "../db/redis";
 import { CloudinaryService } from "../cloudinary/service";
 import { requireAuth } from "../middleware/auth";
 import { visitRouter } from "./routes/visit.routes";
-import { imageRouter } from "./routes/image.routes";
+import { imageRouter, visitImageRouter } from "./routes/image.routes";
 import { storeRouter } from "./routes/store.routes";
 import { dashboardRouter } from "./routes/dashboard.routes";
 import { upload } from "../middleware/upload";
@@ -14,7 +14,8 @@ const router = Router();
 
 // Register sub-routers under authenticated path
 router.use("/visits", requireAuth, visitRouter);
-router.use("/visits", requireAuth, imageRouter);
+router.use("/visits", requireAuth, visitImageRouter);
+router.use("/images", requireAuth, imageRouter);
 router.use("/stores", requireAuth, storeRouter);
 router.use("/dashboard", requireAuth, dashboardRouter);
 

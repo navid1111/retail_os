@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { uploadImageBodySchema, uploadImageParamsSchema } from "./image.validators";
+import {
+  imageParamsSchema,
+  listImagesQuerySchema,
+  uploadImageBodySchema,
+  uploadImageParamsSchema,
+} from "./image.validators";
 
 describe("image validators", () => {
   it("accepts params with a valid visit id", () => {
@@ -29,5 +34,30 @@ describe("image validators", () => {
     });
 
     expect(result.success).toBe(true);
+  });
+
+  it("accepts params with a valid image id", () => {
+    const result = imageParamsSchema.safeParse({
+      imageId: "507f1f77bcf86cd799439011",
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("parses image list filters", () => {
+    const result = listImagesQuerySchema.safeParse({
+      fraude: "true",
+      isRejected: "false",
+      rejectionReason: "blurry",
+      visitId: "507f1f77bcf86cd799439011",
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual({
+      fraud: true,
+      isRejected: false,
+      rejectionReason: "blurry",
+      visitId: "507f1f77bcf86cd799439011",
+    });
   });
 });

@@ -52,7 +52,7 @@ const FraudFlagSchema = new Schema<IFraudFlagDocument>(
     },
     deletedAt: { type: Date, default: null },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: false } }
+  { collection: "fraud_flags", timestamps: { createdAt: "createdAt", updatedAt: false } }
 );
 
 FraudFlagSchema.index({ visitId: 1 });

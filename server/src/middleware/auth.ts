@@ -1,6 +1,23 @@
 import type { Request, Response, NextFunction } from "express";
 import { auth } from "../auth/auth";
 
+const toHeaders = (headers: Request["headers"]): Headers => {
+  const result = new Headers();
+
+  Object.entries(headers).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((item) => result.append(key, item));
+      return;
+    }
+
+    if (value !== undefined) {
+      result.set(key, value);
+    }
+  });
+
+  return result;
+};
+
 export async function requireAuth(
   req: Request,
   res: Response,
@@ -8,7 +25,7 @@ export async function requireAuth(
 ): Promise<void> {
   try {
     const session = await auth.api.getSession({
-      headers: req.headers,
+      headers: toHeaders(req.headers),
     });
 
     if (!session?.user) {

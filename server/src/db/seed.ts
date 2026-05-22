@@ -39,13 +39,172 @@ const seed = async () => {
     // 3. Map and parse JSON data to proper MongoDB types
     console.log("Parsing mock data to MongoDB types...");
 
+    const additionalStores = [
+      {
+        _id: "507f1f77bcf86cd799439013",
+        storeCode: "DHK-002",
+        storeName: "Gulshan Market",
+        address: "Road 79, Gulshan 2, Dhaka",
+        region: "Dhaka",
+        latitude: 23.7925,
+        longitude: 90.4078,
+        gpsRadiusM: 250,
+        isActive: true,
+        skus: [
+          {
+            _id: "664ca7d8a000000000000008",
+            skuName: "Pran Mango Juice 250ml",
+            brand: "Pran",
+            isRequired: true,
+            isPosm: false,
+            minFacing: 3,
+          },
+          {
+            _id: "664ca7d8a000000000000009",
+            skuName: "Pran Mango Juice 1L",
+            brand: "Pran",
+            isRequired: true,
+            isPosm: false,
+            minFacing: 2,
+          },
+          {
+            _id: "664ca7d8a00000000000000a",
+            skuName: "Pran Shelf Talker",
+            brand: "Pran",
+            isRequired: false,
+            isPosm: true,
+            minFacing: 1,
+          },
+        ],
+        createdAt: "2026-05-21T09:05:00.000Z",
+      },
+      {
+        _id: "507f1f77bcf86cd799439014",
+        storeCode: "DHK-003",
+        storeName: "Mirpur Super Shop",
+        address: "Section 10, Mirpur, Dhaka",
+        region: "Dhaka",
+        latitude: 23.8067,
+        longitude: 90.3686,
+        gpsRadiusM: 300,
+        isActive: true,
+        skus: [
+          {
+            _id: "664ca7d8a00000000000000b",
+            skuName: "Fresh Atta 2kg",
+            brand: "Fresh",
+            isRequired: true,
+            isPosm: false,
+            minFacing: 2,
+          },
+          {
+            _id: "664ca7d8a00000000000000c",
+            skuName: "Fresh Flour 1kg",
+            brand: "Fresh",
+            isRequired: true,
+            isPosm: false,
+            minFacing: 2,
+          },
+          {
+            _id: "664ca7d8a00000000000000d",
+            skuName: "Fresh Promo Wobbler",
+            brand: "Fresh",
+            isRequired: false,
+            isPosm: true,
+            minFacing: 1,
+          },
+        ],
+        createdAt: "2026-05-21T09:10:00.000Z",
+      },
+      {
+        _id: "507f1f77bcf86cd799439015",
+        storeCode: "SYL-001",
+        storeName: "Sylhet City Mart",
+        address: "Zindabazar, Sylhet",
+        region: "Sylhet",
+        latitude: 24.8949,
+        longitude: 91.8687,
+        gpsRadiusM: 300,
+        isActive: true,
+        skus: [
+          {
+            _id: "664ca7d8a00000000000000e",
+            skuName: "Aarong Milk 500ml",
+            brand: "Aarong",
+            isRequired: true,
+            isPosm: false,
+            minFacing: 3,
+          },
+          {
+            _id: "664ca7d8a00000000000000f",
+            skuName: "Aarong Yogurt 500g",
+            brand: "Aarong",
+            isRequired: true,
+            isPosm: false,
+            minFacing: 2,
+          },
+          {
+            _id: "664ca7d8a000000000000010",
+            skuName: "Aarong Chiller Sticker",
+            brand: "Aarong",
+            isRequired: false,
+            isPosm: true,
+            minFacing: 1,
+          },
+        ],
+        createdAt: "2026-05-21T09:15:00.000Z",
+      },
+      {
+        _id: "507f1f77bcf86cd799439016",
+        storeCode: "RAJ-001",
+        storeName: "Rajshahi Trade Center",
+        address: "Shaheb Bazar, Rajshahi",
+        region: "Rajshahi",
+        latitude: 24.3745,
+        longitude: 88.6042,
+        gpsRadiusM: 350,
+        isActive: false,
+        skus: [
+          {
+            _id: "664ca7d8a000000000000011",
+            skuName: "ACI Salt 1kg",
+            brand: "ACI",
+            isRequired: true,
+            isPosm: false,
+            minFacing: 4,
+          },
+          {
+            _id: "664ca7d8a000000000000012",
+            skuName: "ACI Pure Spice 200g",
+            brand: "ACI",
+            isRequired: true,
+            isPosm: false,
+            minFacing: 2,
+          },
+          {
+            _id: "664ca7d8a000000000000013",
+            skuName: "ACI Shelf Strip",
+            brand: "ACI",
+            isRequired: false,
+            isPosm: true,
+            minFacing: 1,
+          },
+        ],
+        createdAt: "2026-05-21T09:20:00.000Z",
+      },
+    ];
+
     const users = mockData.users.map((u: any) => ({
       ...u,
       _id: new ObjectId(u._id),
       createdAt: new Date(u.createdAt),
     }));
 
-    const stores = mockData.stores.map((s: any) => ({
+    const storesByCode = new Map(
+      [...mockData.stores, ...additionalStores].map((store: any) => [store.storeCode, store])
+    );
+
+    const stores = Array.from(storesByCode.values()).map((s: any) => ({
       ...s,
       _id: new ObjectId(s._id),
       skus: s.skus.map((sku: any) => ({
