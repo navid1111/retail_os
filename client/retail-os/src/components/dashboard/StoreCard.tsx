@@ -8,6 +8,7 @@ export type StoreCardData = {
   name: string
   location: string
   status: StoreStatus
+  region?: string
   lastSync?: string
   skuCount?: string
   alertTitle?: string
@@ -49,6 +50,8 @@ export function StoreCard({ store }: { store: StoreCardData }) {
         <Icon name="location_on" />
         {store.location}
       </p>
+
+      {store.region ? <div className="store-card__region">{store.region}</div> : null}
 
       {store.status === 'idle' ? (
         <>
