@@ -1,0 +1,15 @@
+info:
+  name: Upload Image local file copy
+  type: http
+  seq: 4
+
+http:
+  method: post
+  url: ""
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+​

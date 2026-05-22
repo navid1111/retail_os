@@ -5,12 +5,24 @@ import { getDB } from "../db/mongo";
 import { getRedis } from "../db/redis";
 import { CloudinaryService } from "../cloudinary/service";
 import { requireAuth } from "../middleware/auth";
+
 import { YoloService } from "../yolo/service";
 import { GeminiService } from "../gemini/service";
 
-const upload = multer({ storage: multer.memoryStorage() });
+const yoloUpload = multer({ storage: multer.memoryStorage() });
+
+import { visitRouter } from "./routes/visit.routes";
+import { imageRouter } from "./routes/image.routes";
+import { storeRouter } from "./routes/store.routes";
+import { upload } from "../middleware/upload";
+
 
 const router = Router();
+
+// Register sub-routers under authenticated path
+router.use("/visits", requireAuth, visitRouter);
+router.use("/visits", requireAuth, imageRouter);
+router.use("/stores", requireAuth, storeRouter);
 
 router.get("/test", async (req: Request, res: Response): Promise<void> => {
   try {
@@ -34,7 +46,7 @@ router.get("/test", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-router.post("/upload/image", async (req: Request, res: Response): Promise<void> => {
+router.post("/upload/image", upload, async (req: Request, res: Response): Promise<void> => {
   try {
     const { filePath, publicId: publicIdRaw } = req.body;
     const publicId = typeof publicIdRaw === "string" ? publicIdRaw : undefined;
@@ -109,13 +121,13 @@ router.delete("/assets/:publicId", async (req: Request, res: Response): Promise<
   }
 });
 
-router.get("/me",requireAuth, (req: Request, res: Response): void => {
-    const user = (req as any).user;
-    if (!user) {
-        res.status(401).json({ error: "Unauthorized - No user found" });
-        return;
-    }
-    res.json({ user });
+router.get("/me", requireAuth, (req: Request, res: Response): void => {
+  const user = (req as any).user;
+  if (!user) {
+    res.status(401).json({ error: "Unauthorized - No user found" });
+    return;
+  }
+  res.json({ user });
 });
 
 router.get("/yolo/health", async (req: Request, res: Response): Promise<void> => {
@@ -127,7 +139,7 @@ router.get("/yolo/health", async (req: Request, res: Response): Promise<void> =>
   }
 });
 
-router.post("/yolo/predict", upload.single("file"), async (req: Request, res: Response): Promise<void> => {
+router.post("/yolo/predict", yoloUpload.single("file"), async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
       res.status(400).json({ error: "No image file provided. Use form-data with key 'file'" });

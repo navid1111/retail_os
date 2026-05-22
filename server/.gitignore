@@ -1,13 +1,12 @@
 # Dependencies
-node_modules
+node_modules/
 
 # Environment (secrets - never commit)
-.env
-.env.local
-.env.*.local
+.env*
 
 # Build output
 dist/
+build/
 
 # Docker local data
 init-mongo.js
@@ -19,9 +18,12 @@ logs/
 # OS files
 Thumbs.db
 .DS_Store
+*.tmp
+*.swp
 
 # IDE
 .idea/
+.vscode/
 
 # Test coverage
 coverage/

@@ -1,0 +1,22 @@
+info:
+  name: Upload Image local file
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:5000/api/upload/image
+  body:
+    type: json
+    data: |2-
+       {
+          "filePath": "/home/navid-kamal/IM/retail_os/Screenshot from 2026-05-21 15-29-32.png",
+          "publicId": "optional-public-id"
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

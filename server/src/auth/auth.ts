@@ -20,4 +20,7 @@ export const auth = betterAuth({
       apiKey: process.env.BETTER_AUTH_API_KEY,
     }),
   ],
+  advanced: {
+    disableOriginCheck: process.env.NODE_ENV === "development",
+  },
 });

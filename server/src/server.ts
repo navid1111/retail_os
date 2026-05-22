@@ -5,6 +5,7 @@ import { app } from "./app";
 import { connectDB, closeDB } from "./db/mongo";
 import { connectRedis, closeRedis } from "./db/redis";
 import { initializeCloudinary } from "./cloudinary/client";
+import { startQueueScheduler, closeQueueScheduler } from "./queues/schedular";
 
 const startServer = async (): Promise<void> => {
   try {
@@ -12,6 +13,7 @@ const startServer = async (): Promise<void> => {
     await connectDB();
     await connectRedis();
     initializeCloudinary(); // Initialize Cloudinary
+    const scheduler = startQueueScheduler();
 
     Sentry.setupExpressErrorHandler(app);
 
@@ -26,6 +28,7 @@ const startServer = async (): Promise<void> => {
     process.on("SIGINT", async (): Promise<void> => {
       await closeDB();
       await closeRedis();
+      await closeQueueScheduler(scheduler);
       process.exit(0);
     });
 

@@ -1,0 +1,15 @@
+info:
+  name: sign-in
+  type: http
+  seq: 7
+
+http:
+  method: post
+  url: ""
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+​
