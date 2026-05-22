@@ -1,8 +1,13 @@
 import { Router, Request, Response } from "express";
 import * as Sentry from "@sentry/node";
 import { ZodError } from "zod";
-import { checkInVisit, submitVisit } from "../../services/visit.service";
-import { checkInVisitBodySchema, submitVisitParamsSchema } from "../validators/visit.validators";
+import { checkInVisit, listVisitsByRep, submitVisit } from "../../services/visit.service";
+import {
+  checkInVisitBodySchema,
+  repVisitsParamsSchema,
+  submitVisitParamsSchema,
+  visitListQuerySchema,
+} from "../validators/visit.validators";
 
 export const visitRouter = Router();
 
@@ -69,5 +74,61 @@ export const submitVisitHandler = async (req: Request, res: Response): Promise<v
   }
 };
 
+export const listRepVisitsHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const params = repVisitsParamsSchema.parse(req.params);
+    const query = visitListQuerySchema.parse(req.query);
+
+    const visits = await listVisitsByRep({
+      repId: params.repId,
+      status: query.status,
+      limit: query.limit,
+    });
+
+    res.json(visits);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: "Validation error", details: error.issues });
+      return;
+    }
+    Sentry.captureException(error);
+    res.status(500).json({ error: "Failed to fetch visits" });
+  }
+};
+
+export const listMyVisitsHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const repId = resolveUserId(req);
+    if (!repId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const query = visitListQuerySchema.parse(req.query);
+    const visits = await listVisitsByRep({
+      repId,
+      status: query.status,
+      limit: query.limit,
+    });
+
+    res.json(visits);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: "Validation error", details: error.issues });
+      return;
+    }
+    Sentry.captureException(error);
+    res.status(500).json({ error: "Failed to fetch visits" });
+  }
+};
+
 visitRouter.post("/check-in", checkInHandler);
+visitRouter.get("/mine", listMyVisitsHandler);
+visitRouter.get("/rep/:repId", listRepVisitsHandler);
 visitRouter.post("/:visitId/submit", submitVisitHandler);

@@ -1,0 +1,15 @@
+info:
+  name: image-rep
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: http://localhost:5000/api/images/rep/6a1063750f6bb0d415187fbf
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

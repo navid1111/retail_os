@@ -31,6 +31,13 @@ export interface UploadVisitImageInput {
   publicId?: string;
 }
 
+export interface ListImagesByRepInput {
+  repId: string;
+  isRejected?: boolean;
+  rejectionReason?: "blurry" | "duplicate" | "exif_old";
+  limit?: number;
+}
+
 const toObjectId = (value: string, fieldName: string): ObjectId => {
   if (!ObjectId.isValid(value)) {
     throw new Error(`Invalid ${fieldName}`);
@@ -187,4 +194,108 @@ export const processVisitImageJob = async (jobData: any): Promise<void> => {
       await fs.unlink(filePath).catch(() => {});
     }
   }
+};
+
+export const listImagesByRep = async (
+  input: ListImagesByRepInput
+): Promise<unknown[]> => {
+  const db = getDB();
+  const repId = toObjectId(input.repId, "repId");
+
+  const imageMatch: Record<string, unknown> = {};
+
+  if (input.isRejected !== undefined) {
+    imageMatch.isRejected = input.isRejected;
+  }
+
+  if (input.rejectionReason) {
+    imageMatch.rejectionReason = input.rejectionReason;
+  }
+
+  return db
+    .collection<VisitImageRecord>("visit_images")
+    .aggregate([
+      ...(Object.keys(imageMatch).length > 0 ? [{ $match: imageMatch }] : []),
+      {
+        $lookup: {
+          from: "visits",
+          localField: "visitId",
+          foreignField: "_id",
+          as: "visit",
+        },
+      },
+      {
+        $unwind: "$visit",
+      },
+      {
+        $match: {
+          "visit.repId": repId,
+          "visit.deletedAt": null,
+        },
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "visit.storeId",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      {
+        $unwind: {
+          path: "$store",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "fraud_flags",
+          localField: "_id",
+          foreignField: "imageId",
+          as: "fraudFlags",
+        },
+      },
+      {
+        $addFields: {
+          hasFraudFlag: { $gt: [{ $size: "$fraudFlags" }, 0] },
+        },
+      },
+      { $sort: { uploadedAt: -1 } },
+      { $limit: input.limit ?? 50 },
+      {
+        $project: {
+          _id: 1,
+          visitId: 1,
+          imageUrl: 1,
+          publicId: 1,
+          imageHash: 1,
+          exifTakenAt: 1,
+          fileSizeKb: 1,
+          widthPx: 1,
+          heightPx: 1,
+          blurScore: 1,
+          isRejected: 1,
+          rejectionReason: 1,
+          uploadedAt: 1,
+          hasFraudFlag: 1,
+          fraudFlags: 1,
+          visit: {
+            _id: "$visit._id",
+            repId: "$visit.repId",
+            storeId: "$visit.storeId",
+            status: "$visit.status",
+            checkInTime: "$visit.checkInTime",
+            checkOutTime: "$visit.checkOutTime",
+          },
+          store: {
+            _id: "$store._id",
+            storeCode: "$store.storeCode",
+            storeName: "$store.storeName",
+            address: "$store.address",
+            region: "$store.region",
+          },
+        },
+      },
+    ])
+    .toArray();
 };

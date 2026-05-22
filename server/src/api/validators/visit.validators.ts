@@ -15,3 +15,12 @@ export const checkInVisitBodySchema = z.object({
 export const submitVisitParamsSchema = z.object({
   visitId: objectIdSchema,
 });
+
+export const repVisitsParamsSchema = z.object({
+  repId: objectIdSchema,
+});
+
+export const visitListQuerySchema = z.object({
+  status: z.enum(["pending", "processing", "completed", "flagged"]).optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+});

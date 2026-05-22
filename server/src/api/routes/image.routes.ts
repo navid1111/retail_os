@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import * as Sentry from "@sentry/node";
 import { ZodError } from "zod";
-import { uploadVisitImage } from "../../services/image.service";
+import { listImagesByRep, uploadVisitImage } from "../../services/image.service";
 import {
   getImageFraudByImageId,
   getImageFraudByPublicId,
@@ -10,6 +10,7 @@ import {
 import {
   imageParamsSchema,
   listImagesQuerySchema,
+  repImagesParamsSchema,
   uploadImageBodySchema,
   uploadImageParamsSchema,
 } from "../validators/image.validators";
@@ -80,6 +81,59 @@ export const listImagesHandler = async (req: Request, res: Response): Promise<vo
   }
 };
 
+export const listRepImagesHandler = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const repId = resolveUserId(req);
+    if (!repId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const params = repImagesParamsSchema.parse(req.params);
+    const query = listImagesQuerySchema.parse(req.query);
+    const images = await listImagesByRep({
+      repId: params.repId,
+      isRejected: query.isRejected,
+      rejectionReason: query.rejectionReason,
+    });
+
+    res.status(200).json(images);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: "Validation error", details: error.issues });
+      return;
+    }
+    Sentry.captureException(error);
+    res.status(500).json({ error: "Failed to fetch representative images" });
+  }
+};
+
+export const listMyImagesHandler = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const repId = resolveUserId(req);
+    if (!repId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const query = listImagesQuerySchema.parse(req.query);
+    const images = await listImagesByRep({
+      repId,
+      isRejected: query.isRejected,
+      rejectionReason: query.rejectionReason,
+    });
+
+    res.status(200).json(images);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ error: "Validation error", details: error.issues });
+      return;
+    }
+    Sentry.captureException(error);
+    res.status(500).json({ error: "Failed to fetch representative images" });
+  }
+};
+
 export const getImageFraudByIdHandler = async (req: Request, res: Response): Promise<void> => {
   try {
     const repId = resolveUserId(req);
@@ -137,5 +191,7 @@ export const getImageFraudHandler = async (req: Request, res: Response): Promise
 };
 
 imageRouter.get("/", listImagesHandler);
+imageRouter.get("/mine", listMyImagesHandler);
+imageRouter.get("/rep/:repId", listRepImagesHandler);
 imageRouter.get("/:imageId/fraud", getImageFraudByIdHandler);
 imageRouter.get("/public/:publicId/fraud", getImageFraudHandler);

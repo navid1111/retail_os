@@ -58,6 +58,12 @@ export interface SubmitVisitInput {
   repId: string;
 }
 
+export interface ListVisitsByRepInput {
+  repId: string;
+  status?: VisitStatus;
+  limit?: number;
+}
+
 const toObjectId = (
   value: string,
   fieldName: string
@@ -289,4 +295,68 @@ export const submitVisit = async (
     status: "processing",
     checkOutTime,
   };
+};
+
+export const listVisitsByRep = async (
+  input: ListVisitsByRepInput
+): Promise<unknown[]> => {
+  const db = getDB();
+  const repId = toObjectId(input.repId, "repId");
+
+  const match: Record<string, unknown> = {
+    repId,
+    deletedAt: null,
+  };
+
+  if (input.status) {
+    match.status = input.status;
+  }
+
+  return db
+    .collection<VisitRecord>("visits")
+    .aggregate([
+      { $match: match },
+      { $sort: { checkInTime: -1, createdAt: -1 } },
+      { $limit: input.limit ?? 50 },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "storeId",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      {
+        $unwind: {
+          path: "$store",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          repId: 1,
+          storeId: 1,
+          checkInTime: 1,
+          checkOutTime: 1,
+          gpsLat: 1,
+          gpsLng: 1,
+          gpsAccuracyM: 1,
+          status: 1,
+          overallScore: 1,
+          repNotes: 1,
+          images: 1,
+          fraudFlags: 1,
+          createdAt: 1,
+          store: {
+            _id: "$store._id",
+            storeCode: "$store.storeCode",
+            storeName: "$store.storeName",
+            address: "$store.address",
+            region: "$store.region",
+          },
+        },
+      },
+    ])
+    .toArray();
 };

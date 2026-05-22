@@ -1,33 +1,39 @@
 import { Icon } from './Icon'
 
 const primaryItems = [
-  { label: 'Dashboard', icon: 'dashboard' },
-  { label: 'Store List', icon: 'storefront', active: true },
-  { label: 'Visit Feed', icon: 'assignment' },
-  { label: 'Fraud Panel', icon: 'gavel' },
-  { label: 'Image History', icon: 'image' },
+  { label: 'Dashboard', icon: 'dashboard', href: '/' },
+  { label: 'Store List', icon: 'storefront', href: '/stores' },
+  { label: 'Visit Feed', icon: 'assignment', href: '/visits' },
+  { label: 'Fraud Panel', icon: 'gavel', href: '#' },
+  { label: 'Image History', icon: 'image', href: '/image-history' },
 ]
 
 const secondaryItems = [
-  { label: 'Support', icon: 'contact_support' },
-  { label: 'Settings', icon: 'settings' },
+  { label: 'Support', icon: 'contact_support', href: '#' },
+  { label: 'Settings', icon: 'settings', href: '#' },
 ]
 
 type NavItem = {
   label: string
   icon: string
-  active?: boolean
+  href: string
 }
 
 function SidebarLink({ item }: { item: NavItem }) {
+  const path = window.location.pathname
+  const isActive =
+    item.href === '/stores'
+      ? path === '/stores' || path === '/shop-dashboard' || path.startsWith('/stores/')
+      : path === item.href
+
   return (
     <a
       className={`dashboard-sidebar__link ${
-        item.active ? 'dashboard-sidebar__link--active' : ''
+        isActive ? 'dashboard-sidebar__link--active' : ''
       }`}
-      href="#"
+      href={item.href}
     >
-      <Icon filled={item.active} name={item.icon} />
+      <Icon filled={isActive} name={item.icon} />
       <span>{item.label}</span>
     </a>
   )

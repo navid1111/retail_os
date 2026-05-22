@@ -1,9 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
-import { getImageFraudByIdHandler, listImagesHandler, uploadImageHandler } from "./image.routes";
-import { uploadVisitImage } from "../../services/image.service";
+import {
+  getImageFraudByIdHandler,
+  listImagesHandler,
+  listMyImagesHandler,
+  listRepImagesHandler,
+  uploadImageHandler,
+} from "./image.routes";
+import { listImagesByRep, uploadVisitImage } from "../../services/image.service";
 import { getImageFraudByImageId, listVisitImages } from "../../services/fraud.service";
 
 vi.mock("../../services/image.service", () => ({
+  listImagesByRep: vi.fn(),
   uploadVisitImage: vi.fn(),
 }));
 
@@ -94,5 +101,46 @@ describe("image routes", () => {
     expect(listVisitImages).toHaveBeenCalledWith({}, { fraud: false, isRejected: false });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith([{ _id: "img", hasFraudFlag: false }]);
+  });
+
+  it("lists images clicked by a sales representative", async () => {
+    vi.mocked(listImagesByRep).mockResolvedValue([{ _id: "img" }]);
+
+    const req: any = {
+      params: { repId: "507f1f77bcf86cd799439012" },
+      query: { isRejected: "false" },
+      user: { _id: "507f1f77bcf86cd799439013" },
+    };
+    const res = createRes();
+
+    await listRepImagesHandler(req, res);
+
+    expect(listImagesByRep).toHaveBeenCalledWith({
+      repId: "507f1f77bcf86cd799439012",
+      isRejected: false,
+      rejectionReason: undefined,
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith([{ _id: "img" }]);
+  });
+
+  it("lists images clicked by the authenticated sales representative", async () => {
+    vi.mocked(listImagesByRep).mockResolvedValue([{ _id: "img" }]);
+
+    const req: any = {
+      params: {},
+      query: { rejectionReason: "blurry" },
+      user: { _id: "507f1f77bcf86cd799439012" },
+    };
+    const res = createRes();
+
+    await listMyImagesHandler(req, res);
+
+    expect(listImagesByRep).toHaveBeenCalledWith({
+      repId: "507f1f77bcf86cd799439012",
+      isRejected: undefined,
+      rejectionReason: "blurry",
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
   });
 });

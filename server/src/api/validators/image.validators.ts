@@ -17,6 +17,10 @@ export const imageParamsSchema = z.object({
   imageId: objectIdSchema,
 });
 
+export const repImagesParamsSchema = z.object({
+  repId: objectIdSchema,
+});
+
 export const listImagesQuerySchema = z
   .object({
     visitId: objectIdSchema.optional(),

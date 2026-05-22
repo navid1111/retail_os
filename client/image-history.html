@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Geist', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .mono-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e8e8e8",
+                        "secondary": "#5e5e5e",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#dadada",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#45464e",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface": "#f9f9f9",
+                        "outline-variant": "#cfc4c5",
+                        "on-secondary-container": "#626262",
+                        "on-tertiary-fixed": "#1a1b22",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#1a1b22",
+                        "secondary-fixed-dim": "#c7c6c6",
+                        "tertiary": "#000000",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline": "#7e7576",
+                        "primary-container": "#1b1b1b",
+                        "surface-container": "#eeeeee",
+                        "surface-variant": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6cf",
+                        "primary-fixed": "#e2e2e2",
+                        "on-surface-variant": "#4c4546",
+                        "secondary-fixed": "#e4e2e2",
+                        "inverse-surface": "#2f3131",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-container": "#848484",
+                        "tertiary-fixed": "#e2e1eb",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#1b1b1b",
+                        "background": "#f9f9f9",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "on-tertiary-container": "#83838c",
+                        "inverse-primary": "#c6c6c6",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-secondary-fixed-variant": "#464747",
+                        "surface-tint": "#5e5e5e",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#e1dfdf",
+                        "on-surface": "#1a1c1c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "base": "8px",
+                        "margin": "32px",
+                        "sm": "12px",
+                        "xl": "80px",
+                        "md": "24px",
+                        "xs": "4px",
+                        "lg": "48px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "mono-code": ["jetbrainsMono"],
+                        "headline-md": ["Geist"],
+                        "body-md": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "display-lg-mobile": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["13px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "mono-code": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Shell: SideNavBar -->
+<aside class="flex flex-col h-screen fixed left-0 top-0 py-6 bg-surface-container-low dark:bg-surface-container-highest border-r border-outline-variant dark:border-outline docked h-full left-0 w-64 z-50">
+<div class="px-6 mb-8">
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed tracking-tight">Ops Control</h1>
+<p class="text-secondary font-label-sm text-label-sm">Field Operations</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-sm text-label-sm hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-sm text-label-sm hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="storefront">storefront</span> Store List
+            </a>
+<a class="flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-sm text-label-sm hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="receipt_long">receipt_long</span> Visit Feed
+            </a>
+<a class="flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-sm text-label-sm hover:bg-surface-container dark:hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="gpp_bad">gpp_bad</span> Fraud Panel
+            </a>
+<!-- Active State -->
+<a class="flex items-center px-6 py-3 text-primary dark:text-primary-fixed font-bold border-r-2 border-primary bg-surface-container-high dark:bg-surface-dim font-label-sm text-label-sm translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="history_toggle_off">history_toggle_off</span> Image History
+            </a>
+</nav>
+<div class="px-6 pt-6 border-t border-outline-variant space-y-1">
+<a class="flex items-center py-2 text-secondary font-label-sm text-label-sm hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="help_outline">help_outline</span> Support
+            </a>
+<a class="flex items-center py-2 text-secondary font-label-sm text-label-sm hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span> Logout
+            </a>
+</div>
+</aside>
+<!-- Shell: TopNavBar (Simulated within layout) -->
+<main class="ml-64 min-h-screen">
+<header class="bg-surface dark:bg-surface-container-high border-b border-outline-variant dark:border-outline sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-gutter h-16 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-4">
+<button class="flex items-center text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_back">arrow_back</span>
+<span class="ml-2 font-label-sm text-label-sm">Back to Dhaka Outlet</span>
+</button>
+<div class="h-4 w-[1px] bg-outline-variant mx-2"></div>
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight">Dhaka Outlet / DHK-001</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-secondary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="Supervisor Profile" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional headshot of a middle-aged male corporate supervisor in a clean, high-contrast studio setting. He is wearing a dark charcoal suit and a crisp white shirt, looking directly at the camera with a confident and serious expression. The lighting is soft yet directional, emphasizing the minimalist and high-end aesthetic of a modern B2B SaaS platform interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR0jZcGsDSIqaaRc-Yj-jMl47oTnOB2cz8w81VMZ6tN6eQn1r2tZfL_1n18c3mqVmGmrNXwVU6C7QfiCEnPg2Q3zWXFiOsE3Doe545wb12buyZjEq2KfK8u2O54w7pl6aZND50lMLqBBQp2n4OcLZnBIhJg_NplBdRihgeOAs03ycARXeSGhB0AHi8wTp3LmPF8YtuAbb7Lg3HKKhf6CJFtetXP__n_W441rmYIYYtzhRfQuY7dBcVL9nmXEsMraM_lZxmGrCW_39n"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<div class="p-gutter max-w-[1440px] mx-auto space-y-gutter">
+<!-- Summary Stats: Bento Grid Style -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant p-md">
+<p class="font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider">Total Visits</p>
+<p class="font-display-lg text-display-lg mono-code">14</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md">
+<p class="font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider">Average Score</p>
+<div class="flex items-baseline gap-2">
+<p class="font-display-lg text-display-lg mono-code">74%</p>
+<span class="material-symbols-outlined text-error" data-icon="trending_down">trending_down</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md border-l-4 border-l-primary">
+<p class="font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider">Fraud Flags</p>
+<p class="font-display-lg text-display-lg mono-code text-error">03</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md">
+<p class="font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider">Repeated Missing SKU</p>
+<p class="font-headline-md text-headline-md">Diet Coke</p>
+</div>
+</section>
+<!-- Controls Bar -->
+<section class="flex flex-col md:flex-row gap-4 items-center justify-between border border-outline-variant bg-surface p-4">
+<div class="flex flex-wrap items-center gap-3">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary text-sm" data-icon="calendar_today">calendar_today</span>
+<select class="pl-10 pr-8 py-2 bg-white border border-outline-variant font-label-sm text-label-sm appearance-none focus:border-primary outline-none">
+<option>Date: All Time</option>
+<option>Last 7 Days</option>
+<option>Last 30 Days</option>
+</select>
+</div>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary text-sm" data-icon="person">person</span>
+<select class="pl-10 pr-8 py-2 bg-white border border-outline-variant font-label-sm text-label-sm appearance-none focus:border-primary outline-none">
+<option>Rep: All Personnel</option>
+<option>Ahmed K.</option>
+<option>Sarah J.</option>
+</select>
+</div>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary text-sm" data-icon="analytics">analytics</span>
+<select class="pl-10 pr-8 py-2 bg-white border border-outline-variant font-label-sm text-label-sm appearance-none focus:border-primary outline-none">
+<option>Score: Any</option>
+<option>Above 90%</option>
+<option>Below 50%</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-4 w-full md:w-auto">
+<div class="relative flex-1 md:w-64">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 border border-outline-variant focus:border-primary outline-none font-label-sm text-label-sm" placeholder="Search images..." type="text"/>
+</div>
+<div class="flex border border-outline-variant">
+<button class="p-2 bg-primary text-white" title="Grid View">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low transition-colors" title="Timeline View">
+<span class="material-symbols-outlined" data-icon="view_timeline">view_timeline</span>
+</button>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 border border-primary font-label-sm text-label-sm hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="compare_arrows">compare_arrows</span>
+                        Compare
+                    </button>
+</div>
+</section>
+<!-- Image History Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+<!-- Card 1 (Flagged) -->
+<div class="bg-surface-container-lowest border border-outline-variant group relative">
+<div class="relative overflow-hidden aspect-[4/3]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A high-angle, sharp photograph of a supermarket beverage shelf filled with colorful soda cans and bottles. The image is taken in a professional retail audit context with crisp focus and bright fluorescent lighting. The color palette is vibrant against a clean, white store environment, emphasizing modern commercial efficiency. One corner of the image features a subtle digital overlay indicating a compliance check." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi1VlGi3qC3D6iFT8H70rb1VraXX9dk2KkapnY1kRgpT8k6NajavIy1nY6Zrsf08tf-Rc8V0fVpUK7FxesFmgop_Yi1dv5PC_lNBn6LOTyun7BEQji7-jhrnWQUZqa2nw6_UH9Yluwf2cD392W4wSpJsYh4y--pQHhndJa0uk4EGNcB7PZ40lSDLEWNhyrMEokCqztqjhcNqcMXa7lPIbJ9xAjfFg7NKr3GimJroO7aKt50FSqZg6vl8MIT2Cpzz3qiiyqVnXayQZe"/>
+<!-- Fraud Badges -->
+<div class="absolute top-2 left-2 flex flex-col gap-1">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 flex items-center gap-1 uppercase tracking-tighter">
+<span class="material-symbols-outlined text-[12px]" data-icon="location_on">location_on</span> GPS
+                            </span>
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 flex items-center gap-1 uppercase tracking-tighter">
+<span class="material-symbols-outlined text-[12px]" data-icon="content_copy">content_copy</span> Duplicate
+                            </span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-full py-2 bg-white text-primary font-label-sm text-label-sm">Inspect Details</button>
+</div>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-label-sm text-label-sm font-bold">21 May, 10:45 AM</h3>
+<p class="text-secondary font-label-sm text-label-sm">Ahmed Khan</p>
+</div>
+<div class="text-right">
+<p class="font-mono-code text-mono-code font-bold text-error">45%</p>
+<p class="text-[10px] text-secondary uppercase tracking-widest">Compliance</p>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="text-[11px] font-bold uppercase tracking-widest text-error">Flagged</span>
+</div>
+</div>
+</div>
+<!-- Card 2 (Completed) -->
+<div class="bg-surface-container-lowest border border-outline-variant group relative">
+<div class="relative overflow-hidden aspect-[4/3]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A meticulously organized supermarket shelf containing neatly aligned boxes of dry goods and snacks. The lighting is uniform and soft, characteristic of a high-end retail space. The photograph is sharp and high-density, highlighting the precision of the shelf layout. The overall aesthetic is clean and professional, reflecting a successful retail compliance audit with a monochrome-leaning background and vibrant product packaging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa7YGJlnvFzl9l33b4xzWhfFwm0KYfeQmTc8tbS6n6JvEr3kiCyt8ybPEJlK8oUaCtw-JozCv2NX-WO9dUu_dXVmUPNGJKmFkdyGkg4ngOxlNFvo3bkjPfLgsXpVrEQUvVl5hR-mmWO09hug-_jBGax2CHzuW281DvXVwesO5dFO2nuy-bZ2IIk28Wxi7xI7WYT2HZfKL4c5-Uym5wCMy05VFN0t1Y5UTt29xqM_-F7lOS3BL_SXmGaZujO6BTYBf_ndjB0oYWOiL8"/>
+<div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-full py-2 bg-white text-primary font-label-sm text-label-sm">Inspect Details</button>
+</div>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-label-sm text-label-sm font-bold">19 May, 02:20 PM</h3>
+<p class="text-secondary font-label-sm text-label-sm">Sarah Jenkins</p>
+</div>
+<div class="text-right">
+<p class="font-mono-code text-mono-code font-bold text-primary">91%</p>
+<p class="text-[10px] text-secondary uppercase tracking-widest">Compliance</p>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-[11px] font-bold uppercase tracking-widest text-primary">Completed</span>
+</div>
+</div>
+</div>
+<!-- Card 3 (Completed) -->
+<div class="bg-surface-container-lowest border border-outline-variant group relative">
+<div class="relative overflow-hidden aspect-[4/3]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A perspective shot of a modern retail aisle, focusing on a specific shelf section with premium bottled beverages. The lighting creates a sleek, high-end commercial atmosphere. The composition is structured and balanced, with sharp focus on the front-facing products. The color palette is sophisticated, using deep blacks and whites to create a professional B2B SaaS dashboard visual style for image history records." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWEqnbx5PgsaCRKDu0n6HnkrjAGukxrYm3ZknsBh-0pxSInm-4H3qHjDPpbbj7sckfi52FH9nC4v-JqjblI8bn1OZ4DBa4TArikTbqmHlxG8PUSxlosh57ey-Y0-CnOEKbEQ4WlPgVe3hND9Q6zMR6VelBVho6Em9T9QWXfjF4z4UenUSltPcpJ0tKnaHcVDVxjirStGwx47aBfi2MG_3V822Aom7i2P5uJ-qTF-gAvM3dSWI2FK-VKpXtLp7gxiGoyawISPf6Kpcw"/>
+<div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-full py-2 bg-white text-primary font-label-sm text-label-sm">Inspect Details</button>
+</div>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-label-sm text-label-sm font-bold">18 May, 11:15 AM</h3>
+<p class="text-secondary font-label-sm text-label-sm">Ahmed Khan</p>
+</div>
+<div class="text-right">
+<p class="font-mono-code text-mono-code font-bold text-primary">82%</p>
+<p class="text-[10px] text-secondary uppercase tracking-widest">Compliance</p>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-[11px] font-bold uppercase tracking-widest text-primary">Completed</span>
+</div>
+</div>
+</div>
+<!-- Card 4 (Flagged) -->
+<div class="bg-surface-container-lowest border border-outline-variant group relative">
+<div class="relative overflow-hidden aspect-[4/3]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A close-up photograph of a retail shelf that appears slightly cluttered and unorganized, captured during a quality control visit. The lighting is harsh and reveals gaps in the product arrangement. This image is part of a professional audit log, showing the reality of field operations. The style is documentary and realistic, with high clarity and sharp edges, consistent with a data-driven SaaS management tool interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYDadZgkiMnMBmk3CAcDXt6IWMMc80o1jAaZX0HUZKEeroiZhp6Au_DJoYpWywx-CMZnX0EwuAtW4M71_n35mLgHMnA6_CqdPRI6hSZuVGCD2A7-Z8Ub8vdffcLtEqJI6SzKqGkK-SaPpHk3RTD5Lw6Z7Wxr8PrGwB6cs8AZHyPK-OJ1d--7oiLOfPQbMeuy9ns74x79Aw7KnvGplzL9JrLnRtfWv2xeN8e0CdZMWytl7m-VHRBiJQCmjGz6beNnu9fK-kjzCVKJHO"/>
+<!-- Fraud Badge -->
+<div class="absolute top-2 left-2">
+<span class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 flex items-center gap-1 uppercase tracking-tighter">
+<span class="material-symbols-outlined text-[12px]" data-icon="schedule">schedule</span> Timestamp
+                            </span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-full py-2 bg-white text-primary font-label-sm text-label-sm">Inspect Details</button>
+</div>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-label-sm text-label-sm font-bold">15 May, 09:30 AM</h3>
+<p class="text-secondary font-label-sm text-label-sm">Sarah Jenkins</p>
+</div>
+<div class="text-right">
+<p class="font-mono-code text-mono-code font-bold text-error">52%</p>
+<p class="text-[10px] text-secondary uppercase tracking-widest">Compliance</p>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2 border-t border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="text-[11px] font-bold uppercase tracking-widest text-error">Flagged</span>
+</div>
+</div>
+</div>
+<!-- More Cards (Placeholders for high density feel) -->
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest border border-outline-variant group relative opacity-80">
+<div class="relative overflow-hidden aspect-[4/3] bg-surface-container">
+<div class="w-full h-full flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant text-4xl" data-icon="image">image</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-label-sm text-label-sm font-bold">12 May, 04:55 PM</h3>
+<p class="text-secondary font-label-sm text-label-sm">Ahmed Khan</p>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-surface-container-lowest border border-outline-variant group relative opacity-80">
+<div class="relative overflow-hidden aspect-[4/3] bg-surface-container">
+<div class="w-full h-full flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant text-4xl" data-icon="image">image</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-label-sm text-label-sm font-bold">10 May, 01:10 PM</h3>
+<p class="text-secondary font-label-sm text-label-sm">Sarah Jenkins</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<script>
+        // Micro-interaction for buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('opacity-80');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('opacity-80');
+            });
+        });
+
+        // Search highlight effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-1', 'ring-primary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-1', 'ring-primary');
+        });
+    </script>
+</body></html>

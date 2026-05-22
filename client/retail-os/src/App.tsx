@@ -5,12 +5,22 @@ import { ShopDashboardPage } from './pages/ShopDashboardPage'
 import { SingleShopPage } from './pages/SingleShopPage'
 import { VisitPage } from './pages/VisitPage'
 import { AiAnalysisPage } from './pages/AiAnalysisPage'
+import { VisitFeedPage } from './pages/VisitFeedPage'
+import { ImageHistoryPage } from './pages/ImageHistoryPage'
 
 function App() {
   const path = window.location.pathname
 
   if (path === '/login') {
     return <LoginPage />
+  }
+
+  if (path === '/visits') {
+    return <VisitFeedPage />
+  }
+
+  if (path === '/image-history') {
+    return <ImageHistoryPage />
   }
 
   if (/^\/stores\/[^/]+\/analysis$/.test(path)) {
