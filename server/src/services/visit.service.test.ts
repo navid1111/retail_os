@@ -105,11 +105,31 @@ describe("visit.service", () => {
       storeId: storeId.toHexString(),
       gpsLat: 1,
       gpsLng: 1,
+      gpsAccuracyM: 12,
     });
 
     expect(visit.status).toBe("flagged");
     expect(visit.fraudFlags).toEqual([flagId]);
-    expect(collections.fraud_flags.insertOne).toHaveBeenCalled();
+    expect(collections.fraud_flags.insertOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        visitId,
+        fraudType: "gps_mismatch",
+        confidence: 1,
+        detail: {
+          distanceM: 157249,
+          limitM: 100,
+          storeGps: {
+            lat: 0,
+            lng: 0,
+          },
+          checkInGps: {
+            lat: 1,
+            lng: 1,
+            accuracyM: 12,
+          },
+        },
+      })
+    );
     expect(collections.visits.updateOne).toHaveBeenCalledWith(
       { _id: visitId, deletedAt: null },
       expect.objectContaining({
