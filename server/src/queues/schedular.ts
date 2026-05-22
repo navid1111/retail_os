@@ -31,6 +31,8 @@ export const startQueueScheduler = (): QueueScheduler => {
 		QUEUE_NAMES.PROCESS_IMAGE,
 		async (job) => {
 			console.log("Processing image job", job.id, job.data);
+			const { processVisitImageJob } = await import("../services/image.service");
+			await processVisitImageJob(job.data);
 			return { processed: true };
 		},
 		{ connection }

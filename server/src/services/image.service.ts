@@ -11,6 +11,7 @@ export interface VisitImageRecord {
   _id: ObjectId;
   visitId: ObjectId;
   imageUrl: string;
+  publicId?: string;
   imageHash?: string;
   exifTakenAt?: Date;
   fileSizeKb?: number;
@@ -74,19 +75,23 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
     throw new Error("Image source is required");
   }
 
-  const cloudinaryOptions = input.publicId ? { public_id: input.publicId } : undefined;
-  const upload = input.filePath
-    ? await CloudinaryService.uploadImage(input.filePath, cloudinaryOptions)
-    : await CloudinaryService.uploadFromUrl(input.sourceUrl as string, cloudinaryOptions);
+  // Copy temp file to a permanent location so it survives request cleanup
+  let permanentFilePath: string | undefined = undefined;
+  if (input.filePath) {
+    const fs = await import("fs/promises");
+    const os = await import("os");
+    permanentFilePath = `${os.tmpdir()}/visit_img_${Date.now()}_${Math.random().toString(36).slice(2)}.tmp`;
+    await fs.copyFile(input.filePath, permanentFilePath);
+  }
+
+  const generatedPublicId = input.publicId || `visit_${visitId}_${Date.now()}`;
 
   const now = new Date();
   const image: VisitImageRecord = {
     _id: new ObjectId(),
     visitId,
-    imageUrl: resolveImageUrl(upload),
-    fileSizeKb: resolveFileSizeKb(upload.bytes),
-    widthPx: upload.width,
-    heightPx: upload.height,
+    imageUrl: "", // To be filled by background worker
+    publicId: generatedPublicId,
     isRejected: false,
     uploadedAt: now,
   };
@@ -107,7 +112,9 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
       imageId: image._id.toHexString(),
       visitId: visitId.toHexString(),
       storeId: visit.storeId?.toHexString?.() ?? visit.storeId?.toString?.(),
-      imageUrl: image.imageUrl,
+      filePath: permanentFilePath,
+      sourceUrl: input.sourceUrl,
+      publicId: generatedPublicId,
     },
     undefined
   );
@@ -119,7 +126,7 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
     entityId: image._id.toHexString(),
     meta: {
       visitId: visitId.toHexString(),
-      cloudinaryPublicId: upload.public_id,
+      cloudinaryPublicId: generatedPublicId,
     },
   });
 
@@ -143,7 +150,7 @@ function calculateVariance(data: Buffer): number {
  * Calculate Laplacian variance to detect blur
  * Higher variance = sharp image, Lower variance = blurry image
  */
-export async function detectBlur(imagePath: string): Promise<{
+export async function detectBlur(imagePath: string | Buffer): Promise<{
   variance: number;
   isBlurry: boolean;
   confidence: number;
@@ -163,9 +170,8 @@ export async function detectBlur(imagePath: string): Promise<{
   // Calculate variance of the Laplacian response
   const variance = calculateVariance(data);
 
-  // Threshold: typically 100 is a good cutoff
-  // Adjust based on your image dataset
-  const BLUR_THRESHOLD = 100;
+  // Threshold: Lowered to 50 to require stronger evidence before labeling as blurry
+  const BLUR_THRESHOLD = 50;
   const isBlurry = variance < BLUR_THRESHOLD;
 
   // Confidence: how far from threshold (0-1 scale)
@@ -239,3 +245,128 @@ export function hammingDistance(hash1: string, hash2: string): number {
   }
   return dist
 }
+
+export const processVisitImageJob = async (jobData: any) => {
+  const { imageId, visitId, filePath, sourceUrl, publicId } = jobData;
+  const db = getDB();
+  const imageIdObj = new ObjectId(imageId);
+  const visitIdObj = new ObjectId(visitId);
+
+  try {
+    // 1. Cloudinary Upload
+    const cloudinaryOptions = publicId ? { public_id: publicId } : undefined;
+    const upload = filePath
+      ? await CloudinaryService.uploadImage(filePath, cloudinaryOptions)
+      : await CloudinaryService.uploadFromUrl(sourceUrl, cloudinaryOptions);
+
+    const imageUrl = resolveImageUrl(upload);
+    const fileSizeKb = resolveFileSizeKb(upload.bytes);
+    const widthPx = upload.width;
+    const heightPx = upload.height;
+
+    // 2. Parallel Blur & Duplicate Detection
+    let bufferOrPath: Buffer | string = filePath;
+    if (!filePath && sourceUrl) {
+      const response = await fetch(sourceUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      bufferOrPath = Buffer.from(arrayBuffer);
+    }
+
+    const [blurResult, pHash] = await Promise.all([
+      detectBlur(bufferOrPath),
+      computePHash(bufferOrPath)
+    ]);
+
+    // Update image with basic results
+    await db.collection<VisitImageRecord>("visit_images").updateOne(
+      { _id: imageIdObj },
+      { 
+        $set: { 
+          imageUrl,
+          fileSizeKb, 
+          widthPx, 
+          heightPx, 
+          blurScore: blurResult.variance,
+          imageHash: pHash 
+        } 
+      }
+    );
+
+    // Duplicate detection check against other images
+    const otherImages = await db.collection<VisitImageRecord>("visit_images")
+      .find({ visitId: visitIdObj, _id: { $ne: imageIdObj }, imageHash: { $exists: true } })
+      .toArray();
+
+    let isDuplicate = false;
+    let duplicateOfImageId: ObjectId | undefined = undefined;
+    let pHashDistance = 0;
+
+    for (const other of otherImages) {
+      if (other.imageHash) {
+         const dist = hammingDistance(pHash, other.imageHash);
+         if (dist <= 20) {
+           isDuplicate = true;
+           duplicateOfImageId = other._id;
+           pHashDistance = dist;
+           break;
+         }
+      }
+    }
+
+    let fraudTypes: Array<{type: "blurry_image" | "duplicate_image", confidence: number, detail: any, dupId?: ObjectId}> = [];
+
+    // Require high confidence (>= 0.4) so we don't accidentally flag slightly soft images
+    if (blurResult.isBlurry && blurResult.confidence >= 0.4) {
+      fraudTypes.push({
+        type: "blurry_image",
+        confidence: blurResult.confidence,
+        detail: { blurScore: blurResult.variance }
+      });
+    }
+
+    if (isDuplicate) {
+      fraudTypes.push({
+        type: "duplicate_image",
+        confidence: 1.0,
+        detail: { pHashDistance },
+        dupId: duplicateOfImageId
+      });
+    }
+
+    // Insert Fraud Flags
+    if (fraudTypes.length > 0) {
+      const { FraudFlag } = await import("../models/FraudFlag.model");
+      for (const fraud of fraudTypes) {
+        await FraudFlag.create({
+          visitId: visitIdObj,
+          imageId: imageIdObj,
+          fraudType: fraud.type,
+          confidence: fraud.confidence,
+          detail: fraud.detail,
+          duplicateOfImageId: fraud.dupId,
+          createdAt: new Date()
+        });
+      }
+
+      // Mark image as rejected
+      const mainReason = isDuplicate ? "duplicate" : "blurry";
+      await db.collection<VisitImageRecord>("visit_images").updateOne(
+        { _id: imageIdObj },
+        { 
+          $set: { 
+            isRejected: true,
+            rejectionReason: mainReason
+          } 
+        }
+      );
+    }
+  } catch (error) {
+    console.error("Failed to process image job", error);
+    throw error;
+  } finally {
+    if (filePath) {
+      const fs = await import("fs/promises");
+      await fs.unlink(filePath).catch(() => {});
+    }
+  }
+};

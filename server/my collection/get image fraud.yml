@@ -1,11 +1,10 @@
 info:
-  name: visit-submit
+  name: get image fraud
   type: http
-  seq: 1
 
 http:
-  method: POST
-  url: http://localhost:5000/api/visits/6a0f1ed53481d78f2c6fd2be/submit
+  method: GET
+  url: http://localhost:5000/api/visits/images/{{imageId}}/fraud
   auth: inherit
 
 settings:
@@ -13,4 +12,3 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-​

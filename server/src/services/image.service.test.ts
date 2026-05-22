@@ -26,6 +26,15 @@ vi.mock("./audit.service", () => ({
   auditLog: vi.fn(),
 }));
 
+vi.mock("fs/promises", () => ({
+  default: {
+    copyFile: vi.fn(),
+    unlink: vi.fn(),
+  },
+  copyFile: vi.fn(),
+  unlink: vi.fn(),
+}));
+
 type CollectionMock = {
   findOne: ReturnType<typeof vi.fn>;
   insertOne: ReturnType<typeof vi.fn>;
@@ -97,7 +106,7 @@ describe("image.service", () => {
     });
 
     expect(result._id).toEqual(imageId);
-    expect(result.imageUrl).toBe("https://cdn.example.com/image.jpg");
+    expect(result.imageUrl).toBe(""); // Backgrounded
     expect(collections.visit_images.insertOne).toHaveBeenCalled();
     expect(collections.visits.updateOne).toHaveBeenCalledWith(
       { _id: visitId, repId, deletedAt: null },
@@ -110,7 +119,7 @@ describe("image.service", () => {
         imageId: imageId.toHexString(),
         visitId: visitId.toHexString(),
         storeId: storeId.toHexString(),
-        imageUrl: "https://cdn.example.com/image.jpg",
+        filePath: expect.any(String),
       }),
       undefined
     );
@@ -157,8 +166,12 @@ describe("image.service", () => {
     });
 
     expect(result._id).toEqual(imageId);
-    expect(CloudinaryService.uploadFromUrl).toHaveBeenCalledWith(
-      "https://example.com/image.jpg",
+    expect(addJobToQueue).toHaveBeenCalledWith(
+      "PROCESS_IMAGE",
+      "process-image",
+      expect.objectContaining({
+        sourceUrl: "https://example.com/image.jpg",
+      }),
       undefined
     );
   });
@@ -205,8 +218,22 @@ describe("detectBlur", () => {
     expect(result).toBeDefined();
     expect(typeof result.variance).toBe("number");
     expect(result.isBlurry).toBe(true);
-    expect(result.variance).toBeLessThan(100);
+    expect(result.variance).toBeLessThan(50);
     expect(typeof result.confidence).toBe("number");
+  });
+
+  it("should detect that media/dup1.jpeg and media/dup2.jpeg are NOT blurry", async () => {
+    const dup1Path = path.resolve(__dirname, "../../media/dup1.jpeg");
+    const dup2Path = path.resolve(__dirname, "../../media/dup2.jpeg");
+    
+    const result1 = await detectBlur(dup1Path);
+    const result2 = await detectBlur(dup2Path);
+
+    expect(result1.isBlurry).toBe(false);
+    expect(result1.variance).toBeGreaterThanOrEqual(50);
+    
+    expect(result2.isBlurry).toBe(false);
+    expect(result2.variance).toBeGreaterThanOrEqual(50);
   });
 });
 
@@ -227,7 +254,19 @@ describe("duplicate image detection", () => {
     
     // For duplicates, the hamming distance should be very low (we'll assert <= 20)
     expect(distance).toBeLessThanOrEqual(20);
+  });
+
+  it("should NOT detect dup1 and blury as duplicates", async () => {
+    const dup1Path = path.resolve(__dirname, "../../media/dup1.jpeg");
+    const bluryPath = path.resolve(__dirname, "../../media/blury.jpg");
+
+    const hash1 = await computePHash(dup1Path);
+    const hash2 = await computePHash(bluryPath);
+
+    const distance = hammingDistance(hash1, hash2);
     
-    console.log(`Hash1: ${hash1}, Hash2: ${hash2}, Distance: ${distance}`);
+    // For non-duplicates, the hamming distance should be high
+    expect(distance).toBeGreaterThan(20);
   });
 });
+
