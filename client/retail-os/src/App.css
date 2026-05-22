@@ -517,6 +517,7 @@
   padding: 12px 16px;
   text-transform: uppercase;
   transition: background 160ms ease, color 160ms ease, border-color 160ms ease, opacity 160ms ease;
+  text-decoration: none;
   white-space: nowrap;
 }
 
@@ -803,6 +804,401 @@
 
 .ai-health i:last-child {
   background: var(--border);
+}
+
+.shop-detail {
+  width: min(100%, 1400px);
+}
+
+.shop-detail__crumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  color: #4c4546;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.shop-detail__crumb a {
+  color: #4c4546;
+  text-decoration: none;
+}
+
+.shop-detail__crumb a:hover {
+  color: var(--primary);
+}
+
+.shop-detail__crumb .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.shop-detail__crumb span {
+  color: var(--primary);
+}
+
+.shop-detail__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(320px, 4fr);
+  gap: 32px;
+}
+
+.shop-detail__main {
+  display: grid;
+  gap: 32px;
+}
+
+.shop-detail__header {
+  display: grid;
+  gap: 8px;
+}
+
+.shop-detail__header > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.shop-detail__header h1 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.shop-detail__header span {
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: var(--primary-text);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  padding: 4px 12px;
+}
+
+.shop-detail__header p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #4c4546;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.shop-detail__header .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.detail-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.detail-card:hover {
+  border-color: #7e7576;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.gps-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 45%;
+  min-height: 256px;
+  overflow: hidden;
+}
+
+.gps-card__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--border);
+  padding: 32px;
+}
+
+.gps-card__copy h3,
+.detail-section-header h3,
+.checkin-panel h3,
+.visit-notes span {
+  margin: 0;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gps-card__copy h3 {
+  color: #7e7576;
+  margin-bottom: 24px;
+}
+
+.gps-card__distance {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.gps-card__distance span {
+  width: 16px;
+  height: 16px;
+  background: var(--primary);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.gps-card__distance strong {
+  color: var(--primary);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.gps-card__distance b,
+.gps-card__copy p b {
+  font-family: "JetBrains Mono", monospace;
+}
+
+.gps-card__copy p {
+  margin: 0;
+  color: #4c4546;
+  font-size: 13px;
+}
+
+.gps-card__map {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-container);
+}
+
+.gps-card__map img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.25);
+  opacity: 0.5;
+}
+
+.gps-card__map::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.gps-card__pin {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+}
+
+.gps-card__pin span {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
+  animation: pulse 1.1s ease-in-out infinite;
+}
+
+.gps-card__pin .material-symbols-outlined {
+  color: var(--primary);
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.25));
+  font-size: 32px;
+}
+
+.target-products {
+  padding: 32px;
+}
+
+.detail-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+}
+
+.detail-section-header h3 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.detail-section-header h3 span {
+  background: var(--surface-container-highest);
+  color: var(--primary);
+  font-size: 10px;
+  padding: 4px 12px;
+}
+
+.detail-section-header button {
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.detail-section-header button:hover {
+  text-decoration: underline;
+}
+
+.sku-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sku-tile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 16px;
+  transition: border-color 160ms ease;
+}
+
+.sku-tile:hover {
+  border-color: var(--primary);
+}
+
+.sku-tile__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  background: var(--surface-container);
+  color: var(--primary);
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.sku-tile:hover .sku-tile__icon {
+  background: var(--primary);
+  color: var(--primary-text);
+}
+
+.sku-tile h4 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.sku-tile p {
+  margin: 0;
+  color: #4c4546;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+}
+
+.checkin-panel {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  border-top: 4px solid var(--primary);
+  padding: 32px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.checkin-panel h3 {
+  font-size: 18px;
+  letter-spacing: 0;
+  margin-bottom: 32px;
+}
+
+.last-visit-card {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  margin-bottom: 32px;
+  padding: 24px;
+}
+
+.last-visit-card div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.last-visit-card span {
+  color: #7e7576;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.last-visit-card strong {
+  color: var(--primary);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+}
+
+.last-visit-card div:last-child strong {
+  border: 1px solid var(--primary);
+  background: var(--surface);
+  padding: 2px 8px;
+}
+
+.visit-notes {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.visit-notes textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  min-height: 118px;
+  padding: 16px;
+  resize: none;
+}
+
+.visit-notes textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.checkin-panel .dashboard-button {
+  width: 100%;
+  padding-block: 16px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+}
+
+.checkin-panel > p {
+  margin: 24px 0 0;
+  color: #4c4546;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 @keyframes spin {
@@ -1259,6 +1655,31 @@
 
   .store-grid {
     grid-template-columns: 1fr;
+  }
+
+  .shop-detail__grid,
+  .gps-card,
+  .sku-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gps-card__copy {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .gps-card__map {
+    min-height: 220px;
+  }
+
+  .target-products,
+  .checkin-panel,
+  .gps-card__copy {
+    padding: 24px;
+  }
+
+  .checkin-panel {
+    position: static;
   }
 }
 

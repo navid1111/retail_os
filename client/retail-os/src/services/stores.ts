@@ -57,3 +57,15 @@ export const getStores = async ({
 
   return response.json()
 }
+
+export const getStoreById = async (storeId: string): Promise<Store> => {
+  const response = await fetch(`${API_BASE_URL}/api/stores/${storeId}`, {
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch store')
+  }
+
+  return response.json()
+}

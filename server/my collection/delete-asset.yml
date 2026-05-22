@@ -4,8 +4,8 @@ info:
   seq: 5
 
 http:
-  method: DELETE
-  url: http://localhost:5000/api/assets/optional-public-id
+  method: GET
+  url: http://localhost:5000/api/stores/507f1f77bcf86cd799439012
   auth: inherit
 
 settings:

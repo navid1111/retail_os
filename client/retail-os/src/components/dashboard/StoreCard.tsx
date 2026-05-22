@@ -4,6 +4,7 @@ import { Icon } from './Icon'
 export type StoreStatus = 'idle' | 'active' | 'done' | 'action' | 'processing'
 
 export type StoreCardData = {
+  id: string
   code: string
   name: string
   location: string
@@ -53,32 +54,22 @@ export function StoreCard({ store }: { store: StoreCardData }) {
 
       {store.region ? <div className="store-card__region">{store.region}</div> : null}
 
-      {store.status === 'idle' ? (
-        <>
-          <div className="store-card__stats">
-            <div>
-              <span>Last Sync</span>
-              <strong>{store.lastSync}</strong>
-            </div>
-            <div>
-              <span>SKU Count</span>
-              <strong>{store.skuCount}</strong>
-            </div>
-          </div>
-          <DashboardButton icon="arrow_forward" tone="primary">
-            Initiate Visit
-          </DashboardButton>
-        </>
-      ) : null}
+      <div className="store-card__stats">
+        <div>
+          <span>Last Sync</span>
+          <strong>{store.lastSync}</strong>
+        </div>
+        <div>
+          <span>SKU Count</span>
+          <strong>{store.skuCount}</strong>
+        </div>
+      </div>
 
       {store.status === 'active' ? (
-        <>
-          <div className="capture-status">
-            <Icon name="sync" />
-            <span>Capture in progress</span>
-          </div>
-          <DashboardButton icon="shortcut">Resume Tasks</DashboardButton>
-        </>
+        <div className="capture-status">
+          <Icon name="sync" />
+          <span>Capture in progress</span>
+        </div>
       ) : null}
 
       {store.status === 'done' ? (
@@ -89,15 +80,10 @@ export function StoreCard({ store }: { store: StoreCardData }) {
       ) : null}
 
       {store.status === 'action' ? (
-        <>
-          <div className="alert-block">
-            <strong>{store.alertTitle}</strong>
-            <p>{store.alertBody}</p>
-          </div>
-          <DashboardButton icon="warning" tone="danger">
-            Review Flags
-          </DashboardButton>
-        </>
+        <div className="alert-block">
+          <strong>{store.alertTitle}</strong>
+          <p>{store.alertBody}</p>
+        </div>
       ) : null}
 
       {store.status === 'processing' ? (
@@ -117,6 +103,10 @@ export function StoreCard({ store }: { store: StoreCardData }) {
           </div>
         </>
       ) : null}
+
+      <DashboardButton href={`/stores/${store.id}`} icon="arrow_forward" tone="primary">
+        Initiate Visit
+      </DashboardButton>
     </article>
   )
 }

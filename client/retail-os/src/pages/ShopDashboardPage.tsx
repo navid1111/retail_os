@@ -42,6 +42,7 @@ const mapStoreToCard = (store: Store, index: number): StoreCardData => {
   const status = getStoreStatus(index)
 
   return {
+    id: store._id,
     code: store.storeCode,
     name: store.storeName,
     location: formatStoreLocation(store),
