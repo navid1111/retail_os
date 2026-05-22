@@ -49,7 +49,7 @@ VisitSchema.index({ storeId: 1, checkInTime: -1 });
 VisitSchema.index({ status: 1 }, { partialFilterExpression: { deletedAt: null } });
 VisitSchema.index({ deletedAt: 1 });
 
-VisitSchema.pre(/^find/, function (this: mongoose.Query<unknown, IVisitDocument>, next) {
+VisitSchema.pre(/^find/, function (this: mongoose.Query<unknown, IVisitDocument>, next: any) {
   if (this.getFilter().deletedAt === undefined) {
     this.where({ deletedAt: null });
   }

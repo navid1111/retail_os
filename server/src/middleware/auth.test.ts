@@ -34,7 +34,7 @@ describe("requireAuth middleware", () => {
     const res = createRes();
     const next = vi.fn() as NextFunction;
 
-    getSessionSpy.mockResolvedValue({ user: null });
+    getSessionSpy.mockResolvedValue({ user: null } as any);
 
     await requireAuth(req, res, next);
 
@@ -49,7 +49,7 @@ describe("requireAuth middleware", () => {
     const next = vi.fn() as NextFunction;
 
     const session = { user: { id: "u1" }, session: { id: "s1" } };
-    getSessionSpy.mockResolvedValue(session);
+    getSessionSpy.mockResolvedValue(session as any);
 
     await requireAuth(req, res, next);
 
