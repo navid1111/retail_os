@@ -6,6 +6,7 @@ import { getRedis } from "../db/redis";
 import { CloudinaryService } from "../cloudinary/service";
 import { requireAuth } from "../middleware/auth";
 import { YoloService } from "../yolo/service";
+import { GeminiService } from "../gemini/service";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -138,6 +139,16 @@ router.post("/yolo/predict", upload.single("file"), async (req: Request, res: Re
   } catch (err) {
     Sentry.captureException(err);
     res.status(500).json({ error: `YOLO prediction failed: ${err}` });
+  }
+});
+
+router.post("/yolo/report", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const report = await GeminiService.generateSupervisorReport(req.body);
+    res.json({ report });
+  } catch (err: any) {
+    Sentry.captureException(err);
+    res.status(500).json({ error: `Report generation failed: ${err.message}` });
   }
 });
 
