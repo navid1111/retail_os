@@ -11,6 +11,7 @@ type BetterAuthUserDocument = {
   emailVerified: boolean;
   role: UserRole;
   region: string;
+  phone?: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -32,6 +33,7 @@ export type AdminUserDto = {
   email: string;
   role: UserRole;
   region: string;
+  phone?: string;
   isActive: boolean;
   createdAt?: Date;
 };
@@ -42,6 +44,7 @@ export type CreateAdminUserInput = {
   password: string;
   role: UserRole;
   region: string;
+  phone?: string;
   actorId?: string;
 };
 
@@ -51,6 +54,7 @@ const mapUser = (user: BetterAuthUserDocument): AdminUserDto => ({
   email: user.email,
   role: user.role || "rep",
   region: user.region || "Global",
+  phone: user.phone,
   isActive: user.isActive !== false,
   createdAt: user.createdAt,
 });
@@ -93,6 +97,7 @@ export const createAdminUser = async (
     emailVerified: false,
     role: input.role,
     region: input.region,
+    phone: input.phone,
     isActive: true,
     createdAt: now,
     updatedAt: now,

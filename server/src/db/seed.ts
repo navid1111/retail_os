@@ -25,6 +25,9 @@ const seed = async () => {
     // 2. Clear existing collections
     console.log("Clearing existing data from all collections...");
     await db.collection("users").deleteMany({});
+    await db.collection("user").deleteMany({});
+    await db.collection("account").deleteMany({});
+    await db.collection("session").deleteMany({});
     await db.collection("stores").deleteMany({});
     await db.collection("visits").deleteMany({});
     await db.collection("visit_images").deleteMany({});
@@ -194,10 +197,37 @@ const seed = async () => {
       },
     ];
 
+    const { hashPassword } = await import("better-auth/crypto");
+    const defaultPasswordHash = await hashPassword("Password123!");
+
     const users = mockData.users.map((u: any) => ({
       ...u,
       _id: new ObjectId(u._id),
       createdAt: new Date(u.createdAt),
+    }));
+
+    const betterAuthUsers = mockData.users.map((u: any) => ({
+      _id: new ObjectId(u._id),
+      name: u.fullName,
+      fullName: u.fullName,
+      email: u.email.toLowerCase(),
+      emailVerified: false,
+      role: u.role,
+      region: u.region || "Global",
+      phone: u.phone,
+      isActive: u.isActive !== false,
+      createdAt: new Date(u.createdAt),
+      updatedAt: new Date(u.createdAt),
+    }));
+
+    const betterAuthAccounts = mockData.users.map((u: any) => ({
+      _id: new ObjectId(),
+      accountId: u._id,
+      providerId: "credential",
+      userId: new ObjectId(u._id),
+      password: defaultPasswordHash,
+      createdAt: new Date(u.createdAt),
+      updatedAt: new Date(u.createdAt),
     }));
 
     const storesByCode = new Map(
@@ -275,7 +305,9 @@ const seed = async () => {
     
     if (users.length > 0) {
       await db.collection("users").insertMany(users);
-      console.log(`✓ Seeded ${users.length} users`);
+      await db.collection("user").insertMany(betterAuthUsers);
+      await db.collection("account").insertMany(betterAuthAccounts);
+      console.log(`✓ Seeded ${users.length} users (and Better Auth accounts)`);
     }
 
     if (stores.length > 0) {

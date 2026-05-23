@@ -13,6 +13,7 @@ const initialForm = {
   email: '',
   role: 'rep' as AdminUserRole,
   region: 'Dhaka',
+  phone: '',
   password: '',
 }
 
@@ -125,6 +126,15 @@ function UserModal({
               </select>
             </label>
           </div>
+          <label>
+            <span>Phone Number (for WhatsApp Alerts)</span>
+            <input
+              onChange={(event) => onChange({ ...form, phone: event.target.value })}
+              placeholder="e.g. +8801733333333"
+              type="tel"
+              value={form.phone}
+            />
+          </label>
           <label>
             <span>Temporary Password</span>
             <input
@@ -254,6 +264,7 @@ export function AdminUsersPage() {
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
+                  <th>Phone</th>
                   <th>Role</th>
                   <th>Region</th>
                   <th>Status</th>
@@ -264,6 +275,7 @@ export function AdminUsersPage() {
                   <tr key={user.id}>
                     <td>{user.fullName}</td>
                     <td>{user.email}</td>
+                    <td className="admin-users-table__mono">{user.phone || '—'}</td>
                     <td>
                       <span className={user.role === 'admin' ? 'admin-role admin-role--admin' : 'admin-role'}>
                         {roleLabels[user.role]}

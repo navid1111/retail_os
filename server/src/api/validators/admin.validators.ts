@@ -10,4 +10,5 @@ export const createAdminUserBodySchema = z.object({
   password: z.string().min(8, "password must be at least 8 characters").max(128),
   role: z.enum(["rep", "supervisor", "admin"]),
   region: z.string().trim().min(1, "region is required").max(80),
+  phone: z.string().trim().optional(),
 });

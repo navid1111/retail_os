@@ -6,6 +6,7 @@ export type AdminUser = {
   email: string
   role: AdminUserRole
   region: string
+  phone?: string
   isActive: boolean
   createdAt?: string
 }
@@ -16,6 +17,7 @@ export type CreateAdminUserInput = {
   password: string
   role: AdminUserRole
   region: string
+  phone?: string
 }
 
 export async function getAdminUsers(): Promise<AdminUser[]> {

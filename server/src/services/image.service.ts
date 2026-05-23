@@ -254,6 +254,26 @@ export const processVisitImageJob = async (jobData: any): Promise<void> => {
         { _id: visitIdObj },
         { $set: { status: visitStatus } }
       );
+
+      // If the image was rejected due to fraud, dispatch a WhatsApp alert to the salesperson
+      if (fraudResult.isRejected) {
+        try {
+          const visit = await db.collection("visits").findOne({ _id: visitIdObj });
+          if (visit && visit.repId) {
+            const rep = await db.collection("user").findOne({ _id: visit.repId });
+            const phoneNumber = rep?.whatsapp || rep?.phone;
+            if (phoneNumber) {
+              const { WhatsAppService } = await import("../whatsapp/service");
+              const reason = fraudResult.rejectionReason || "Validation check failed";
+              
+              // Non-blocking trigger
+              await WhatsAppService.sendFraudAlert(phoneNumber, visitId, reason);
+            }
+          }
+        } catch (alertErr) {
+          console.error("Failed to trigger WhatsApp alert workflow:", alertErr);
+        }
+      }
     }
   } catch (error) {
     console.error("Failed to process image job", error);
