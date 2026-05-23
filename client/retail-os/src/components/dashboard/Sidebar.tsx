@@ -41,26 +41,23 @@ function SidebarLink({ item }: { item: NavItem }) {
 
 export function Sidebar() {
   return (
-    <nav className="dashboard-sidebar" aria-label="Main navigation">
+    <aside className="dashboard-sidebar">
       <div className="dashboard-sidebar__brand">
-        <div className="dashboard-sidebar__mark">R</div>
-        <div>
-          <div className="dashboard-sidebar__name">RetailOS</div>
-          <div className="dashboard-sidebar__eyebrow">Execution Hub</div>
-        </div>
+        <h1>RetailOS</h1>
+        <p>Execution Hub</p>
       </div>
 
-      <div className="dashboard-sidebar__section">
+      <nav className="dashboard-sidebar__section" aria-label="Main navigation">
         {primaryItems.map((item) => (
           <SidebarLink item={item} key={item.label} />
         ))}
-      </div>
+      </nav>
 
       <div className="dashboard-sidebar__footer">
         {secondaryItems.map((item) => (
           <SidebarLink item={item} key={item.label} />
         ))}
       </div>
-    </nav>
+    </aside>
   )
 }

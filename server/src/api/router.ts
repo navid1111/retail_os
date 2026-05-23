@@ -14,11 +14,11 @@ import { upload } from "../middleware/upload";
 const router = Router();
 
 // Register sub-routers under authenticated path
-router.use("/visits", requireAuth, visitRouter);
-router.use("/visits", requireAuth, visitImageRouter);
-router.use("/images", requireAuth, imageRouter);
-router.use("/stores", requireAuth, storeRouter);
-router.use("/dashboard", requireAuth, dashboardRouter);
+router.use("/visits", requireAuth, requireRole("rep"), visitRouter);
+router.use("/visits", requireAuth, requireRole("rep"), visitImageRouter);
+router.use("/images", requireAuth, requireRole("rep"), imageRouter);
+router.use("/stores", requireAuth, requireRole("rep"), storeRouter);
+router.use("/dashboard", requireAuth, requireRole("rep"), dashboardRouter);
 router.use("/admin", requireAuth, requireRole("admin"), adminRouter);
 
 router.get("/test", async (req: Request, res: Response): Promise<void> => {
