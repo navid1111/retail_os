@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import * as Sentry from "@sentry/node";
 import { getDB } from "../db/mongo";
 import { CloudinaryService, CloudinaryUploadResponse } from "../cloudinary/service";
 import { addJobToQueue } from "../queues/queues";
@@ -190,6 +191,70 @@ export const processVisitImageJob = async (jobData: any): Promise<void> => {
         },
       }
     );
+
+    // If the image is not rejected and YOLO is enabled, perform YOLO + Gemini audit analysis
+    if (!fraudResult.isRejected && process.env.YOLO_ENABLED === "true") {
+      try {
+        const fs = await import("fs/promises");
+        const imageBuffer = typeof imageInput === "string"
+          ? await fs.readFile(imageInput)
+          : imageInput;
+
+        const { YoloService } = await import("../yolo/service");
+        const { GeminiService } = await import("../gemini/service");
+        const { AiAnalysis } = await import("../models/AiAnalysis.model");
+
+        const yoloResult = await YoloService.predict(imageBuffer, "image.jpg");
+
+        // Upload the base64 annotated image from YOLO to Cloudinary
+        let annotatedImageUrl = "";
+        if (yoloResult.annotatedImage) {
+          const uploadResult = await CloudinaryService.uploadImage(yoloResult.annotatedImage);
+          annotatedImageUrl = uploadResult.secure_url || uploadResult.url;
+        }
+
+        // Generate report using Gemini
+        const inputData = yoloResult.rawResponse || yoloResult;
+        const report = await GeminiService.generateSupervisorReport(inputData);
+
+        // Save analysis results to Mongoose database
+        await AiAnalysis.create({
+          imageId: imageIdObj,
+          visitId: visitIdObj,
+          provider: yoloResult.provider,
+          modelName: yoloResult.modelName,
+          complianceScore: yoloResult.complianceScore,
+          productsDetected: yoloResult.productsDetected,
+          competitorsDetected: yoloResult.competitorsDetected,
+          missingSkus: yoloResult.missingSkus,
+          issues: yoloResult.issues,
+          supervisorSummary: report,
+          annotatedImageUrl,
+          processingMs: yoloResult.processingMs,
+        });
+
+        // Update the visit's overall score with the computed compliance score and mark completed
+        await db.collection("visits").updateOne(
+          { _id: visitIdObj },
+          { $set: { overallScore: yoloResult.complianceScore, status: "completed" } }
+        );
+      } catch (aiError) {
+        console.error("AI analysis during background processing failed:", aiError);
+        // We set status to "completed" anyway so the rep isn't stuck forever
+        await db.collection("visits").updateOne(
+          { _id: visitIdObj },
+          { $set: { status: "completed" } }
+        );
+        Sentry.captureException(aiError);
+      }
+    } else {
+      // If rejected or YOLO disabled, mark the visit as completed or flagged
+      const visitStatus = fraudResult.isRejected ? "flagged" : "completed";
+      await db.collection("visits").updateOne(
+        { _id: visitIdObj },
+        { $set: { status: visitStatus } }
+      );
+    }
   } catch (error) {
     console.error("Failed to process image job", error);
     throw error;

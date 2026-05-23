@@ -24,6 +24,7 @@ export interface IAiAnalysis {
   issues: string[];
   supervisorSummary?: string;
   rawResponse?: Record<string, unknown>;
+  annotatedImageUrl?: string;
   processingMs?: number;
   createdAt: Date;
 }
@@ -61,6 +62,7 @@ const AiAnalysisSchema = new Schema<IAiAnalysisDocument>(
     issues: { type: [String], default: [] },
     supervisorSummary: { type: String },
     rawResponse: { type: Schema.Types.Mixed },
+    annotatedImageUrl: { type: String },
     processingMs: { type: Number },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: false } }

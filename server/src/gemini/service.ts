@@ -86,7 +86,7 @@ ${rawJson}
         throw new Error("Empty response received from Gemini API");
       }
 
-      return text.trim();
+      return text.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ").trim();
     } catch (error: any) {
       Sentry.captureException(error);
       const apiErrorMessage = error.response?.data?.error?.message || error.message;

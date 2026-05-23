@@ -171,4 +171,36 @@ router.post("/yolo/report", async (req: Request, res: Response): Promise<void> =
   }
 });
 
+router.post("/yolo/analyze", yoloUpload.single("file"), async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: "No image file provided. Use form-data with key 'file'" });
+      return;
+    }
+
+    const prediction = await YoloService.predict(req.file.buffer, req.file.originalname);
+
+    // Upload the base64-encoded image to Cloudinary
+    let cloudinaryUrl = "";
+    if (prediction.annotatedImage) {
+      const uploadResult = await CloudinaryService.uploadImage(prediction.annotatedImage);
+      cloudinaryUrl = uploadResult.secure_url || uploadResult.url;
+    }
+
+    // Replace the heavy base64 string with the clean Cloudinary URL
+    prediction.annotatedImage = cloudinaryUrl;
+
+    const inputData = prediction.rawResponse || prediction;
+    const report = await GeminiService.generateSupervisorReport(inputData);
+
+    res.json({
+      prediction,
+      report,
+    });
+  } catch (err: any) {
+    Sentry.captureException(err);
+    res.status(500).json({ error: `Analysis failed: ${err.message || err}` });
+  }
+});
+
 export { router };

@@ -232,7 +232,7 @@ export function VisitPage({ storeId }: VisitPageProps) {
     try {
       await uploadVisitImageFile(visitId, selectedFile)
       await submitVisit(visitId)
-      window.location.assign(`/stores/${storeId}/analysis`)
+      window.location.assign(`/stores/${storeId}/analysis?visitId=${visitId}`)
     } catch (requestError) {
       setSubmitError(
         requestError instanceof Error ? requestError.message : 'Failed to submit visit'

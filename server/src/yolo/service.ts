@@ -24,6 +24,7 @@ export interface YoloPredictResponse {
   missingSkus: string[];
   issues: string[];
   rawResponse: Record<string, any>;
+  annotatedImage: string;
   processingMs: number;
 }
 

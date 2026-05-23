@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
 import * as Sentry from "@sentry/node";
 import { ZodError } from "zod";
+import { ObjectId } from "mongodb";
+import { getDB } from "../../db/mongo";
 import { checkInVisit, listVisitsByRep, submitVisit } from "../../services/visit.service";
 import {
   checkInVisitBodySchema,
@@ -128,7 +130,66 @@ export const listMyVisitsHandler = async (
   }
 };
 
+export const getVisitAnalysisHandler = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { visitId } = req.params;
+    if (typeof visitId !== "string") {
+      res.status(400).json({ error: "Invalid visitId parameter" });
+      return;
+    }
+    const db = getDB();
+
+    const analysis = await db.collection("aianalyses").findOne({ visitId: new ObjectId(visitId) });
+
+    if (!analysis) {
+      const visit = await db.collection("visits").findOne({ _id: new ObjectId(visitId) });
+      if (!visit) {
+        res.status(404).json({ error: "Visit not found" });
+        return;
+      }
+
+      if (visit.status === "pending" || visit.status === "processing") {
+        res.status(202).json({ status: "processing", message: "AI analysis is currently running in the background." });
+        return;
+      }
+
+      if (visit.status === "flagged") {
+        const image = await db.collection("visit_images").findOne({ visitId: visit._id, isRejected: true });
+        const fraudFlag = image ? await db.collection("fraud_flags").findOne({ imageId: image._id }) : null;
+        const reason = fraudFlag 
+          ? `Image was rejected due to: ${fraudFlag.fraudType.replace("_", " ")}.`
+          : "Image was rejected by the fraud detection system (blurry or duplicate).";
+        res.status(400).json({ error: "Visit flagged", reason });
+        return;
+      }
+
+      res.status(404).json({ error: "AI analysis was not performed or failed." });
+      return;
+    }
+
+    res.json({
+      status: "completed",
+      prediction: {
+        provider: analysis.provider,
+        modelName: analysis.modelName,
+        complianceScore: analysis.complianceScore,
+        productsDetected: analysis.productsDetected,
+        competitorsDetected: analysis.competitorsDetected,
+        missingSkus: analysis.missingSkus,
+        issues: analysis.issues,
+        annotatedImage: analysis.annotatedImageUrl,
+        processingMs: analysis.processingMs,
+      },
+      report: analysis.supervisorSummary,
+    });
+  } catch (error) {
+    Sentry.captureException(error);
+    res.status(500).json({ error: `Failed to retrieve analysis: ${error}` });
+  }
+};
+
 visitRouter.post("/check-in", checkInHandler);
 visitRouter.get("/mine", listMyVisitsHandler);
 visitRouter.get("/rep/:repId", listRepVisitsHandler);
 visitRouter.post("/:visitId/submit", submitVisitHandler);
+visitRouter.get("/:visitId/analysis", getVisitAnalysisHandler);
