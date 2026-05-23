@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Icon } from '../components/dashboard/Icon'
 import { getStoreById, type Store } from '../services/stores'
+import { uploadVisitImageFile } from '../services/visitImages'
+import { submitVisit } from '../services/visits'
 
 type VisitPageProps = {
   storeId: string
@@ -73,7 +75,26 @@ function VisitProgress({ seconds }: { seconds: number }) {
   )
 }
 
-function PhotoDocumentation() {
+function PhotoDocumentation({
+  selectedFile,
+  onFileChange,
+}: {
+  selectedFile: File | null
+  onFileChange: (file: File | null) => void
+}) {
+  const previewUrl = useMemo(
+    () => (selectedFile ? URL.createObjectURL(selectedFile) : ''),
+    [selectedFile]
+  )
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
+    }
+  }, [previewUrl])
+
   return (
     <section className="visit-card photo-doc">
       <div className="photo-doc__header">
@@ -83,22 +104,41 @@ function PhotoDocumentation() {
         </h2>
         <span>Required</span>
       </div>
-      <div className="photo-doc__dropzone">
-        <div>
-          <Icon name="add_a_photo" />
-        </div>
-        <p>No photographic evidence captured.</p>
-        <button className="visit-button visit-button--primary" type="button">
+      <label className="photo-doc__dropzone">
+        {previewUrl ? (
+          <img alt="Selected shelf evidence" src={previewUrl} />
+        ) : (
+          <>
+            <div>
+              <Icon name="add_a_photo" />
+            </div>
+            <p>No photographic evidence captured.</p>
+          </>
+        )}
+        <span className="visit-button visit-button--primary">
           <Icon name="camera_enhance" />
-          Capture Image
-        </button>
-      </div>
+          {selectedFile ? 'Change Image' : 'Capture Image'}
+        </span>
+        <input
+          accept="image/*"
+          onChange={(event) => onFileChange(event.target.files?.[0] ?? null)}
+          type="file"
+        />
+      </label>
       <p>Guidelines: Ensure focus on SKUs, pricing tags, and shelf talkers.</p>
     </section>
   )
 }
 
-function VisitNotesAndSubmit({ storeId }: { storeId: string }) {
+function VisitNotesAndSubmit({
+  error,
+  isSubmitting,
+  onSubmit,
+}: {
+  error: string
+  isSubmitting: boolean
+  onSubmit: () => void
+}) {
   return (
     <aside className="visit-side-stack">
       <section className="visit-card visit-notes-card">
@@ -109,16 +149,21 @@ function VisitNotesAndSubmit({ storeId }: { storeId: string }) {
         <textarea placeholder="Enter observations..." />
       </section>
       <section className="visit-card visit-submit-card">
-        <a
+        <button
           className="visit-button visit-button--primary visit-submit"
-          href={`/stores/${storeId}/analysis`}
+          disabled={isSubmitting}
+          onClick={onSubmit}
+          type="button"
         >
           <Icon name="check_circle" />
-          Submit Visit
-        </a>
+          {isSubmitting ? 'Submitting Visit' : 'Submit Visit'}
+        </button>
         <div className="visit-warning">
           <Icon name="warning" />
-          <p>Status: Validation Error. Photographic proof required before submission.</p>
+          <p>
+            {error ||
+              'Status: Validation Error. Photographic proof required before submission.'}
+          </p>
         </div>
       </section>
     </aside>
@@ -129,6 +174,13 @@ export function VisitPage({ storeId }: VisitPageProps) {
   const [store, setStore] = useState<Store | null>(null)
   const [error, setError] = useState('')
   const [seconds, setSeconds] = useState(83)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const visitId = useMemo(
+    () => new URLSearchParams(window.location.search).get('visitId'),
+    []
+  )
 
   useEffect(() => {
     let isMounted = true
@@ -162,6 +214,34 @@ export function VisitPage({ storeId }: VisitPageProps) {
 
   const storeName = useMemo(() => store?.storeName ?? 'Field Visit', [store])
 
+  const handleSubmitVisit = async () => {
+    setSubmitError('')
+
+    if (!visitId) {
+      setSubmitError('Status: Missing visit session. Please check in again.')
+      return
+    }
+
+    if (!selectedFile) {
+      setSubmitError('Status: Validation Error. Photographic proof required before submission.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await uploadVisitImageFile(visitId, selectedFile)
+      await submitVisit(visitId)
+      window.location.assign(`/stores/${storeId}/analysis`)
+    } catch (requestError) {
+      setSubmitError(
+        requestError instanceof Error ? requestError.message : 'Failed to submit visit'
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="visit-page">
       <VisitTopBar store={store} />
@@ -175,8 +255,15 @@ export function VisitPage({ storeId }: VisitPageProps) {
         </div>
         <div className="visit-grid">
           <VisitProgress seconds={seconds} />
-          <PhotoDocumentation />
-          <VisitNotesAndSubmit storeId={storeId} />
+          <PhotoDocumentation
+            onFileChange={setSelectedFile}
+            selectedFile={selectedFile}
+          />
+          <VisitNotesAndSubmit
+            error={submitError}
+            isSubmitting={isSubmitting}
+            onSubmit={handleSubmitVisit}
+          />
         </div>
       </main>
     </div>

@@ -93,6 +93,11 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
     const os = await import("os");
     permanentFilePath = `${os.tmpdir()}/visit_img_${Date.now()}_${Math.random().toString(36).slice(2)}.tmp`;
     await fs.copyFile(input.filePath, permanentFilePath);
+    try {
+      await fs.unlink(input.filePath);
+    } catch {
+      // Multer temp cleanup is best-effort; the worker uses the copied file.
+    }
   }
 
   const generatedPublicId = input.publicId || `visit_${visitId}_${Date.now()}`;

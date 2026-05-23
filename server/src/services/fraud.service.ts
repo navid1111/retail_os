@@ -12,6 +12,12 @@ type FraudCandidate = {
   duplicateOfImageId?: ObjectId;
 };
 
+type VisitRepRecord = {
+  _id: ObjectId;
+  repId: ObjectId;
+  deletedAt?: Date | null;
+};
+
 export type ImageFraudResult = {
   imageHash: string;
   blurScore: number;
@@ -153,10 +159,38 @@ export const analyzeImageFraud = async (
     });
   }
 
-  const otherImages = await db
-    .collection<VisitImageRecord>("visit_images")
-    .find({ visitId, _id: { $ne: imageId }, imageHash: { $exists: true } })
-    .toArray();
+  const visit = await db
+    .collection<VisitRepRecord>("visits")
+    .findOne({ _id: visitId, deletedAt: null });
+
+  const otherImages = visit
+    ? await db
+        .collection<VisitImageRecord>("visit_images")
+        .aggregate<VisitImageRecord>([
+          {
+            $match: {
+              _id: { $ne: imageId },
+              imageHash: { $exists: true },
+            },
+          },
+          {
+            $lookup: {
+              from: "visits",
+              localField: "visitId",
+              foreignField: "_id",
+              as: "visit",
+            },
+          },
+          { $unwind: "$visit" },
+          {
+            $match: {
+              "visit.repId": visit.repId,
+              "visit.deletedAt": null,
+            },
+          },
+        ])
+        .toArray()
+    : [];
 
   for (const other of otherImages) {
     if (!other.imageHash) {

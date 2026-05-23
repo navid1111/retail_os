@@ -6,6 +6,9 @@ type DashboardButtonProps = {
   icon?: string
   tone?: 'primary' | 'secondary' | 'danger'
   href?: string
+  disabled?: boolean
+  onClick?: () => void
+  type?: 'button' | 'submit'
 }
 
 export function DashboardButton({
@@ -13,6 +16,9 @@ export function DashboardButton({
   icon,
   tone = 'secondary',
   href,
+  disabled = false,
+  onClick,
+  type = 'button',
 }: DashboardButtonProps) {
   if (href) {
     return (
@@ -24,7 +30,12 @@ export function DashboardButton({
   }
 
   return (
-    <button className={`dashboard-button dashboard-button--${tone}`} type="button">
+    <button
+      className={`dashboard-button dashboard-button--${tone}`}
+      disabled={disabled}
+      onClick={onClick}
+      type={type}
+    >
       <span>{children}</span>
       {icon ? <Icon name={icon} /> : null}
     </button>

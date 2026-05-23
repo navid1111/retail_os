@@ -3,6 +3,7 @@ import { DashboardButton } from '../components/dashboard/DashboardButton'
 import { DashboardLayout } from '../components/dashboard/DashboardLayout'
 import { Icon } from '../components/dashboard/Icon'
 import { getStoreById, type Store, type StoreSku } from '../services/stores'
+import { checkInVisit } from '../services/visits'
 
 type SingleShopPageProps = {
   storeId: string
@@ -75,11 +76,35 @@ function TargetProducts({ skus }: { skus: StoreSku[] }) {
 }
 
 function CheckInPanel({ createdAt, storeId }: { createdAt: string; storeId: string }) {
+  const [notes, setNotes] = useState('')
+  const [isCheckingIn, setIsCheckingIn] = useState(false)
+  const [error, setError] = useState('')
+
   const lastVisitLabel = new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: '2-digit',
     year: 'numeric',
   }).format(new Date(createdAt))
+
+  const handleCheckIn = async () => {
+    setIsCheckingIn(true)
+    setError('')
+
+    try {
+      const visit = await checkInVisit({
+        storeId,
+        repNotes: notes || undefined,
+      })
+
+      window.location.assign(`/stores/${storeId}/visit?visitId=${visit._id}`)
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error ? requestError.message : 'Failed to check in visit'
+      )
+    } finally {
+      setIsCheckingIn(false)
+    }
+  }
 
   return (
     <aside className="detail-card checkin-panel">
@@ -96,11 +121,23 @@ function CheckInPanel({ createdAt, storeId }: { createdAt: string; storeId: stri
       </div>
       <label className="visit-notes" htmlFor="visit-notes">
         <span>Optional Notes</span>
-        <textarea id="visit-notes" placeholder="Arrived on time..." rows={4} />
+        <textarea
+          id="visit-notes"
+          onChange={(event) => setNotes(event.target.value)}
+          placeholder="Arrived on time..."
+          rows={4}
+          value={notes}
+        />
       </label>
-      <DashboardButton href={`/stores/${storeId}/visit`} icon="login" tone="primary">
-        Check In
+      <DashboardButton
+        disabled={isCheckingIn}
+        icon="login"
+        onClick={handleCheckIn}
+        tone="primary"
+      >
+        {isCheckingIn ? 'Checking In' : 'Check In'}
       </DashboardButton>
+      {error ? <p className="checkin-panel__error">{error}</p> : null}
       <p>Data will be synced upon check-in.</p>
     </aside>
   )
