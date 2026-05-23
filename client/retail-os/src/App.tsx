@@ -8,6 +8,8 @@ import { AiAnalysisPage } from './pages/AiAnalysisPage'
 import { VisitFeedPage } from './pages/VisitFeedPage'
 import { ImageHistoryPage } from './pages/ImageHistoryPage'
 import { AdminAssistantPage } from './pages/AdminAssistantPage'
+import { AdminUsersPage } from './pages/AdminUsersPage'
+import { AdminGuard } from './components/admin/AdminGuard'
 
 function App() {
   const path = window.location.pathname
@@ -24,8 +26,20 @@ function App() {
     return <ImageHistoryPage />
   }
 
+  if (path === '/admin/users') {
+    return (
+      <AdminGuard>
+        <AdminUsersPage />
+      </AdminGuard>
+    )
+  }
+
   if (path === '/admin' || path === '/admin/assistant') {
-    return <AdminAssistantPage />
+    return (
+      <AdminGuard>
+        <AdminAssistantPage />
+      </AdminGuard>
+    )
   }
 
   if (/^\/stores\/[^/]+\/analysis$/.test(path)) {

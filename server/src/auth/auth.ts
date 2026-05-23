@@ -15,6 +15,32 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  user: {
+    additionalFields: {
+      fullName: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "rep",
+        input: true,
+      },
+      region: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      isActive: {
+        type: "boolean",
+        required: false,
+        defaultValue: true,
+        input: true,
+      },
+    },
+  },
   plugins: [
     dash({
       apiKey: process.env.BETTER_AUTH_API_KEY,

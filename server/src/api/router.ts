@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/node";
 import { getDB } from "../db/mongo";
 import { getRedis } from "../db/redis";
 import { CloudinaryService } from "../cloudinary/service";
-import { requireAuth } from "../middleware/auth";
+import { requireAuth, requireRole } from "../middleware/auth";
 import { visitRouter } from "./routes/visit.routes";
 import { imageRouter, visitImageRouter } from "./routes/image.routes";
 import { storeRouter } from "./routes/store.routes";
@@ -19,8 +19,7 @@ router.use("/visits", requireAuth, visitImageRouter);
 router.use("/images", requireAuth, imageRouter);
 router.use("/stores", requireAuth, storeRouter);
 router.use("/dashboard", requireAuth, dashboardRouter);
-// TODO: Re-enable requireRole("admin") before shipping the admin assistant.
-router.use("/admin", requireAuth, adminRouter);
+router.use("/admin", requireAuth, requireRole("admin"), adminRouter);
 
 router.get("/test", async (req: Request, res: Response): Promise<void> => {
   try {
