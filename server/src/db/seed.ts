@@ -32,7 +32,7 @@ const seed = async () => {
     await db.collection("visits").deleteMany({});
     await db.collection("visit_images").deleteMany({});
     await db.collection("ai_analyses").deleteMany({});
-    await db.collection("aianalyses").deleteMany({}); // clearing Mongoose default pluralization just in case
+    await db.collection("aianalyses").deleteMany({}); // legacy Mongoose default collection
     await db.collection("fraud_flags").deleteMany({});
     await db.collection("notifications").deleteMany({});
     // Since audit_logs has a pre hook on Mongoose preventing updates/deletes,
@@ -326,9 +326,7 @@ const seed = async () => {
     }
 
     if (aiAnalyses.length > 0) {
-      // Seed into both ai_analyses and aianalyses to ensure both naming conventions are populated
       await db.collection("ai_analyses").insertMany(aiAnalyses);
-      await db.collection("aianalyses").insertMany(aiAnalyses);
       console.log(`✓ Seeded ${aiAnalyses.length} AI analyses`);
     }
 

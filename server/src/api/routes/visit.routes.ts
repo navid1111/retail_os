@@ -133,22 +133,46 @@ export const listMyVisitsHandler = async (
 export const getVisitAnalysisHandler = async (req: Request, res: Response): Promise<void> => {
   try {
     const { visitId } = req.params;
-    if (typeof visitId !== "string") {
+    if (typeof visitId !== "string" || !ObjectId.isValid(visitId)) {
       res.status(400).json({ error: "Invalid visitId parameter" });
       return;
     }
     const db = getDB();
+    const visitObjectId = new ObjectId(visitId);
 
-    const analysis = await db.collection("aianalyses").findOne({ visitId: new ObjectId(visitId) });
+    const analysis = await db.collection("ai_analyses").findOne({ visitId: visitObjectId });
 
     if (!analysis) {
-      const visit = await db.collection("visits").findOne({ _id: new ObjectId(visitId) });
+      const visit = await db.collection("visits").findOne({ _id: visitObjectId });
       if (!visit) {
         res.status(404).json({ error: "Visit not found" });
         return;
       }
 
+      if (visit.analysisError) {
+        res.json({
+          status: "failed",
+          message: visit.analysisError,
+          failedAt: visit.analysisFailedAt,
+        });
+        return;
+      }
+
       if (visit.status === "pending" || visit.status === "processing") {
+        const processingStartedAt = visit.checkOutTime ?? visit.createdAt ?? visit.checkInTime;
+        const processingAgeMs = processingStartedAt
+          ? Date.now() - new Date(processingStartedAt).getTime()
+          : 0;
+
+        if (visit.status === "processing" && processingAgeMs > 3 * 60 * 1000) {
+          res.json({
+            status: "failed",
+            message:
+              "AI analysis timed out. Check that the YOLO server is running and reachable from the backend.",
+          });
+          return;
+        }
+
         res.status(202).json({ status: "processing", message: "AI analysis is currently running in the background." });
         return;
       }
@@ -159,11 +183,15 @@ export const getVisitAnalysisHandler = async (req: Request, res: Response): Prom
         const reason = fraudFlag 
           ? `Image was rejected due to: ${fraudFlag.fraudType.replace("_", " ")}.`
           : "Image was rejected by the fraud detection system (blurry or duplicate).";
-        res.status(400).json({ error: "Visit flagged", reason });
+        res.json({ status: "flagged", message: "Visit flagged", reason });
         return;
       }
 
-      res.status(404).json({ error: "AI analysis was not performed or failed." });
+      res.json({
+        status: "failed",
+        message:
+          "AI analysis was not performed or failed. The visit exists, but no analysis result was saved.",
+      });
       return;
     }
 

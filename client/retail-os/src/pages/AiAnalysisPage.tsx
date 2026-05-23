@@ -25,6 +25,7 @@ export interface YoloPredictResponse {
   complianceScore: number
   productsDetected: YoloProductDetection[]
   competitorsDetected: YoloCompetitorDetection[]
+  posmPresent?: boolean
   missingSkus: string[]
   issues: string[]
   annotatedImage: string
@@ -379,6 +380,8 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
             })
             setLoading(false)
           }
+        } else if (data.status === 'flagged' || data.status === 'failed') {
+          throw new Error(data.reason || data.message || 'AI analysis is unavailable for this visit.')
         } else {
           throw new Error(data.message || 'AI analysis failed.')
         }
@@ -408,6 +411,10 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
     
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('storeId', storeId)
+    if (visitId) {
+      formData.append('visitId', visitId)
+    }
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/yolo/analyze`, {
@@ -434,6 +441,9 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
   // Derive POSM status: check if any detected product includes a POSM SKU
   const isPosmPresent = useMemo(() => {
     if (!analysisData || !store) return true
+    if (typeof analysisData.prediction.posmPresent === 'boolean') {
+      return analysisData.prediction.posmPresent
+    }
     const posmSkus = store.skus.filter(s => s.isPosm)
     if (posmSkus.length === 0) return true
     return posmSkus.some(posmSku => 

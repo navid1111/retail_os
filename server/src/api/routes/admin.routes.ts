@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/node";
 import { ZodError } from "zod";
 import { askAdminDatabaseAssistant } from "../../services/adminChat.service";
 import { createAdminUser, listAdminUsers } from "../../services/adminUser.service";
+import { listAdminVisitsWithAnalysis } from "../../services/adminVisit.service";
 import { adminChatBodySchema, createAdminUserBodySchema } from "../validators/admin.validators";
 import { adminFraudRouter } from "./fraud.routes";
 
@@ -32,6 +33,31 @@ export const postAdminChatHandler = async (
 };
 
 adminRouter.post("/chat", postAdminChatHandler);
+
+export const listAdminVisitsHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const result = await listAdminVisitsWithAnalysis({
+      page: Number(req.query.page ?? 1),
+      limit: Number(req.query.limit ?? 25),
+      status: typeof req.query.status === "string" ? req.query.status : undefined,
+      ai:
+        req.query.ai === "with" || req.query.ai === "missing" || req.query.ai === "all"
+          ? req.query.ai
+          : undefined,
+      search: typeof req.query.search === "string" ? req.query.search : undefined,
+    });
+    res.json(result);
+  } catch (error) {
+    Sentry.captureException(error);
+    const message = error instanceof Error ? error.message : "Failed to list visits";
+    res.status(500).json({ error: message });
+  }
+};
+
+adminRouter.get("/visits", listAdminVisitsHandler);
 
 export const listAdminUsersHandler = async (
   _req: Request,

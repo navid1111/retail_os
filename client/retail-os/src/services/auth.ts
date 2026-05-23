@@ -63,9 +63,23 @@ export const signInWithEmail = async ({
 }
 
 export const getCurrentUser = async (): Promise<CurrentUser | null> => {
-  const response = await fetch(`${API_BASE_URL}/api/me`, {
-    credentials: 'include',
-  })
+  let response: Response | null = null
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    response = await fetch(`${API_BASE_URL}/api/me`, {
+      credentials: 'include',
+    })
+
+    if (![502, 503, 504].includes(response.status)) {
+      break
+    }
+
+    await new Promise((resolve) => window.setTimeout(resolve, 600))
+  }
+
+  if (!response) {
+    throw new Error('Unable to verify access')
+  }
 
   if (response.status === 401) {
     return null

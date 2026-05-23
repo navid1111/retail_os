@@ -22,7 +22,7 @@ function getRowColumns(rows: unknown[] | undefined): string[] {
     return []
   }
 
-  return Object.keys(rows[0] as Record<string, unknown>).slice(0, 6)
+  return Object.keys(rows[0] as Record<string, unknown>).slice(0, 10)
 }
 
 function formatCell(value: unknown): string {

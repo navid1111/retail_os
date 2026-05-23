@@ -65,7 +65,7 @@ const AiAnalysisSchema = new Schema<IAiAnalysisDocument>(
     annotatedImageUrl: { type: String },
     processingMs: { type: Number },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: false } }
+  { collection: "ai_analyses", timestamps: { createdAt: "createdAt", updatedAt: false } }
 );
 
 AiAnalysisSchema.index({ visitId: 1 });

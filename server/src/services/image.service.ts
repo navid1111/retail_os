@@ -61,6 +61,27 @@ const resolveFileSizeKb = (bytes?: number): number | undefined => {
   return Math.round(bytes / 1024);
 };
 
+const withTimeout = async <T>(
+  label: string,
+  promise: Promise<T>,
+  timeoutMs: number
+): Promise<T> => {
+  let timeoutId: NodeJS.Timeout | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`${label} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+};
+
 export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<VisitImageRecord> => {
   const db = getDB();
   const visitId = toObjectId(input.visitId, "visitId");
@@ -155,10 +176,15 @@ export const processVisitImageJob = async (jobData: any): Promise<void> => {
   const visitIdObj = new ObjectId(visitId);
 
   try {
+    console.log("Image job: uploading source", { imageId, visitId });
     const cloudinaryOptions = publicId ? { public_id: publicId } : undefined;
-    const upload = filePath
-      ? await CloudinaryService.uploadImage(filePath, cloudinaryOptions)
-      : await CloudinaryService.uploadFromUrl(sourceUrl, cloudinaryOptions);
+    const upload = await withTimeout(
+      "Cloudinary source upload",
+      filePath
+        ? CloudinaryService.uploadImage(filePath, cloudinaryOptions)
+        : CloudinaryService.uploadFromUrl(sourceUrl, cloudinaryOptions),
+      45000
+    );
 
     const imageUrl = resolveImageUrl(upload);
     const fileSizeKb = resolveFileSizeKb(upload.bytes);
@@ -172,7 +198,12 @@ export const processVisitImageJob = async (jobData: any): Promise<void> => {
       imageInput = Buffer.from(arrayBuffer);
     }
 
-    const fraudResult = await analyzeImageFraud(db, imageIdObj, visitIdObj, imageInput);
+    console.log("Image job: running fraud analysis", { imageId, visitId });
+    const fraudResult = await withTimeout(
+      "Fraud analysis",
+      analyzeImageFraud(db, imageIdObj, visitIdObj, imageInput),
+      45000
+    );
 
     await db.collection<VisitImageRecord>("visit_images").updateOne(
       { _id: imageIdObj },
@@ -204,46 +235,80 @@ export const processVisitImageJob = async (jobData: any): Promise<void> => {
         const { GeminiService } = await import("../gemini/service");
         const { AiAnalysis } = await import("../models/AiAnalysis.model");
 
-        const yoloResult = await YoloService.predict(imageBuffer, "image.jpg");
+        console.log("Image job: running YOLO analysis", { imageId, visitId });
+        const yoloResult = await withTimeout(
+          "YOLO analysis",
+          YoloService.predict(imageBuffer, "image.jpg"),
+          35000
+        );
 
         // Upload the base64 annotated image from YOLO to Cloudinary
         let annotatedImageUrl = "";
         if (yoloResult.annotatedImage) {
-          const uploadResult = await CloudinaryService.uploadImage(yoloResult.annotatedImage);
+          console.log("Image job: uploading annotated image", { imageId, visitId });
+          const uploadResult = await withTimeout(
+            "Cloudinary annotated upload",
+            CloudinaryService.uploadImage(yoloResult.annotatedImage),
+            45000
+          );
           annotatedImageUrl = uploadResult.secure_url || uploadResult.url;
         }
 
         // Generate report using Gemini
+        console.log("Image job: generating Gemini report", { imageId, visitId });
         const inputData = yoloResult.rawResponse || yoloResult;
-        const report = await GeminiService.generateSupervisorReport(inputData);
+        const report = await withTimeout(
+          "Gemini report generation",
+          GeminiService.generateSupervisorReport(inputData),
+          65000
+        );
 
-        // Save analysis results to Mongoose database
-        await AiAnalysis.create({
-          imageId: imageIdObj,
-          visitId: visitIdObj,
-          provider: yoloResult.provider,
-          modelName: yoloResult.modelName,
-          complianceScore: yoloResult.complianceScore,
-          productsDetected: yoloResult.productsDetected,
-          competitorsDetected: yoloResult.competitorsDetected,
-          missingSkus: yoloResult.missingSkus,
-          issues: yoloResult.issues,
-          supervisorSummary: report,
-          annotatedImageUrl,
-          processingMs: yoloResult.processingMs,
-        });
+        // Persist the complete AI analysis payload. Upsert keeps queue retries from duplicating records.
+        await AiAnalysis.updateOne(
+          { imageId: imageIdObj },
+          {
+            $set: {
+              imageId: imageIdObj,
+              visitId: visitIdObj,
+              provider: yoloResult.provider,
+              modelName: yoloResult.modelName,
+              complianceScore: yoloResult.complianceScore,
+              productsDetected: yoloResult.productsDetected,
+              competitorsDetected: yoloResult.competitorsDetected,
+              posmPresent: yoloResult.posmPresent,
+              missingSkus: yoloResult.missingSkus,
+              issues: yoloResult.issues,
+              supervisorSummary: report,
+              rawResponse: yoloResult.rawResponse,
+              annotatedImageUrl,
+              processingMs: yoloResult.processingMs,
+            },
+            $setOnInsert: { createdAt: new Date() },
+          },
+          { upsert: true }
+        );
 
         // Update the visit's overall score with the computed compliance score and mark completed
         await db.collection("visits").updateOne(
           { _id: visitIdObj },
-          { $set: { overallScore: yoloResult.complianceScore, status: "completed" } }
+          {
+            $set: { overallScore: yoloResult.complianceScore, status: "completed" },
+            $unset: { analysisError: "" },
+          }
         );
+        console.log("Image job: analysis completed", { imageId, visitId });
       } catch (aiError) {
         console.error("AI analysis during background processing failed:", aiError);
-        // We set status to "completed" anyway so the rep isn't stuck forever
+        const message = aiError instanceof Error ? aiError.message : String(aiError);
         await db.collection("visits").updateOne(
           { _id: visitIdObj },
-          { $set: { status: "completed" } }
+          {
+            $set: {
+              status: "processing",
+              analysisError: message,
+              analysisFailedAt: new Date(),
+            },
+          }
         );
         Sentry.captureException(aiError);
       }

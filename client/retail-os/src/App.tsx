@@ -11,6 +11,7 @@ import { AdminAssistantPage } from './pages/AdminAssistantPage'
 import { AdminUsersPage } from './pages/AdminUsersPage'
 import { AdminFraudPage } from './pages/AdminFraudPage'
 import { FraudPanelPage } from './pages/FraudPanelPage'
+import { AdminVisitsPage } from './pages/AdminVisitsPage'
 import { AdminGuard } from './components/admin/AdminGuard'
 import { RepGuard } from './components/dashboard/RepGuard'
 
@@ -57,6 +58,14 @@ function App() {
     return (
       <AdminGuard>
         <AdminFraudPage />
+      </AdminGuard>
+    )
+  }
+
+  if (path === '/admin/visits') {
+    return (
+      <AdminGuard>
+        <AdminVisitsPage />
       </AdminGuard>
     )
   }

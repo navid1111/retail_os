@@ -280,6 +280,10 @@ export const submitVisit = async (
         status: "processing",
         checkOutTime,
       },
+      $unset: {
+        analysisError: "",
+        analysisFailedAt: "",
+      },
     }
   );
 

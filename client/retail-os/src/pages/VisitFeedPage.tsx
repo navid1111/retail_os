@@ -59,7 +59,7 @@ function VisitHistoryCard({ visit }: { visit: VisitRecord }) {
       className={`visit-history-card ${
         isFlagged ? 'visit-history-card--flagged' : ''
       } ${isProcessing ? 'visit-history-card--processing' : ''}`}
-      href={`/stores/${storeId}/analysis`}
+      href={`/stores/${storeId}/analysis?visitId=${visit._id}`}
     >
       <div className="visit-history-card__main">
         <div className="visit-history-card__icon">

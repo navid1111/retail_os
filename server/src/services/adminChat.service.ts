@@ -22,6 +22,7 @@ export type AdminChatResponse = {
 type PlannedQuery = {
   answer?: string;
   query?: Record<string, unknown>;
+  deterministicAnswer?: boolean;
 };
 
 const READ_OPERATIONS = new Set([
@@ -36,7 +37,7 @@ export async function askAdminDatabaseAssistant(
   question: string
 ): Promise<AdminChatResponse> {
   const schema = await dataStoreMcp.inspectDatabase();
-  const plannedQuery = await planDatabaseQuery(question, schema);
+  const plannedQuery = planKnownDatabaseQuery(question) ?? (await planDatabaseQuery(question, schema));
 
   if (!plannedQuery.query) {
     return {
@@ -49,7 +50,9 @@ export async function askAdminDatabaseAssistant(
   const query = normalizeMongoQuery(plannedQuery.query);
   const queryResult = await dataStoreMcp.queryDatabase(query);
   const rows = extractRows(queryResult);
-  const answer = await summarizeDatabaseResult(question, schema, query, queryResult);
+  const answer = plannedQuery.deterministicAnswer
+    ? summarizeKnownDatabaseResult(question, queryResult)
+    : await summarizeDatabaseResult(question, schema, query, queryResult);
 
   return {
     answer,
@@ -57,6 +60,93 @@ export async function askAdminDatabaseAssistant(
     rows,
     rawResult: queryResult,
   };
+}
+
+function planKnownDatabaseQuery(question: string): PlannedQuery | undefined {
+  const normalizedQuestion = question.toLowerCase();
+  const asksForVisits = /\bvisits?\b/.test(normalizedQuestion);
+  const asksForAiAnalysis = /ai[_\s-]?analys/.test(normalizedQuestion);
+
+  if (!asksForVisits || !asksForAiAnalysis) {
+    return undefined;
+  }
+
+  const requestedLimit = Number(normalizedQuestion.match(/\b(\d{1,2})\b/)?.[1] ?? 5);
+  const limit = Math.max(1, Math.min(requestedLimit, 25));
+
+  return {
+    deterministicAnswer: true,
+    query: {
+      operation: "aggregate",
+      collection: "visits",
+      pipeline: [
+        { $sort: { checkInTime: -1, createdAt: -1, _id: -1 } },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: "ai_analyses",
+            localField: "_id",
+            foreignField: "visitId",
+            as: "aiAnalysis",
+          },
+        },
+        {
+          $unwind: {
+            path: "$aiAnalysis",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "stores",
+            localField: "storeId",
+            foreignField: "_id",
+            as: "store",
+          },
+        },
+        {
+          $unwind: {
+            path: "$store",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            _id: { $toString: "$_id" },
+            storeName: "$store.storeName",
+            checkInTime: 1,
+            status: 1,
+            overallScore: 1,
+            aiScore: "$aiAnalysis.complianceScore",
+            aiProducts: { $size: { $ifNull: ["$aiAnalysis.productsDetected", []] } },
+            aiCompetitors: "$aiAnalysis.competitorsDetected",
+            aiMissingSkus: "$aiAnalysis.missingSkus",
+            aiSummary: "$aiAnalysis.supervisorSummary",
+          },
+        },
+      ],
+    },
+  };
+}
+
+function summarizeKnownDatabaseResult(question: string, queryResult: unknown): string {
+  const rows = extractRows(queryResult) || [];
+  const rowsWithAi = rows.filter((row) => {
+    if (!row || typeof row !== "object") {
+      return false;
+    }
+
+    const record = row as Record<string, unknown>;
+    return (
+      record.aiScore !== undefined ||
+      Boolean(record.aiSummary) ||
+      (Array.isArray(record.aiCompetitors) && record.aiCompetitors.length > 0) ||
+      (Array.isArray(record.aiMissingSkus) && record.aiMissingSkus.length > 0)
+    );
+  }).length;
+
+  const requestedRows = rows.length === 1 ? "visit" : "visits";
+  return `Here are the ${rows.length} most recent ${requestedRows} with AI analysis joined from ai_analyses. ${rowsWithAi} of ${rows.length} ${requestedRows} have saved AI analysis data.`;
 }
 
 async function planDatabaseQuery(question: string, schema: unknown): Promise<PlannedQuery> {
