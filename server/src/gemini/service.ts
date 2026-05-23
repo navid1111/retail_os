@@ -2,7 +2,26 @@ import axios from "axios";
 import * as Sentry from "@sentry/node";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
+const FALLBACK_GEMINI_MODELS = [
+  DEFAULT_GEMINI_MODEL,
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
+];
+
+const getConfiguredModel = (): string =>
+  process.env.GEMINI_MODEL?.trim() || DEFAULT_GEMINI_MODEL;
+
+const getModelCandidates = (): string[] => {
+  const configuredModel = getConfiguredModel();
+  return [configuredModel, ...FALLBACK_GEMINI_MODELS].filter(
+    (model, index, models) => model && models.indexOf(model) === index
+  );
+};
+
+const isModelUnsupportedError = (message: string): boolean =>
+  message.includes(" is not found ") ||
+  message.includes("not supported for generateContent");
 
 export class GeminiService {
   static async generateSupervisorReport(modelResponseJson: any): Promise<string> {
@@ -45,10 +64,13 @@ Rules:
 ${rawJson}
 </model_response>`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+    let lastErrorMessage = "";
 
-    try {
-      const response = await axios.post(
+    for (const model of getModelCandidates()) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+
+      try {
+        const response = await axios.post(
         url,
         {
           contents: [
@@ -79,18 +101,27 @@ ${rawJson}
         }
       );
 
-      const candidate = response.data?.candidates?.[0];
-      const text = candidate?.content?.parts?.[0]?.text;
+        const candidate = response.data?.candidates?.[0];
+        const text = candidate?.content?.parts?.[0]?.text;
 
-      if (!text) {
-        throw new Error("Empty response received from Gemini API");
+        if (!text) {
+          throw new Error("Empty response received from Gemini API");
+        }
+
+        return text.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ").trim();
+      } catch (error: any) {
+        const apiErrorMessage = error.response?.data?.error?.message || error.message;
+        lastErrorMessage = apiErrorMessage;
+
+        if (!isModelUnsupportedError(apiErrorMessage)) {
+          Sentry.captureException(error);
+          throw new Error(`Gemini report generation failed using ${model}: ${apiErrorMessage}`);
+        }
+
+        console.warn(`Gemini model ${model} is unavailable for generateContent. Trying fallback model.`);
       }
-
-      return text.replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ").trim();
-    } catch (error: any) {
-      Sentry.captureException(error);
-      const apiErrorMessage = error.response?.data?.error?.message || error.message;
-      throw new Error(`Gemini report generation failed: ${apiErrorMessage}`);
     }
+
+    throw new Error(`Gemini report generation failed: ${lastErrorMessage}`);
   }
 }

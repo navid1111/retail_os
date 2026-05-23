@@ -4,6 +4,7 @@ import { ZodError } from "zod";
 import { askAdminDatabaseAssistant } from "../../services/adminChat.service";
 import { createAdminUser, listAdminUsers } from "../../services/adminUser.service";
 import { listAdminVisitsWithAnalysis } from "../../services/adminVisit.service";
+import { getAdminJobDashboard } from "../../services/adminJob.service";
 import { adminChatBodySchema, createAdminUserBodySchema } from "../validators/admin.validators";
 import { adminFraudRouter } from "./fraud.routes";
 
@@ -58,6 +59,22 @@ export const listAdminVisitsHandler = async (
 };
 
 adminRouter.get("/visits", listAdminVisitsHandler);
+
+export const getAdminJobsHandler = async (
+  _req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const result = await getAdminJobDashboard();
+    res.json(result);
+  } catch (error) {
+    Sentry.captureException(error);
+    const message = error instanceof Error ? error.message : "Failed to load jobs";
+    res.status(500).json({ error: message });
+  }
+};
+
+adminRouter.get("/jobs", getAdminJobsHandler);
 
 export const listAdminUsersHandler = async (
   _req: Request,

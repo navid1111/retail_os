@@ -6,6 +6,7 @@ const navItems = [
   { label: 'AI Assistant', icon: 'smart_toy', href: '/admin/assistant' },
   { label: 'Visits', icon: 'route', href: '/admin/visits' },
   { label: 'Fraud Review', icon: 'gavel', href: '/admin/fraud' },
+  { label: 'Jobs', icon: 'memory', href: '/admin/jobs' },
   { label: 'User Management', icon: 'group', href: '/admin/users' },
 ]
 

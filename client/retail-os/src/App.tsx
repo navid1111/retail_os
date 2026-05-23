@@ -10,6 +10,7 @@ import { ImageHistoryPage } from './pages/ImageHistoryPage'
 import { AdminAssistantPage } from './pages/AdminAssistantPage'
 import { AdminUsersPage } from './pages/AdminUsersPage'
 import { AdminFraudPage } from './pages/AdminFraudPage'
+import { AdminJobsPage } from './pages/AdminJobsPage'
 import { FraudPanelPage } from './pages/FraudPanelPage'
 import { AdminVisitsPage } from './pages/AdminVisitsPage'
 import { AdminGuard } from './components/admin/AdminGuard'
@@ -66,6 +67,14 @@ function App() {
     return (
       <AdminGuard>
         <AdminVisitsPage />
+      </AdminGuard>
+    )
+  }
+
+  if (path === '/admin/jobs') {
+    return (
+      <AdminGuard>
+        <AdminJobsPage />
       </AdminGuard>
     )
   }

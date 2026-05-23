@@ -18,6 +18,38 @@ const resolveUserId = (req: Request): string | undefined => {
   return user?._id ?? user?.id;
 };
 
+const formatFraudReason = (value?: string): string | undefined =>
+  value?.replace(/_/g, " ");
+
+const resolveVisitFraudState = async (
+  db: ReturnType<typeof getDB>,
+  visitId: ObjectId
+): Promise<{ status: "flagged"; message: string; reason: string } | null> => {
+  const image = await db.collection("visit_images").findOne({
+    visitId,
+    isRejected: true,
+  });
+  const fraudFlag = await db.collection("fraud_flags").findOne({
+    visitId,
+    ...(image ? { imageId: image._id } : {}),
+  });
+
+  if (!image && !fraudFlag) {
+    return null;
+  }
+
+  const reason =
+    formatFraudReason(fraudFlag?.fraudType) ??
+    formatFraudReason(image?.rejectionReason) ??
+    "fraud detection";
+
+  return {
+    status: "flagged",
+    message: "Visit flagged",
+    reason: `Image was rejected due to: ${reason}.`,
+  };
+};
+
 export const checkInHandler = async (req: Request, res: Response): Promise<void> => {
   try {
     const repId = resolveUserId(req);
@@ -140,15 +172,21 @@ export const getVisitAnalysisHandler = async (req: Request, res: Response): Prom
     const db = getDB();
     const visitObjectId = new ObjectId(visitId);
 
+    const visit = await db.collection("visits").findOne({ _id: visitObjectId });
+    if (!visit) {
+      res.status(404).json({ error: "Visit not found" });
+      return;
+    }
+
+    const fraudState = await resolveVisitFraudState(db, visitObjectId);
+    if (fraudState) {
+      res.json(fraudState);
+      return;
+    }
+
     const analysis = await db.collection("ai_analyses").findOne({ visitId: visitObjectId });
 
     if (!analysis) {
-      const visit = await db.collection("visits").findOne({ _id: visitObjectId });
-      if (!visit) {
-        res.status(404).json({ error: "Visit not found" });
-        return;
-      }
-
       if (visit.analysisError) {
         res.json({
           status: "failed",
@@ -178,12 +216,11 @@ export const getVisitAnalysisHandler = async (req: Request, res: Response): Prom
       }
 
       if (visit.status === "flagged") {
-        const image = await db.collection("visit_images").findOne({ visitId: visit._id, isRejected: true });
-        const fraudFlag = image ? await db.collection("fraud_flags").findOne({ imageId: image._id }) : null;
-        const reason = fraudFlag 
-          ? `Image was rejected due to: ${fraudFlag.fraudType.replace("_", " ")}.`
-          : "Image was rejected by the fraud detection system (blurry or duplicate).";
-        res.json({ status: "flagged", message: "Visit flagged", reason });
+        res.json({
+          status: "flagged",
+          message: "Visit flagged",
+          reason: "Image was rejected by the fraud detection system.",
+        });
         return;
       }
 

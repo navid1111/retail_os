@@ -30,11 +30,139 @@ function formatCell(value: unknown): string {
     return '-'
   }
 
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return '0'
+    }
+
+    return `${value.length} item${value.length === 1 ? '' : 's'}`
+  }
+
   if (typeof value === 'object') {
     return JSON.stringify(value)
   }
 
   return String(value)
+}
+
+function MarkdownTable({ lines }: { lines: string[] }) {
+  const rows = lines
+    .filter((line) => line.trim().startsWith('|'))
+    .map((line) =>
+      line
+        .trim()
+        .replace(/^\||\|$/g, '')
+        .split('|')
+        .map((cell) => cell.trim())
+    )
+  const header = rows[0] ?? []
+  const body = rows.slice(2)
+
+  if (header.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="admin-chat-table">
+      <table>
+        <thead>
+          <tr>
+            {header.map((cell) => (
+              <th key={cell}>{cell}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {body.map((row, index) => (
+            <tr key={index}>
+              {header.map((cell, cellIndex) => (
+                <td key={`${cell}-${cellIndex}`}>{row[cellIndex] ?? '-'}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function renderInlineMarkdown(text: string) {
+  const segments = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g)
+
+  return segments.map((segment, index) => {
+    if (segment.startsWith('**') && segment.endsWith('**')) {
+      return <strong key={index}>{segment.slice(2, -2)}</strong>
+    }
+
+    if (segment.startsWith('`') && segment.endsWith('`')) {
+      return <code key={index}>{segment.slice(1, -1)}</code>
+    }
+
+    return segment
+  })
+}
+
+function MessageContent({ text }: { text: string }) {
+  const lines = text.split(/\r?\n/)
+  const blocks: Array<{ type: 'table' | 'list' | 'paragraph'; lines: string[] }> = []
+  let current: { type: 'table' | 'list' | 'paragraph'; lines: string[] } | null = null
+
+  const flush = () => {
+    if (current && current.lines.length > 0) {
+      blocks.push(current)
+    }
+    current = null
+  }
+
+  lines.forEach((line) => {
+    const trimmed = line.trim()
+
+    if (!trimmed) {
+      flush()
+      return
+    }
+
+    const type = trimmed.startsWith('|')
+      ? 'table'
+      : /^[-*]\s+/.test(trimmed)
+        ? 'list'
+        : 'paragraph'
+
+    if (!current || current.type !== type) {
+      flush()
+      current = { type, lines: [] }
+    }
+
+    current.lines.push(line)
+  })
+
+  flush()
+
+  return (
+    <>
+      {blocks.map((block, index) => {
+        if (block.type === 'table') {
+          return <MarkdownTable key={index} lines={block.lines} />
+        }
+
+        if (block.type === 'list') {
+          return (
+            <ul className="admin-chat-list" key={index}>
+              {block.lines.map((line, itemIndex) => (
+                <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^[-*]\s+/, ''))}</li>
+              ))}
+            </ul>
+          )
+        }
+
+        return (
+          <p key={index}>
+            {renderInlineMarkdown(block.lines.join(' '))}
+          </p>
+        )
+      })}
+    </>
+  )
 }
 
 function ResultTable({ rows }: { rows?: unknown[] }) {
@@ -74,6 +202,7 @@ function ResultTable({ rows }: { rows?: unknown[] }) {
 
 function ChatBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user'
+  const hasMarkdownTable = /\n\|.+\|\n\|[\s:|.-]+\|/.test(message.text)
 
   return (
     <article className={`admin-chat-message ${isUser ? 'admin-chat-message--user' : ''}`}>
@@ -83,8 +212,8 @@ function ChatBubble({ message }: { message: ChatMessage }) {
         </div>
       ) : null}
       <div className="admin-chat-message__body">
-        <p>{message.text}</p>
-        <ResultTable rows={message.result?.rows} />
+        <MessageContent text={message.text} />
+        {!hasMarkdownTable ? <ResultTable rows={message.result?.rows} /> : null}
         {message.result?.query ? (
           <details className="admin-chat-query">
             <summary>Query</summary>

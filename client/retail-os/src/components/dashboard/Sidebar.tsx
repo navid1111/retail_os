@@ -1,4 +1,5 @@
 import { Icon } from './Icon'
+import { signOut } from '../../services/auth'
 
 const primaryItems = [
   { label: 'Dashboard', icon: 'dashboard', href: '/' },
@@ -40,6 +41,11 @@ function SidebarLink({ item }: { item: NavItem }) {
 }
 
 export function Sidebar() {
+  const handleLogout = async () => {
+    await signOut()
+    window.location.assign('/login')
+  }
+
   return (
     <aside className="dashboard-sidebar">
       <div className="dashboard-sidebar__brand">
@@ -57,6 +63,10 @@ export function Sidebar() {
         {secondaryItems.map((item) => (
           <SidebarLink item={item} key={item.label} />
         ))}
+        <button className="dashboard-sidebar__link" onClick={handleLogout} type="button">
+          <Icon name="logout" />
+          <span>Log Out</span>
+        </button>
       </div>
     </aside>
   )

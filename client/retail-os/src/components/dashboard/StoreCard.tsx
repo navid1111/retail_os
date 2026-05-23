@@ -37,10 +37,6 @@ export function StoreCard({ store }: { store: StoreCardData }) {
 
   return (
     <article className={className}>
-      {store.status === 'action' ? (
-        <Icon className="store-card__flag" name="priority_high" />
-      ) : null}
-
       <div className="store-card__top">
         <StatusBadge status={store.status} />
         <span className="store-card__code">#{store.code}</span>
@@ -64,45 +60,6 @@ export function StoreCard({ store }: { store: StoreCardData }) {
           <strong>{store.skuCount}</strong>
         </div>
       </div>
-
-      {store.status === 'active' ? (
-        <div className="capture-status">
-          <Icon name="sync" />
-          <span>Capture in progress</span>
-        </div>
-      ) : null}
-
-      {store.status === 'done' ? (
-        <div className="verified-status">
-          <Icon name="check_circle" />
-          <span>Verified &amp; Synced</span>
-        </div>
-      ) : null}
-
-      {store.status === 'action' ? (
-        <div className="alert-block">
-          <strong>{store.alertTitle}</strong>
-          <p>{store.alertBody}</p>
-        </div>
-      ) : null}
-
-      {store.status === 'processing' ? (
-        <>
-          <div className="processing-meter">
-            <div />
-          </div>
-          <div className="processing-label">Analyzing Frame 142/200</div>
-          <div className="ai-health">
-            <span>Shelf AI Health</span>
-            <div>
-              <i />
-              <i />
-              <i />
-              <i />
-            </div>
-          </div>
-        </>
-      ) : null}
 
       <DashboardButton href={`/stores/${store.id}`} icon="arrow_forward" tone="primary">
         Initiate Visit

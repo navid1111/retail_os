@@ -5,11 +5,6 @@ import { SearchControls } from '../components/dashboard/SearchControls'
 import { StoreCard, type StoreCardData } from '../components/dashboard/StoreCard'
 import { getStores, type Store } from '../services/stores'
 
-const storeStatuses = ['idle', 'active', 'done', 'action', 'processing'] as const
-
-const getStoreStatus = (index: number): StoreCardData['status'] =>
-  storeStatuses[index % storeStatuses.length]
-
 const storeMatchesSearch = (store: Store, search: string): boolean => {
   const term = search.trim().toLowerCase()
 
@@ -38,23 +33,16 @@ const storeMatchesRegion = (store: Store, region: string): boolean =>
 const formatStoreLocation = (store: Store): string =>
   store.address ?? store.region ?? 'Location unavailable'
 
-const mapStoreToCard = (store: Store, index: number): StoreCardData => {
-  const status = getStoreStatus(index)
-
+const mapStoreToCard = (store: Store): StoreCardData => {
   return {
     id: store._id,
     code: store.storeCode,
     name: store.storeName,
     location: formatStoreLocation(store),
     region: store.region,
-    status,
+    status: 'idle',
     lastSync: '24H AGO',
     skuCount: `${store.skus.length} Items`,
-    alertTitle: status === 'action' ? 'Alert: Stock Discrepancy' : undefined,
-    alertBody:
-      status === 'action'
-        ? 'Inventory mismatch detected in SKU category: Beverages. Urgent verification required.'
-        : undefined,
   }
 }
 

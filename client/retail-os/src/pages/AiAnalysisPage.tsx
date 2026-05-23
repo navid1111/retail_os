@@ -8,6 +8,8 @@ type AiAnalysisPageProps = {
   storeId: string
 }
 
+type AnalysisStatus = 'idle' | 'processing' | 'completed' | 'flagged' | 'failed'
+
 export interface YoloProductDetection {
   name: string
   brand: string
@@ -321,6 +323,7 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
   const [store, setStore] = useState<Store | null>(null)
   const [error, setError] = useState('')
   const [analysisData, setAnalysisData] = useState<AnalysisResponse | null>(null)
+  const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus>('idle')
   const [loading, setLoading] = useState(false)
   const [uploadError, setUploadError] = useState('')
 
@@ -355,6 +358,7 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
     let pollTimeoutId: number | undefined
 
     const pollAnalysis = async () => {
+      setAnalysisStatus('processing')
       setLoading(true)
       try {
         const response = await fetch(`${API_BASE_URL}/api/visits/${visitId}/analysis`, {
@@ -378,15 +382,21 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
               prediction: data.prediction,
               report: data.report
             })
+            setAnalysisStatus('completed')
             setLoading(false)
           }
         } else if (data.status === 'flagged' || data.status === 'failed') {
-          throw new Error(data.reason || data.message || 'AI analysis is unavailable for this visit.')
+          if (isMounted) {
+            setAnalysisStatus(data.status)
+            setUploadError(data.reason || data.message || 'AI analysis is unavailable for this visit.')
+            setLoading(false)
+          }
         } else {
           throw new Error(data.message || 'AI analysis failed.')
         }
       } catch (err: any) {
         if (isMounted) {
+          setAnalysisStatus('failed')
           setUploadError(err.message || 'Failed to retrieve AI analysis.')
           setLoading(false)
         }
@@ -405,7 +415,24 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
 
   const storeName = useMemo(() => store?.storeName ?? 'Store', [store])
 
+  const statusDisplay = useMemo(() => {
+    if (analysisStatus === 'completed') {
+      return { icon: 'check_circle', label: 'Analysis Completed' }
+    }
+    if (analysisStatus === 'flagged') {
+      return { icon: 'gpp_bad', label: 'Visit Flagged' }
+    }
+    if (analysisStatus === 'failed') {
+      return { icon: 'error', label: 'Analysis Stopped' }
+    }
+    if (analysisStatus === 'processing') {
+      return { icon: 'pending', label: 'Checking Image' }
+    }
+    return { icon: 'pending', label: 'Awaiting Shelf Image' }
+  }, [analysisStatus])
+
   const handleFileSelect = async (file: File) => {
+    setAnalysisStatus('processing')
     setLoading(true)
     setUploadError('')
     
@@ -430,8 +457,10 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
 
       const data = await response.json()
       setAnalysisData(data)
+      setAnalysisStatus('completed')
     } catch (err: any) {
       console.error(err)
+      setAnalysisStatus('failed')
       setUploadError(err.message || 'An error occurred during analysis.')
     } finally {
       setLoading(false)
@@ -458,9 +487,9 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
       <header className="analysis-header">
         <div className="analysis-header__inner">
           <div className="analysis-header__left">
-            <a href={`/stores/${storeId}/visit`}>
+            <a href="/shop-dashboard">
               <Icon name="arrow_back" />
-              Back to Visit
+              Back to Dashboard
             </a>
             <div />
             <section>
@@ -468,9 +497,9 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
               <p>Visit #VIS-221 · Live AI Auditor</p>
             </section>
           </div>
-          <span className="analysis-status" style={!analysisData ? { backgroundColor: '#6b7280' } : undefined}>
-            <Icon name={analysisData ? "check_circle" : "pending"} />
-            {analysisData ? "Analysis Completed" : "Awaiting Shelf Image"}
+          <span className="analysis-status" style={analysisStatus !== 'completed' ? { backgroundColor: '#6b7280' } : undefined}>
+            <Icon name={statusDisplay.icon} />
+            {statusDisplay.label}
           </span>
         </div>
       </header>
@@ -482,9 +511,9 @@ export function AiAnalysisPage({ storeId }: AiAnalysisPageProps) {
         <div className="analysis-stats">
           <AnalysisStat 
             filled={!!analysisData} 
-            icon={analysisData ? "task_alt" : "pending"} 
+            icon={analysisData ? "task_alt" : statusDisplay.icon} 
             label="Analysis Status" 
-            value={analysisData ? "Completed" : "Awaiting Image"} 
+            value={statusDisplay.label.replace('Analysis ', '')} 
           />
           <AnalysisStat 
             icon="neurology" 

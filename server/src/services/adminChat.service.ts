@@ -146,7 +146,31 @@ function summarizeKnownDatabaseResult(question: string, queryResult: unknown): s
   }).length;
 
   const requestedRows = rows.length === 1 ? "visit" : "visits";
-  return `Here are the ${rows.length} most recent ${requestedRows} with AI analysis joined from ai_analyses. ${rowsWithAi} of ${rows.length} ${requestedRows} have saved AI analysis data.`;
+  const tableRows = rows.map((row) => {
+    const record = (row && typeof row === "object" ? row : {}) as Record<string, unknown>;
+    const id = String(record._id ?? "-");
+    const products = Number(record.aiProducts ?? 0);
+    const competitors = Array.isArray(record.aiCompetitors) ? record.aiCompetitors.length : 0;
+    const missingSkus = Array.isArray(record.aiMissingSkus) ? record.aiMissingSkus.length : 0;
+    const score = typeof record.aiScore === "number" ? `${Math.round(record.aiScore)}/100` : "-";
+    const checkInTime = record.checkInTime
+      ? new Date(String(record.checkInTime)).toISOString().replace("T", " ").slice(0, 16)
+      : "-";
+
+    return `| ...${id.slice(-4)} | ${record.storeName ?? "-"} | ${checkInTime} | ${record.status ?? "-"} | ${products} | ${competitors} | ${missingSkus} | ${score} |`;
+  });
+
+  return [
+    `Here are the ${rows.length} most recent ${requestedRows} with AI analysis joined from ai_analyses. ${rowsWithAi} of ${rows.length} ${requestedRows} have saved AI analysis data.`,
+    "",
+    "| Visit | Store | Check-In | Status | Products | Competitors | Missing SKUs | Score |",
+    "| :--- | :--- | :--- | :--- | ---: | ---: | ---: | :--- |",
+    ...tableRows,
+    "",
+    "**Key observations:**",
+    `- AI analysis is available for ${rowsWithAi} of ${rows.length} ${requestedRows}.`,
+    `- ${rows.length - rowsWithAi} ${rows.length - rowsWithAi === 1 ? "visit is" : "visits are"} still missing saved AI analysis data.`,
+  ].join("\n");
 }
 
 async function planDatabaseQuery(question: string, schema: unknown): Promise<PlannedQuery> {
@@ -193,8 +217,13 @@ async function summarizeDatabaseResult(
   const prompt = [
     "You are the RetailOS admin database assistant.",
     "Answer the admin's question using the query result.",
-    "Be concise. Mention important numbers and patterns. If the result is tabular, describe the table.",
+    "Return a presentation-ready response.",
+    "If the result has multiple records, include a compact Markdown table before observations.",
+    "Summarize arrays as counts in the table unless the admin specifically asks for raw item details.",
+    "Use readable dates, short IDs, and business-friendly column names.",
+    "After the table, add 2-4 concise bullet observations.",
     "Do not invent values that are not in the result.",
+    "Do not dump raw JSON unless the admin specifically asks for raw JSON.",
     "",
     `Question: ${question}`,
     `Schema summary: ${JSON.stringify(schema).slice(0, 12000)}`,
@@ -207,7 +236,7 @@ async function summarizeDatabaseResult(
 
 async function callGemini(prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const model = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY is not configured");

@@ -92,3 +92,12 @@ export const getCurrentUser = async (): Promise<CurrentUser | null> => {
   const data = await response.json()
   return data.user ?? null
 }
+
+export const signOut = async (): Promise<void> => {
+  await fetch(`${API_BASE_URL}/api/auth/sign-out`, {
+    method: 'POST',
+    credentials: 'include',
+  }).catch(() => {
+    // Navigation below still clears the protected UI even if the network request fails.
+  })
+}

@@ -3,6 +3,7 @@ import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth/auth";
 import { router } from "./api/router";
+import { metricsHandler, metricsMiddleware } from "./metrics";
 
 export const app = express();
 
@@ -38,6 +39,13 @@ app.use(
     credentials: true,
   })
 );
+
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+
+app.get("/metrics", metricsHandler);
+app.use(metricsMiddleware);
 
 // Mount Better Auth BEFORE express.json()
 app.use("/api/auth", toNodeHandler(auth));
