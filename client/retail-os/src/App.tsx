@@ -7,6 +7,7 @@ import { VisitPage } from './pages/VisitPage'
 import { AiAnalysisPage } from './pages/AiAnalysisPage'
 import { VisitFeedPage } from './pages/VisitFeedPage'
 import { ImageHistoryPage } from './pages/ImageHistoryPage'
+import { AdminAssistantPage } from './pages/AdminAssistantPage'
 
 function App() {
   const path = window.location.pathname
@@ -21,6 +22,10 @@ function App() {
 
   if (path === '/image-history') {
     return <ImageHistoryPage />
+  }
+
+  if (path === '/admin' || path === '/admin/assistant') {
+    return <AdminAssistantPage />
   }
 
   if (/^\/stores\/[^/]+\/analysis$/.test(path)) {

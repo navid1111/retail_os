@@ -6,6 +6,7 @@ vi.mock("../../src/middleware/auth", () => ({
     req.user = { _id: "507f1f77bcf86cd799439012" };
     next();
   },
+  requireRole: () => (_req: any, _res: any, next: any) => next(),
 }));
 
 vi.mock("../../src/services/image.service", () => ({
