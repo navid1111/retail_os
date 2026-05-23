@@ -21,6 +21,7 @@ export interface YoloPredictResponse {
   complianceScore: number;
   productsDetected: YoloProductDetection[];
   competitorsDetected: YoloCompetitorDetection[];
+  posmPresent?: boolean;
   missingSkus: string[];
   issues: string[];
   rawResponse: Record<string, any>;

@@ -3312,6 +3312,250 @@
   color: #93000a;
 }
 
+.admin-visits-page {
+  display: grid;
+  gap: 24px;
+  width: min(100%, 1520px);
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.admin-visits-count {
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-visits-filter {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 0 12px;
+}
+
+.admin-visits-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.65fr);
+  min-height: 620px;
+}
+
+.admin-visits-table {
+  border-right: 1px solid var(--border);
+}
+
+.admin-visits-table tbody tr {
+  cursor: pointer;
+}
+
+.admin-visits-table td strong,
+.admin-visits-table td small {
+  display: block;
+}
+
+.admin-visits-table td small {
+  margin-top: 4px;
+  color: #6f6768;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+}
+
+.admin-visits-row--active td {
+  background: var(--primary) !important;
+  color: var(--primary-text);
+}
+
+.admin-visits-row--active td small,
+.admin-visits-row--active .admin-role,
+.admin-visits-row--active .admin-user-status {
+  color: inherit;
+}
+
+.admin-user-status--muted {
+  color: #8f8687;
+}
+
+.admin-user-status--muted i {
+  background: #a9a0a1;
+}
+
+.admin-visit-detail {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 24px;
+  background: var(--surface);
+}
+
+.admin-visit-detail header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 18px;
+}
+
+.admin-visit-detail header p,
+.admin-visit-detail header span {
+  margin: 0;
+  color: #6f6768;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-visit-detail h2,
+.admin-visit-detail h3 {
+  margin: 0;
+  color: var(--primary);
+}
+
+.admin-visit-detail h2 {
+  margin: 4px 0;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.admin-visit-score {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--primary);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 18px;
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+.admin-visit-score--good {
+  border-color: #17a34a;
+  color: #116b33;
+}
+
+.admin-visit-score--warn {
+  border-color: #eab308;
+  color: #855b00;
+}
+
+.admin-visit-score--bad {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.admin-visit-detail__image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+}
+
+.admin-visit-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-visit-metrics div,
+.admin-visit-ai-section {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  padding: 14px;
+}
+
+.admin-visit-metrics span {
+  display: block;
+  color: #6f6768;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-visit-metrics strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--primary);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 24px;
+}
+
+.admin-visit-ai-section {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-visit-ai-section h3 {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-visit-ai-section p {
+  margin: 0;
+  color: #312b2c;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.admin-visit-ai-section ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-visit-ai-section li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  font-size: 13px;
+}
+
+.admin-visits-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: #4c4546;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 14px 24px;
+}
+
+.admin-visits-pagination div {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-visits-pagination button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--primary);
+  cursor: pointer;
+  font: inherit;
+  padding: 8px 10px;
+}
+
+.admin-visits-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .admin-user-modal {
   position: fixed;
   inset: 0;

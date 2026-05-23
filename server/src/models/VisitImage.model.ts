@@ -34,7 +34,7 @@ const VisitImageSchema = new Schema<IVisitImageDocument>(
     rejectionReason: { type: String, enum: ["blurry", "duplicate", "exif_old"] },
     uploadedAt: { type: Date, default: () => new Date() },
   },
-  { timestamps: false }
+  { collection: "visit_images", timestamps: false }
 );
 
 VisitImageSchema.index({ imageHash: 1 });
