@@ -3,29 +3,34 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 export type UserRole = "rep" | "supervisor" | "admin";
 
 export interface IUser {
-  fullName: string;
+  name?: string;
+  fullName?: string;
   email: string;
-  passwordHash: string;
-  role: UserRole;
+  emailVerified?: boolean;
+  passwordHash?: string;
+  role?: UserRole;
   phone?: string;
   region?: string;
-  isActive: boolean;
-  createdAt: Date;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface IUserDocument extends IUser, Document {}
 
 const UserSchema = new Schema<IUserDocument>(
   {
-    fullName: { type: String, required: true, trim: true },
+    name: { type: String, trim: true },
+    fullName: { type: String, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    passwordHash: { type: String, required: true },
-    role: { type: String, required: true, enum: ["rep", "supervisor", "admin"] },
+    emailVerified: { type: Boolean, default: false },
+    passwordHash: { type: String },
+    role: { type: String, enum: ["rep", "supervisor", "admin"], default: "rep" },
     phone: { type: String },
     region: { type: String },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: false } }
+  { collection: "user", timestamps: true }
 );
 
 export const User: Model<IUserDocument> = mongoose.model<IUserDocument>("User", UserSchema);

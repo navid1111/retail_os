@@ -16,6 +16,7 @@ export type CurrentUser = {
   name?: string
   fullName?: string
   email?: string
+  role?: 'rep' | 'supervisor' | 'admin'
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''

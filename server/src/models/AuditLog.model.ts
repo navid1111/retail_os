@@ -5,6 +5,7 @@ export type AuditAction =
   | "logout"
   | "visit_create"
   | "visit_submit"
+  | "user_create"
   | "image_upload"
   | "fraud_review"
   | "fraud_confirm"
@@ -34,6 +35,7 @@ const AuditLogSchema = new Schema<IAuditLogDocument>(
         "logout",
         "visit_create",
         "visit_submit",
+        "user_create",
         "image_upload",
         "fraud_review",
         "fraud_confirm",

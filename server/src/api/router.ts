@@ -4,31 +4,31 @@ import multer from "multer";
 import { getDB } from "../db/mongo";
 import { getRedis } from "../db/redis";
 import { CloudinaryService } from "../cloudinary/service";
-import { requireAuth } from "../middleware/auth";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 import { YoloService } from "../yolo/service";
 import { GeminiService } from "../gemini/service";
 
 const yoloUpload = multer({ storage: multer.memoryStorage() });
-
 import { visitRouter } from "./routes/visit.routes";
 import { imageRouter, visitImageRouter } from "./routes/image.routes";
 import { storeRouter } from "./routes/store.routes";
 import { dashboardRouter } from "./routes/dashboard.routes";
 import { adminRouter } from "./routes/admin.routes";
+import { fraudRouter } from "./routes/fraud.routes";
 import { upload } from "../middleware/upload";
 
 
 const router = Router();
 
 // Register sub-routers under authenticated path
-router.use("/visits", requireAuth, visitRouter);
-router.use("/visits", requireAuth, visitImageRouter);
-router.use("/images", requireAuth, imageRouter);
-router.use("/stores", requireAuth, storeRouter);
-router.use("/dashboard", requireAuth, dashboardRouter);
-// TODO: Re-enable requireRole("admin") before shipping the admin assistant.
-router.use("/admin", requireAuth, adminRouter);
+router.use("/visits", requireAuth, requireRole("rep"), visitRouter);
+router.use("/visits", requireAuth, requireRole("rep"), visitImageRouter);
+router.use("/images", requireAuth, requireRole("rep"), imageRouter);
+router.use("/stores", requireAuth, requireRole("rep"), storeRouter);
+router.use("/dashboard", requireAuth, requireRole("rep"), dashboardRouter);
+router.use("/fraud", requireAuth, requireRole("rep"), fraudRouter);
+router.use("/admin", requireAuth, requireRole("admin"), adminRouter);
 
 router.get("/test", async (req: Request, res: Response): Promise<void> => {
   try {

@@ -209,8 +209,10 @@ export const analyzeImageFraud = async (
     }
   }
 
+  const fraudFlagIds: ObjectId[] = [];
+
   for (const fraud of fraudCandidates) {
-    await FraudFlag.create({
+    const fraudFlag = await FraudFlag.create({
       visitId,
       imageId,
       fraudType: fraud.type,
@@ -219,6 +221,23 @@ export const analyzeImageFraud = async (
       duplicateOfImageId: fraud.duplicateOfImageId,
       createdAt: new Date(),
     });
+
+    const flagId = fraudFlag._id;
+    if (flagId) {
+      fraudFlagIds.push(new ObjectId(flagId.toString()));
+    }
+  }
+
+  if (fraudFlagIds.length > 0) {
+    await db.collection("visits").updateOne(
+      { _id: visitId, deletedAt: null },
+      {
+        $set: { status: "flagged" },
+        $addToSet: {
+          fraudFlags: { $each: fraudFlagIds },
+        },
+      }
+    );
   }
 
   return {

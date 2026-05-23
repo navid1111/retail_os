@@ -46,7 +46,7 @@ export async function getDashboardFeed(date?: string | Date): Promise<IDashboard
     .sort({ checkInTime: -1 });
 
   return visits.map((v: any) => {
-    const repName = v.repId?.fullName ?? "Unknown Rep";
+    const repName = v.repId?.fullName ?? v.repId?.name ?? "Unknown Rep";
     const storeName = v.storeId?.storeName ?? "Unknown Store";
     const storeCode = v.storeId?.storeCode ?? "UNKNOWN";
     const fraudFlagsCount = v.fraudFlags?.length ?? 0;

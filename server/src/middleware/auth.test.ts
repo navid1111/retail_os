@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { Request, Response, NextFunction } from "express";
-import { requireAuth } from "./auth";
+import { requireAuth, requireRole } from "./auth";
 import { auth } from "../auth/auth";
 
 type JsonValue = Record<string, unknown> | null;
@@ -70,5 +70,42 @@ describe("requireAuth middleware", () => {
     expect(res.statusCode).toBe(401);
     expect(res.body).toEqual({ error: "Unauthorized" });
     expect(next).not.toHaveBeenCalled();
+  });
+});
+
+describe("requireRole middleware", () => {
+  it("returns 401 when user is missing", () => {
+    const req = {} as Request;
+    const res = createRes();
+    const next = vi.fn() as NextFunction;
+
+    requireRole("rep")(req, res, next);
+
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toEqual({ error: "Unauthorized - No session found" });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("returns 403 when the user role is not allowed", () => {
+    const req = { user: { role: "admin" } } as unknown as Request;
+    const res = createRes();
+    const next = vi.fn() as NextFunction;
+
+    requireRole("rep")(req, res, next);
+
+    expect(res.statusCode).toBe(403);
+    expect(res.body).toEqual({ error: "Forbidden - Insufficient permissions" });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("calls next when the user role is allowed", () => {
+    const req = { user: { role: "rep" } } as unknown as Request;
+    const res = createRes();
+    const next = vi.fn() as NextFunction;
+
+    requireRole("rep")(req, res, next);
+
+    expect(res.statusCode).toBe(200);
+    expect(next).toHaveBeenCalledTimes(1);
   });
 });

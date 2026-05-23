@@ -4,7 +4,8 @@ import { Icon } from '../dashboard/Icon'
 const navItems = [
   { label: 'Dashboard', icon: 'dashboard', href: '/admin' },
   { label: 'AI Assistant', icon: 'smart_toy', href: '/admin/assistant' },
-  { label: 'User Management', icon: 'group', href: '#' },
+  { label: 'Fraud Review', icon: 'gavel', href: '/admin/fraud' },
+  { label: 'User Management', icon: 'group', href: '/admin/users' },
 ]
 
 function AdminNavLink({ item }: { item: (typeof navItems)[number] }) {

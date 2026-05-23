@@ -8,6 +8,11 @@ import { AiAnalysisPage } from './pages/AiAnalysisPage'
 import { VisitFeedPage } from './pages/VisitFeedPage'
 import { ImageHistoryPage } from './pages/ImageHistoryPage'
 import { AdminAssistantPage } from './pages/AdminAssistantPage'
+import { AdminUsersPage } from './pages/AdminUsersPage'
+import { AdminFraudPage } from './pages/AdminFraudPage'
+import { FraudPanelPage } from './pages/FraudPanelPage'
+import { AdminGuard } from './components/admin/AdminGuard'
+import { RepGuard } from './components/dashboard/RepGuard'
 
 function App() {
   const path = window.location.pathname
@@ -17,37 +22,93 @@ function App() {
   }
 
   if (path === '/visits') {
-    return <VisitFeedPage />
+    return (
+      <RepGuard>
+        <VisitFeedPage />
+      </RepGuard>
+    )
   }
 
   if (path === '/image-history') {
-    return <ImageHistoryPage />
+    return (
+      <RepGuard>
+        <ImageHistoryPage />
+      </RepGuard>
+    )
+  }
+
+  if (path === '/fraud') {
+    return (
+      <RepGuard>
+        <FraudPanelPage />
+      </RepGuard>
+    )
+  }
+
+  if (path === '/admin/users') {
+    return (
+      <AdminGuard>
+        <AdminUsersPage />
+      </AdminGuard>
+    )
+  }
+
+  if (path === '/admin/fraud') {
+    return (
+      <AdminGuard>
+        <AdminFraudPage />
+      </AdminGuard>
+    )
   }
 
   if (path === '/admin' || path === '/admin/assistant') {
-    return <AdminAssistantPage />
+    return (
+      <AdminGuard>
+        <AdminAssistantPage />
+      </AdminGuard>
+    )
   }
 
   if (/^\/stores\/[^/]+\/analysis$/.test(path)) {
     const storeId = path.split('/')[2]
-    return <AiAnalysisPage storeId={storeId} />
+    return (
+      <RepGuard>
+        <AiAnalysisPage storeId={storeId} />
+      </RepGuard>
+    )
   }
 
   if (/^\/stores\/[^/]+\/visit$/.test(path)) {
     const storeId = path.split('/')[2]
-    return <VisitPage storeId={storeId} />
+    return (
+      <RepGuard>
+        <VisitPage storeId={storeId} />
+      </RepGuard>
+    )
   }
 
   if (/^\/stores\/[^/]+$/.test(path)) {
     const storeId = path.split('/')[2]
-    return <SingleShopPage storeId={storeId} />
+    return (
+      <RepGuard>
+        <SingleShopPage storeId={storeId} />
+      </RepGuard>
+    )
   }
 
   if (path === '/shop-dashboard' || path === '/stores') {
-    return <ShopDashboardPage />
+    return (
+      <RepGuard>
+        <ShopDashboardPage />
+      </RepGuard>
+    )
   }
 
-  return <HomePage />
+  return (
+    <RepGuard>
+      <HomePage />
+    </RepGuard>
+  )
 }
 
 export default App
