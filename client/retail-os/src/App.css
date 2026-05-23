@@ -3430,6 +3430,426 @@
   opacity: 0.65;
 }
 
+.fraud-page,
+.admin-fraud-page {
+  display: grid;
+  gap: 24px;
+}
+
+.fraud-page__header,
+.admin-fraud-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fraud-page__header h1,
+.admin-fraud-detail h2 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.fraud-page__header p,
+.admin-fraud-detail header p,
+.admin-fraud-detail header span {
+  margin: 4px 0 0;
+  color: #6f6768;
+  font-size: 13px;
+}
+
+.fraud-page__header label,
+.admin-fraud-toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px 12px;
+}
+
+.fraud-page__header select,
+.admin-fraud-toolbar select {
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  outline: 0;
+}
+
+.fraud-workspace,
+.admin-fraud-workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.fraud-list,
+.admin-fraud-list,
+.fraud-detail,
+.admin-fraud-detail {
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.fraud-list,
+.admin-fraud-list {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  max-height: calc(100vh - 180px);
+  overflow: auto;
+}
+
+.fraud-list__item,
+.admin-fraud-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.fraud-list__item:hover,
+.admin-fraud-list__item:hover {
+  background: var(--surface-container-high);
+}
+
+.fraud-list__item--active,
+.admin-fraud-list__item--active {
+  background: var(--primary);
+  color: var(--primary-text);
+}
+
+.fraud-list__item strong,
+.admin-fraud-list__item strong {
+  display: block;
+  font-size: 13px;
+}
+
+.fraud-list__item small,
+.admin-fraud-list__item small {
+  display: block;
+  margin-top: 4px;
+  color: inherit;
+  opacity: 0.72;
+}
+
+.fraud-resolution {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: #4c4546;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fraud-resolution--pending {
+  border-color: #f4c85d;
+  background: #fff7dd;
+  color: #815a00;
+}
+
+.fraud-resolution--confirmed {
+  border-color: #f0a7a7;
+  background: #fff0f0;
+  color: #9d1f1f;
+}
+
+.fraud-resolution--dismissed {
+  border-color: #9ccfb2;
+  background: #edf8f1;
+  color: #22623e;
+}
+
+.fraud-detail,
+.admin-fraud-detail {
+  display: grid;
+  gap: 18px;
+  padding: 20px;
+  min-height: 420px;
+}
+
+.fraud-detail--empty {
+  place-items: center;
+  text-align: center;
+}
+
+.fraud-detail--empty .material-symbols-outlined {
+  color: var(--primary);
+  font-size: 42px;
+}
+
+.fraud-detail__header,
+.admin-fraud-detail > header,
+.fraud-reason header,
+.admin-fraud-reasons article header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fraud-detail__header h2 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.fraud-detail__header p,
+.fraud-detail__header span {
+  margin: 0;
+  color: #6f6768;
+  font-size: 13px;
+}
+
+.fraud-detail__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.fraud-detail__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  padding: 10px;
+  color: #4c4546;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.fraud-reasons,
+.admin-fraud-reasons {
+  display: grid;
+  gap: 12px;
+}
+
+.fraud-reason,
+.admin-fraud-reasons article {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  padding: 14px;
+}
+
+.fraud-reason h4,
+.admin-fraud-reasons h3 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 15px;
+}
+
+.fraud-reason p,
+.admin-fraud-reasons p,
+.fraud-reason__empty {
+  margin: 4px 0 0;
+  color: #6f6768;
+  font-size: 13px;
+}
+
+.fraud-reason dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.fraud-reason dl div {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.fraud-reason dt {
+  color: #6f6768;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.fraud-reason dd {
+  margin: 3px 0 0;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.fraud-images {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.fraud-image {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  overflow: hidden;
+}
+
+.fraud-image img,
+.fraud-image__placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--surface-container-high);
+}
+
+.fraud-image__placeholder {
+  display: grid;
+  place-items: center;
+  color: #6f6768;
+}
+
+.fraud-image div:last-child {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+}
+
+.fraud-image strong,
+.fraud-image span {
+  font-size: 12px;
+}
+
+.fraud-image span {
+  color: #6f6768;
+}
+
+.admin-fraud-toolbar {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 14px;
+}
+
+.admin-fraud-toolbar span {
+  color: #6f6768;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-fraud-detail > header strong {
+  color: var(--primary);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.admin-fraud-reasons pre {
+  overflow: auto;
+  margin: 12px 0 0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px;
+  color: #4c4546;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+}
+
+.admin-fraud-images {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-fraud-images article {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+}
+
+.admin-fraud-images img,
+.admin-fraud-image__placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--surface-container-high);
+}
+
+.admin-fraud-image__placeholder {
+  display: grid;
+  place-items: center;
+  color: #6f6768;
+}
+
+.admin-fraud-images article > div:last-child {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+}
+
+.admin-fraud-images strong,
+.admin-fraud-images span {
+  font-size: 12px;
+}
+
+.admin-fraud-images span {
+  color: #6f6768;
+}
+
+.admin-fraud-notes {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-fraud-notes span {
+  color: #4c4546;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-fraud-notes textarea {
+  min-height: 96px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--text);
+  padding: 12px;
+  font: inherit;
+}
+
+.admin-fraud-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.admin-fraud-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--primary);
+  padding: 10px 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-fraud-actions button:last-child {
+  background: var(--primary);
+  color: var(--primary-text);
+}
+
+.admin-fraud-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 @keyframes analysis-box-in {
   from {
     opacity: 0;

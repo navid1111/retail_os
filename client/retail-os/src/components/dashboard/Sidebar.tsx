@@ -4,7 +4,7 @@ const primaryItems = [
   { label: 'Dashboard', icon: 'dashboard', href: '/' },
   { label: 'Store List', icon: 'storefront', href: '/stores' },
   { label: 'Visit Feed', icon: 'assignment', href: '/visits' },
-  { label: 'Fraud Panel', icon: 'gavel', href: '#' },
+  { label: 'Fraud Panel', icon: 'gavel', href: '/fraud' },
   { label: 'Image History', icon: 'image', href: '/image-history' },
 ]
 

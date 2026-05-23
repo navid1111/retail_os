@@ -25,6 +25,7 @@ describe("analyzeImageFraud", () => {
       repId,
       deletedAt: null,
     });
+    const visitsUpdateOne = vi.fn().mockResolvedValue({ modifiedCount: 1 });
     const aggregate = vi.fn().mockReturnValue({
       toArray: vi.fn().mockResolvedValue([
         {
@@ -38,12 +39,14 @@ describe("analyzeImageFraud", () => {
     const db = {
       collection: vi.fn((name: string) => {
         if (name === "visits") {
-          return { findOne: visitsFindOne };
+          return { findOne: visitsFindOne, updateOne: visitsUpdateOne };
         }
 
         return { aggregate };
       }),
     } as any;
+    const fraudFlagId = new ObjectId();
+    vi.mocked(FraudFlag.create).mockResolvedValue({ _id: fraudFlagId } as any);
 
     const result = await analyzeImageFraud(db, imageId, visitId, imagePath);
 
@@ -65,6 +68,15 @@ describe("analyzeImageFraud", () => {
         fraudType: "duplicate_image",
         duplicateOfImageId: previousImageId,
       })
+    );
+    expect(visitsUpdateOne).toHaveBeenCalledWith(
+      { _id: visitId, deletedAt: null },
+      {
+        $set: { status: "flagged" },
+        $addToSet: {
+          fraudFlags: { $each: [fraudFlagId] },
+        },
+      }
     );
     expect(result.isRejected).toBe(true);
     expect(result.rejectionReason).toBe("duplicate");

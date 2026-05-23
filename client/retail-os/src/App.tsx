@@ -9,6 +9,8 @@ import { VisitFeedPage } from './pages/VisitFeedPage'
 import { ImageHistoryPage } from './pages/ImageHistoryPage'
 import { AdminAssistantPage } from './pages/AdminAssistantPage'
 import { AdminUsersPage } from './pages/AdminUsersPage'
+import { AdminFraudPage } from './pages/AdminFraudPage'
+import { FraudPanelPage } from './pages/FraudPanelPage'
 import { AdminGuard } from './components/admin/AdminGuard'
 import { RepGuard } from './components/dashboard/RepGuard'
 
@@ -35,10 +37,26 @@ function App() {
     )
   }
 
+  if (path === '/fraud') {
+    return (
+      <RepGuard>
+        <FraudPanelPage />
+      </RepGuard>
+    )
+  }
+
   if (path === '/admin/users') {
     return (
       <AdminGuard>
         <AdminUsersPage />
+      </AdminGuard>
+    )
+  }
+
+  if (path === '/admin/fraud') {
+    return (
+      <AdminGuard>
+        <AdminFraudPage />
       </AdminGuard>
     )
   }

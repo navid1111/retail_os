@@ -9,6 +9,7 @@ import { imageRouter, visitImageRouter } from "./routes/image.routes";
 import { storeRouter } from "./routes/store.routes";
 import { dashboardRouter } from "./routes/dashboard.routes";
 import { adminRouter } from "./routes/admin.routes";
+import { fraudRouter } from "./routes/fraud.routes";
 import { upload } from "../middleware/upload";
 
 const router = Router();
@@ -19,6 +20,7 @@ router.use("/visits", requireAuth, requireRole("rep"), visitImageRouter);
 router.use("/images", requireAuth, requireRole("rep"), imageRouter);
 router.use("/stores", requireAuth, requireRole("rep"), storeRouter);
 router.use("/dashboard", requireAuth, requireRole("rep"), dashboardRouter);
+router.use("/fraud", requireAuth, requireRole("rep"), fraudRouter);
 router.use("/admin", requireAuth, requireRole("admin"), adminRouter);
 
 router.get("/test", async (req: Request, res: Response): Promise<void> => {

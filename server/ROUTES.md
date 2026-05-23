@@ -483,3 +483,54 @@ Retrieve visits that have compliance scores within a given date range.
   ```json
   { "error": "Failed to fetch dashboard chart" }
   ```
+
+---
+
+## Fraud Review
+
+### GET /api/fraud/visits
+
+List fraud-flagged visits for the authenticated rep.
+
+- Auth: required, role `rep`
+- Query Parameters:
+  - `resolution`: (Optional) `pending`, `confirmed`, or `dismissed`.
+  - `limit`: (Optional) Number from 1 to 100. Defaults to 50.
+
+### GET /api/fraud/visits/:visitId
+
+Get one fraud-flagged visit for the authenticated rep, including store, images, fraud reasons, confidence, resolution, and details.
+
+- Auth: required, role `rep`
+
+### GET /api/admin/fraud/visits
+
+List fraud-flagged visits across reps for admin review.
+
+- Auth: required, role `admin`
+- Query Parameters:
+  - `resolution`: (Optional) `pending`, `confirmed`, or `dismissed`.
+  - `repId`: (Optional) Rep user id.
+  - `limit`: (Optional) Number from 1 to 100. Defaults to 50.
+
+### GET /api/admin/fraud/visits/:visitId
+
+Get one fraud-flagged visit for admin review.
+
+- Auth: required, role `admin`
+
+### PATCH /api/admin/fraud/visits/:visitId/resolution
+
+Confirm or dismiss all fraud flags on a visit.
+
+- Auth: required, role `admin`
+- Request:
+  ```json
+  {
+    "resolution": "confirmed",
+    "notes": "GPS mismatch verified by supervisor"
+  }
+  ```
+- Notes:
+  - `confirmed` keeps the visit flagged as fraud.
+  - `dismissed` resolves the visit as not fraud and marks it completed.

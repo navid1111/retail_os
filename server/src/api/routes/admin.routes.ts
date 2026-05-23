@@ -4,8 +4,11 @@ import { ZodError } from "zod";
 import { askAdminDatabaseAssistant } from "../../services/adminChat.service";
 import { createAdminUser, listAdminUsers } from "../../services/adminUser.service";
 import { adminChatBodySchema, createAdminUserBodySchema } from "../validators/admin.validators";
+import { adminFraudRouter } from "./fraud.routes";
 
 export const adminRouter = Router();
+
+adminRouter.use("/fraud", adminFraudRouter);
 
 export const postAdminChatHandler = async (
   req: Request,
