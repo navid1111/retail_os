@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Shelf Analysis Report: Dhaka Outlet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "on-secondary-container": "#626262",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e2e2e2",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-container": "#83838c",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "outline-variant": "#cfc4c5",
+                        "on-tertiary-fixed-variant": "#45464e",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "outline": "#7e7576",
+                        "on-tertiary-fixed": "#1a1b22",
+                        "on-surface": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6cf",
+                        "tertiary-container": "#1a1b22",
+                        "tertiary-fixed": "#e2e1eb",
+                        "on-primary-container": "#848484",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "inverse-primary": "#c6c6c6",
+                        "surface-container-high": "#e8e8e8",
+                        "on-primary-fixed": "#1b1b1b",
+                        "surface-tint": "#5e5e5e",
+                        "primary-fixed": "#e2e2e2",
+                        "background": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "surface-dim": "#dadada",
+                        "secondary-container": "#e1dfdf",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "inverse-on-surface": "#f1f1f1",
+                        "primary": "#000000",
+                        "secondary-fixed": "#e4e2e2",
+                        "surface-container": "#eeeeee",
+                        "secondary-fixed-dim": "#c7c6c6",
+                        "secondary": "#5e5e5e",
+                        "on-secondary-fixed-variant": "#464747",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9f9",
+                        "primary-container": "#1b1b1b",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#4c4546",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "margin": "32px",
+                        "gutter": "24px",
+                        "lg": "48px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "xl": "80px",
+                        "container-padding-desktop": "32px",
+                        "container-padding-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Geist"],
+                        "label-sm": ["Geist"],
+                        "display-lg-mobile": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "mono-code": ["JetBrains Mono", "monospace"],
+                        "headline-md": ["Geist"],
+                        "headline-sm": ["Geist"],
+                        "body-md": ["Geist"],
+                        "label-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["13px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "mono-code": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-sm": ["18px", {"lineHeight": "1.4", "letterSpacing": "0", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .ai-overlay-box {
+            position: absolute;
+            border: 2px solid #000000;
+            background: rgba(0, 0, 0, 0.1);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md selection:bg-surface-variant">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-surface-container-lowest border-b border-outline-variant px-container-padding-mobile md:px-container-padding-desktop py-4">
+<div class="max-w-[1600px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low rounded transition-colors group">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Back to Visit</span>
+</button>
+<div class="h-6 w-px bg-outline-variant hidden md:block"></div>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-primary">Shelf Analysis Report: Dhaka Outlet</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Visit #VIS-221 • Submitted: 21 May 2026 • 11:15 AM</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-primary text-on-primary rounded-full text-label-md font-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Analysis Completed
+            </span>
+</div>
+</div>
+</header>
+<main class="max-w-[1600px] mx-auto p-container-padding-mobile md:p-container-padding-desktop pb-24 space-y-gutter">
+<!-- Top Section: Meta Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="p-4 border border-outline-variant bg-surface-container-lowest flex items-center justify-between">
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md uppercase tracking-widest">Analysis Status</p>
+<p class="font-headline-sm text-headline-sm text-primary">Completed</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[32px]" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+</div>
+<div class="p-4 border border-outline-variant bg-surface-container-lowest flex items-center justify-between">
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md uppercase tracking-widest">Provider</p>
+<p class="font-headline-sm text-headline-sm text-primary">Claude Sonnet</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[32px]">neurology</span>
+</div>
+<div class="p-4 border border-outline-variant bg-surface-container-lowest flex items-center justify-between">
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md uppercase tracking-widest">Processing Time</p>
+<p class="font-headline-sm text-headline-sm text-primary">2.3s</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[32px]">speed</span>
+</div>
+</div>
+<!-- Main Content Area: Two Columns -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column (Wide) -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- Shelf Image Section -->
+<section class="border border-outline-variant bg-surface-container-lowest overflow-hidden">
+<div class="px-4 py-3 border-b border-outline-variant flex items-center justify-between bg-surface-bright">
+<h2 class="font-label-md text-label-md uppercase font-bold tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span> Shelf Image Analysis
+                    </h2>
+<div class="flex gap-2">
+<button class="p-1 hover:bg-surface-container rounded transition-colors"><span class="material-symbols-outlined">zoom_in</span></button>
+<button class="p-1 hover:bg-surface-container rounded transition-colors"><span class="material-symbols-outlined">layers</span></button>
+</div>
+</div>
+<div class="relative group cursor-crosshair">
+<img alt="Retail shelf with soda bottles" class="w-full h-[500px] object-cover grayscale" data-alt="A high-resolution photograph of a retail refrigerator shelf packed with various soft drink bottles. The scene is captured in a crisp, modern retail environment with bright, cool-toned overhead lighting. Multiple colored bounding boxes from an AI detection system overlay the image, highlighting specific products. The aesthetic is clean and industrial, using high contrast and sharp focus to emphasize product placement and inventory visibility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhKpAc8QSiFqAiwSjAyVO0NObrwI-RcAuwSlihyS9XEJIpr4Vdk3Lw4QoMwjqkDh-eUrDYK-lq6QhwbVEOCEIL2KVCGPSC6x1EV8I_w9PHPUAaroNMVR_qOEFnuKZkmWafLO9VWXsXoi3YW7Exdj_WV5Q6S5vcC7yZ7H1TDzkPB6hlcefG18-mphz4GWJtL90i_lyQCz-miM56ypB4SaiKc8sW7lKKbDKq0OQSRsfJnzOJyo6Oagohzou161O2lYDJ2YKmltmGt1ec"/>
+<!-- AI Bounding Boxes -->
+<div class="ai-overlay-box top-[10%] left-[5%] w-[12%] h-[35%] border-primary bg-primary/10">
+<span class="absolute -top-6 left-0 bg-primary text-on-primary text-[10px] px-1 font-bold">COKE_500ML 94%</span>
+</div>
+<div class="ai-overlay-box top-[10%] left-[18%] w-[12%] h-[35%] border-primary bg-primary/10">
+<span class="absolute -top-6 left-0 bg-primary text-on-primary text-[10px] px-1 font-bold">COKE_500ML 92%</span>
+</div>
+<div class="ai-overlay-box top-[45%] left-[40%] w-[15%] h-[40%] border-error bg-error/10">
+<span class="absolute -top-6 left-0 bg-error text-white text-[10px] px-1 font-bold">COMPETITOR_PEPSI</span>
+</div>
+<div class="ai-overlay-box top-[10%] left-[65%] w-[12%] h-[35%] border-secondary bg-secondary/10">
+<span class="absolute -top-6 left-0 bg-secondary text-white text-[10px] px-1 font-bold">SPRITE_1L 88%</span>
+</div>
+</div>
+</section>
+<!-- AI Summary Card -->
+<section class="p-6 border-l-8 border-primary bg-primary-container text-on-primary">
+<h2 class="font-label-md text-label-md uppercase mb-4 text-on-primary-container tracking-widest font-bold">AI Executive Summary</h2>
+<p class="font-headline-sm text-headline-sm leading-relaxed text-on-primary">
+                    "Store shelf is <span class="text-white font-bold underline decoration-secondary decoration-2 underline-offset-4">mostly compliant</span>. Two required SKUs are missing. Competitor products occupy one section of visible shelf space."
+                </p>
+</section>
+</div>
+<!-- Right Column (Narrow) -->
+<div class="lg:col-span-4 space-y-gutter">
+<!-- Compliance Score -->
+<section class="p-6 border border-outline-variant bg-surface-container-lowest text-center">
+<h2 class="font-label-md text-label-md uppercase mb-6 tracking-widest font-bold text-on-surface-variant">Compliance Score</h2>
+<div class="relative w-40 h-40 mx-auto mb-4">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-high" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-green-600 transition-all duration-1000" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="79.2" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-lg text-headline-lg text-primary">82<span class="text-body-sm font-normal text-on-surface-variant">/100</span></span>
+<span class="text-label-md font-label-md text-green-600 uppercase font-bold">Good</span>
+</div>
+</div>
+<p class="text-body-sm text-on-surface-variant">Overall shelf alignment to planogram</p>
+</section>
+<!-- Issues Found -->
+<section class="p-6 border border-outline-variant bg-surface-container-lowest">
+<h2 class="font-label-md text-label-md uppercase mb-4 tracking-widest font-bold text-on-surface-variant">Issues Found</h2>
+<div class="space-y-3">
+<div class="flex items-start gap-3 p-3 bg-surface-container border-l-4 border-primary rounded">
+<span class="material-symbols-outlined text-primary mt-0.5">warning</span>
+<div>
+<p class="font-label-md text-label-md font-bold text-primary">Competitor shelf dominance</p>
+<p class="text-body-sm text-on-surface-variant">Pepsi occupies 15% share of shelf</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-error-container/20 border-l-4 border-error rounded">
+<span class="material-symbols-outlined text-error mt-0.5">error</span>
+<div>
+<p class="font-label-md text-label-md font-bold text-error">Missing mandatory SKUs</p>
+<p class="text-body-sm text-on-surface-variant">Diet Coke, Coke Vanilla absent</p>
+</div>
+</div>
+</div>
+</section>
+<!-- POSM Status -->
+<section class="p-6 border border-outline-variant bg-surface-container-lowest">
+<h2 class="font-label-md text-label-md uppercase mb-4 tracking-widest font-bold text-on-surface-variant">POSM Status</h2>
+<div class="flex items-center gap-4 p-4 border border-green-600/30 bg-green-50">
+<div class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white">
+<span class="material-symbols-outlined">check</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold text-green-800 uppercase">Present</p>
+<p class="text-body-sm text-green-700">Promotional material visible</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Detailed Breakdown -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Detected Products -->
+<section class="lg:col-span-1 border border-outline-variant bg-surface-container-lowest h-full">
+<div class="px-4 py-3 border-b border-outline-variant flex items-center justify-between bg-surface-bright">
+<h2 class="font-label-md text-label-md uppercase font-bold tracking-widest">Detected Products</h2>
+<span class="text-label-md text-on-surface-variant font-mono">04 FOUND</span>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-low group transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-mono-code text-[11px]">01</div>
+<span class="font-label-md text-label-md text-primary">Coca Cola 500ml</span>
+</div>
+<span class="font-mono-code text-body-sm font-bold text-green-600">94% CONF.</span>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-mono-code text-[11px]">02</div>
+<span class="font-label-md text-label-md text-primary">Sprite 1L</span>
+</div>
+<span class="font-mono-code text-body-sm font-bold text-green-600">88% CONF.</span>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-mono-code text-[11px]">03</div>
+<span class="font-label-md text-label-md text-primary">Fanta Orange</span>
+</div>
+<span class="font-mono-code text-body-sm font-bold text-green-600">91% CONF.</span>
+</div>
+<div class="p-4 flex items-center justify-between hover:bg-surface-container-low">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-mono-code text-[11px]">04</div>
+<span class="font-label-md text-label-md text-primary">Coca Cola Zero</span>
+</div>
+<span class="font-mono-code text-body-sm font-bold text-green-600">82% CONF.</span>
+</div>
+</div>
+</section>
+<!-- Missing Required SKUs -->
+<section class="lg:col-span-1 border border-outline-variant bg-surface-container-lowest h-full">
+<div class="px-4 py-3 border-b border-outline-variant flex items-center justify-between bg-surface-bright">
+<h2 class="font-label-md text-label-md uppercase font-bold tracking-widest">Missing SKUs</h2>
+<span class="text-label-md text-error font-bold">CRITICAL</span>
+</div>
+<div class="p-4 space-y-3">
+<div class="p-4 border border-error bg-error/5 flex items-center gap-4">
+<div class="p-2 rounded-full bg-error text-white">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold text-primary uppercase">Diet Coke</p>
+<p class="text-body-sm text-on-surface-variant">Mandatory Core SKU</p>
+</div>
+</div>
+<div class="p-4 border border-error bg-error/5 flex items-center gap-4">
+<div class="p-2 rounded-full bg-error text-white">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold text-primary uppercase">Coke Vanilla</p>
+<p class="text-body-sm text-on-surface-variant">Seasonal Campaign SKU</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Competitor Presence -->
+<section class="lg:col-span-1 border border-outline-variant bg-surface-container-lowest h-full">
+<div class="px-4 py-3 border-b border-outline-variant bg-surface-bright">
+<h2 class="font-label-md text-label-md uppercase font-bold tracking-widest">Competitor Presence</h2>
+</div>
+<div class="p-6 space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-label-md text-label-md text-primary uppercase font-bold">Pepsi</span>
+<span class="font-mono-code text-body-sm text-on-surface-variant">3 FACINGS</span>
+</div>
+<div class="h-4 w-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-label-md text-label-md text-primary uppercase font-bold">7Up</span>
+<span class="font-mono-code text-body-sm text-on-surface-variant">2 FACINGS</span>
+</div>
+<div class="h-4 w-full bg-surface-container overflow-hidden">
+<div class="h-full bg-secondary w-1/2"></div>
+</div>
+</div>
+<div class="p-4 bg-surface-container rounded border border-outline-variant">
+<p class="text-body-sm text-on-surface-variant italic leading-relaxed">
+                        "Competitor shelf share has increased by 5% compared to the previous visit on May 14th."
+                    </p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant py-3 px-container-padding-desktop z-40">
+<div class="max-w-[1600px] mx-auto flex justify-between items-center text-on-surface-variant">
+<span class="text-label-md font-label-md uppercase tracking-widest font-bold">RetailOS Intelligence</span>
+<span class="font-mono-code text-body-sm uppercase">Claude-3-Sonnet • 2310ms processing</span>
+</div>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const boxes = document.querySelectorAll('.ai-overlay-box');
+        boxes.forEach(box => {
+            box.style.opacity = '0';
+            box.style.transform = 'scale(0.95)';
+            box.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        });
+
+        setTimeout(() => {
+            boxes.forEach((box, index) => {
+                setTimeout(() => {
+                    box.style.opacity = '1';
+                    box.style.transform = 'scale(1)';
+                }, index * 100);
+            });
+        }, 500);
+    });
+</script>
+</body></html>

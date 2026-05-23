@@ -3,6 +3,7 @@ import { getDB } from "../db/mongo";
 import { CloudinaryService, CloudinaryUploadResponse } from "../cloudinary/service";
 import { addJobToQueue } from "../queues/queues";
 import { auditLog } from "./audit.service";
+import { analyzeImageFraud } from "./fraud.service";
 
 export type VisitStatus = "pending" | "processing" | "completed" | "flagged";
 
@@ -10,6 +11,7 @@ export interface VisitImageRecord {
   _id: ObjectId;
   visitId: ObjectId;
   imageUrl: string;
+  publicId?: string;
   imageHash?: string;
   exifTakenAt?: Date;
   fileSizeKb?: number;
@@ -27,6 +29,13 @@ export interface UploadVisitImageInput {
   filePath?: string;
   sourceUrl?: string;
   publicId?: string;
+}
+
+export interface ListImagesByRepInput {
+  repId: string;
+  isRejected?: boolean;
+  rejectionReason?: "blurry" | "duplicate" | "exif_old";
+  limit?: number;
 }
 
 const toObjectId = (value: string, fieldName: string): ObjectId => {
@@ -56,9 +65,14 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
   const visitId = toObjectId(input.visitId, "visitId");
   const repId = toObjectId(input.repId, "repId");
 
-  const visitsCollection = db.collection<{ _id: ObjectId; repId: ObjectId; storeId?: ObjectId; status?: VisitStatus; deletedAt?: Date | null; images?: ObjectId[] }>(
-    "visits"
-  );
+  const visitsCollection = db.collection<{
+    _id: ObjectId;
+    repId: ObjectId;
+    storeId?: ObjectId;
+    status?: VisitStatus;
+    deletedAt?: Date | null;
+    images?: ObjectId[];
+  }>("visits");
   const visit = await visitsCollection.findOne({ _id: visitId, repId, deletedAt: null });
 
   if (!visit) {
@@ -73,21 +87,27 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
     throw new Error("Image source is required");
   }
 
-  const cloudinaryOptions = input.publicId ? { public_id: input.publicId } : undefined;
-  const upload = input.filePath
-    ? await CloudinaryService.uploadImage(input.filePath, cloudinaryOptions)
-    : await CloudinaryService.uploadFromUrl(input.sourceUrl as string, cloudinaryOptions);
+  let permanentFilePath: string | undefined;
+  if (input.filePath) {
+    const fs = await import("fs/promises");
+    const os = await import("os");
+    permanentFilePath = `${os.tmpdir()}/visit_img_${Date.now()}_${Math.random().toString(36).slice(2)}.tmp`;
+    await fs.copyFile(input.filePath, permanentFilePath);
+    try {
+      await fs.unlink(input.filePath);
+    } catch {
+      // Multer temp cleanup is best-effort; the worker uses the copied file.
+    }
+  }
 
-  const now = new Date();
+  const generatedPublicId = input.publicId || `visit_${visitId}_${Date.now()}`;
   const image: VisitImageRecord = {
     _id: new ObjectId(),
     visitId,
-    imageUrl: resolveImageUrl(upload),
-    fileSizeKb: resolveFileSizeKb(upload.bytes),
-    widthPx: upload.width,
-    heightPx: upload.height,
+    imageUrl: "",
+    publicId: generatedPublicId,
     isRejected: false,
-    uploadedAt: now,
+    uploadedAt: new Date(),
   };
 
   const imagesCollection = db.collection<VisitImageRecord>("visit_images");
@@ -106,7 +126,9 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
       imageId: image._id.toHexString(),
       visitId: visitId.toHexString(),
       storeId: visit.storeId?.toHexString?.() ?? visit.storeId?.toString?.(),
-      imageUrl: image.imageUrl,
+      filePath: permanentFilePath,
+      sourceUrl: input.sourceUrl,
+      publicId: generatedPublicId,
     },
     undefined
   );
@@ -118,9 +140,167 @@ export const uploadVisitImage = async (input: UploadVisitImageInput): Promise<Vi
     entityId: image._id.toHexString(),
     meta: {
       visitId: visitId.toHexString(),
-      cloudinaryPublicId: upload.public_id,
+      cloudinaryPublicId: generatedPublicId,
     },
   });
 
   return image;
+};
+
+export const processVisitImageJob = async (jobData: any): Promise<void> => {
+  const { imageId, visitId, filePath, sourceUrl, publicId } = jobData;
+  const db = getDB();
+  const imageIdObj = new ObjectId(imageId);
+  const visitIdObj = new ObjectId(visitId);
+
+  try {
+    const cloudinaryOptions = publicId ? { public_id: publicId } : undefined;
+    const upload = filePath
+      ? await CloudinaryService.uploadImage(filePath, cloudinaryOptions)
+      : await CloudinaryService.uploadFromUrl(sourceUrl, cloudinaryOptions);
+
+    const imageUrl = resolveImageUrl(upload);
+    const fileSizeKb = resolveFileSizeKb(upload.bytes);
+    const widthPx = upload.width;
+    const heightPx = upload.height;
+
+    let imageInput: Buffer | string = filePath;
+    if (!filePath && sourceUrl) {
+      const response = await fetch(sourceUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      imageInput = Buffer.from(arrayBuffer);
+    }
+
+    const fraudResult = await analyzeImageFraud(db, imageIdObj, visitIdObj, imageInput);
+
+    await db.collection<VisitImageRecord>("visit_images").updateOne(
+      { _id: imageIdObj },
+      {
+        $set: {
+          imageUrl,
+          fileSizeKb,
+          widthPx,
+          heightPx,
+          blurScore: fraudResult.blurScore,
+          imageHash: fraudResult.imageHash,
+          isRejected: fraudResult.isRejected,
+          ...(fraudResult.rejectionReason
+            ? { rejectionReason: fraudResult.rejectionReason }
+            : {}),
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Failed to process image job", error);
+    throw error;
+  } finally {
+    if (filePath) {
+      const fs = await import("fs/promises");
+      await fs.unlink(filePath).catch(() => {});
+    }
+  }
+};
+
+export const listImagesByRep = async (
+  input: ListImagesByRepInput
+): Promise<unknown[]> => {
+  const db = getDB();
+  const repId = toObjectId(input.repId, "repId");
+
+  const imageMatch: Record<string, unknown> = {};
+
+  if (input.isRejected !== undefined) {
+    imageMatch.isRejected = input.isRejected;
+  }
+
+  if (input.rejectionReason) {
+    imageMatch.rejectionReason = input.rejectionReason;
+  }
+
+  return db
+    .collection<VisitImageRecord>("visit_images")
+    .aggregate([
+      ...(Object.keys(imageMatch).length > 0 ? [{ $match: imageMatch }] : []),
+      {
+        $lookup: {
+          from: "visits",
+          localField: "visitId",
+          foreignField: "_id",
+          as: "visit",
+        },
+      },
+      {
+        $unwind: "$visit",
+      },
+      {
+        $match: {
+          "visit.repId": repId,
+          "visit.deletedAt": null,
+        },
+      },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "visit.storeId",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      {
+        $unwind: {
+          path: "$store",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "fraud_flags",
+          localField: "_id",
+          foreignField: "imageId",
+          as: "fraudFlags",
+        },
+      },
+      {
+        $addFields: {
+          hasFraudFlag: { $gt: [{ $size: "$fraudFlags" }, 0] },
+        },
+      },
+      { $sort: { uploadedAt: -1 } },
+      { $limit: input.limit ?? 50 },
+      {
+        $project: {
+          _id: 1,
+          visitId: 1,
+          imageUrl: 1,
+          publicId: 1,
+          imageHash: 1,
+          exifTakenAt: 1,
+          fileSizeKb: 1,
+          widthPx: 1,
+          heightPx: 1,
+          blurScore: 1,
+          isRejected: 1,
+          rejectionReason: 1,
+          uploadedAt: 1,
+          hasFraudFlag: 1,
+          fraudFlags: 1,
+          visit: {
+            _id: "$visit._id",
+            repId: "$visit.repId",
+            storeId: "$visit.storeId",
+            status: "$visit.status",
+            checkInTime: "$visit.checkInTime",
+            checkOutTime: "$visit.checkOutTime",
+          },
+          store: {
+            _id: "$store._id",
+            storeCode: "$store.storeCode",
+            storeName: "$store.storeName",
+            address: "$store.address",
+            region: "$store.region",
+          },
+        },
+      },
+    ])
+    .toArray();
 };

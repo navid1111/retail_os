@@ -1,0 +1,22 @@
+info:
+  name: Upload Image URL
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:5000/api/upload/url
+  body:
+    type: json
+    data: |-
+       {
+          "url": "https://example.com/image.jpg",
+          "publicId": "optional-public-id"
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

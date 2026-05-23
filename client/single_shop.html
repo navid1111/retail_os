@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RetailOS - Store Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "surface-dim": "#dadada",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container": "#eeeeee",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-surface": "#1a1c1c",
+                        "on-surface-variant": "#4c4546",
+                        "outline": "#7e7576",
+                        "outline-variant": "#cfc4c5",
+                        "primary": "#000000",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#1b1b1b",
+                        "on-primary-container": "#848484",
+                        "secondary": "#5e5e5e",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#e1dfdf",
+                        "on-secondary-container": "#626262",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding-desktop": "32px",
+                        "base": "8px",
+                        "touch-target-min": "44px",
+                        "container-padding-mobile": "16px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-md": ["Geist"],
+                        "data-mono": ["Geist"],
+                        "label-md": ["Geist"],
+                        "headline-sm": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "data-mono": ["14px", { "lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.4", "letterSpacing": "0", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400" }],
+                        "body-sm": ["13px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .bento-card {
+            background-color: #ffffff;
+            border: 1px solid #cfc4c5;
+            border-radius: 0.125rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .bento-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: #7e7576;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md m-0 p-0 flex min-h-screen">
+<!-- SideNavBar: Using Monochrome Precision Style -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-[240px] bg-primary-container p-base border-r border-outline-variant z-10 transition-all duration-200 ease-in-out">
+<div class="flex items-center gap-3 px-3 py-4 mb-6">
+<div class="w-8 h-8 rounded bg-white text-primary-container flex items-center justify-center font-headline-sm font-bold">R</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-black text-white leading-tight">RetailOS</h1>
+<p class="font-label-md text-label-md text-on-primary-container mt-0.5 tracking-widest uppercase">Field Execution</p>
+</div>
+</div>
+<div class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container hover:bg-white/5 hover:text-white rounded font-label-md text-label-md transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+            DASHBOARD
+        </a>
+<a class="flex items-center gap-3 px-3 py-2.5 bg-white/10 text-white border-l-4 border-white rounded-r font-label-md text-label-md transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">storefront</span>
+            STORE LIST
+        </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container hover:bg-white/5 hover:text-white rounded font-label-md text-label-md transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined text-[20px]">dynamic_feed</span>
+            VISIT FEED
+        </a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-primary-container hover:bg-white/5 hover:text-white rounded font-label-md text-label-md transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined text-[20px]">photo_library</span>
+            IMAGE HISTORY
+        </a>
+</div>
+<div class="mt-auto mb-6 px-3">
+<button class="w-full bg-white text-primary-container py-2 rounded font-label-md text-label-md hover:bg-surface-dim transition-colors flex justify-center items-center gap-2 font-bold uppercase tracking-widest">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            New Visit
+        </button>
+</div>
+<div class="flex flex-col gap-1 border-t border-on-primary-fixed-variant pt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-on-primary-container hover:text-white transition-all font-label-md text-label-md uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[20px]">contact_support</span>
+            Support
+        </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-primary-container hover:text-white transition-all font-label-md text-label-md uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+            Settings
+        </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-0 md:ml-[240px] flex-1 flex flex-col min-h-screen w-full bg-surface">
+<!-- TopNavBar Component -->
+<header class="bg-surface border-b border-outline-variant sticky top-0 w-full z-40 flex justify-between items-center h-16 px-6">
+<div class="flex items-center gap-4">
+<div class="font-body-md text-on-surface-variant flex items-center">
+<span class="uppercase font-label-sm tracking-widest">RetailOS</span>
+<span class="material-symbols-outlined text-sm mx-2">chevron_right</span>
+<span class="text-primary font-bold">Dashboard</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-outline">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</span>
+<input class="block w-64 pl-9 pr-3 py-1.5 bg-surface-container-low border border-outline-variant rounded-none text-sm placeholder-outline focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Search..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<div class="text-xs font-bold text-primary">Navid R.</div>
+<div class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Field Representative</div>
+</div>
+<div class="w-8 h-8 rounded-full border border-outline-variant overflow-hidden">
+<img alt="User profile avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQMRFNmsFGYT32T4K8z3r_nKH3UrYo3S2VcQZPFO3TIeY_n5_PwlSGL1RaIz692FL9Jf7e2mUSWWL2xhyAHa3L_5dc3yNN6w7pAeR0bjAmwrwDpi1b7tfGc1Vfk1rjOkxR_X7eK8YZ12lNLeNA6abn7kzmI3f1fllE0xq-kU1CXN8ocD_2nwfibawaM9L95GROdp5DFcGCceZqkwc2S2BNNh8x-nvb5tAhvlhqCxkNk8-U_x_R8eXs-7s_c73i-arnIEemsmAalb00"/>
+</div>
+</div>
+</div>
+</header>
+<div class="p-container-padding-desktop flex-1 overflow-y-auto">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-2 text-on-surface-variant mb-8">
+<a class="font-label-sm text-xs uppercase tracking-widest hover:text-primary transition-colors" href="#">Assigned Stores</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="font-label-sm text-xs uppercase tracking-widest text-primary font-bold">Dhaka Outlet</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1400px]">
+<!-- Left Column (Main Content) -->
+<div class="lg:col-span-8 flex flex-col gap-8">
+<!-- Header & Info -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-4 flex-wrap">
+<h2 class="font-headline-lg text-headline-lg text-primary font-black uppercase tracking-tighter">
+                            Dhaka Outlet 
+                        </h2>
+<span class="font-data-mono text-xs bg-primary text-white px-3 py-1 rounded-none border border-primary align-middle">#DHK-001</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                        123 Main St, Gulshan, Dhaka
+                    </div>
+</div>
+<!-- GPS Status Card -->
+<div class="bento-card overflow-hidden flex flex-col md:flex-row h-auto md:h-64">
+<div class="p-8 flex-1 flex flex-col justify-center border-b md:border-b-0 md:border-r border-outline-variant">
+<h3 class="font-label-md text-label-md text-outline uppercase tracking-widest mb-6">Distance from store</h3>
+<div class="flex items-center gap-3 mb-3">
+<div class="h-4 w-4 rounded-none bg-primary shadow-[0_0_10px_rgba(0,0,0,0.2)]"></div>
+<span class="font-headline-md text-headline-md text-primary font-bold">YOU ARE <span class="font-data-mono">120M</span> AWAY</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Radius allowed: <span class="font-data-mono font-bold">300m</span></p>
+</div>
+<div class="md:w-[45%] bg-surface-container relative overflow-hidden">
+<img alt="Map" class="w-full h-full object-cover opacity-50 grayscale contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDik1aT8p9hjnJSRalEoaPuv8TemT6uSGfxaX4P6PO2oq_hbAhgAE0AIX5NaLejcFSy-ioSqRjoHiI0GoxnUv2kCKCZs7KR4lM2Z2lonnMOCb8i5QmQM7k8ubumZBAYGORmgjiP0iUNdqqUE_nTLWIX6yytPMRxIzLpowv6h4-HlgCKqejuG6MZesAVBY0f5YY5QMrJP7dJLbRjz_R6c9i_Dabc8zhehJa1Tv4W-m3Xus-f24mj3EoIRWcx-H9fgJK7s7DDQJarQru4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-white/30 to-transparent"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+<div class="absolute w-24 h-24 rounded-full border-2 border-primary/20 animate-pulse"></div>
+<span class="material-symbols-outlined text-primary text-[32px] drop-shadow-lg" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+</div>
+<!-- Expected SKUs Section -->
+<div class="bento-card p-8">
+<div class="flex justify-between items-center mb-8 border-b border-outline-variant pb-4">
+<h3 class="font-label-md text-label-md text-primary font-black uppercase tracking-widest flex items-center gap-3">
+                            Target Products
+                            <span class="bg-surface-container-highest text-primary px-3 py-1 text-[10px] font-bold">12 REQUIRED</span>
+</h3>
+<button class="font-label-md text-label-md text-primary font-bold hover:underline transition-all uppercase tracking-widest">View All</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- SKU Items -->
+<div class="flex items-center gap-4 p-4 border border-outline-variant hover:border-primary transition-all group cursor-pointer">
+<div class="h-12 w-12 bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">local_drink</span>
+</div>
+<div class="flex-1">
+<div class="font-body-md font-bold text-primary uppercase">Coca Cola 500ml</div>
+<div class="font-data-mono text-[11px] text-on-surface-variant font-medium">CC-500-01</div>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 border border-outline-variant hover:border-primary transition-all group cursor-pointer">
+<div class="h-12 w-12 bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">local_drink</span>
+</div>
+<div class="flex-1">
+<div class="font-body-md font-bold text-primary uppercase">Sprite 1L</div>
+<div class="font-data-mono text-[11px] text-on-surface-variant font-medium">SP-100-02</div>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 border border-outline-variant hover:border-primary transition-all group cursor-pointer">
+<div class="h-12 w-12 bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">local_drink</span>
+</div>
+<div class="flex-1">
+<div class="font-body-md font-bold text-primary uppercase">Fanta Orange</div>
+<div class="font-data-mono text-[11px] text-on-surface-variant font-medium">FA-330-03</div>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 border border-outline-variant hover:border-primary transition-all group cursor-pointer">
+<div class="h-12 w-12 bg-surface-container flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[24px]">local_drink</span>
+</div>
+<div class="flex-1">
+<div class="font-body-md font-bold text-primary uppercase">Diet Coke</div>
+<div class="font-data-mono text-[11px] text-on-surface-variant font-medium">DC-500-04</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (Action Panel) -->
+<div class="lg:col-span-4 flex flex-col gap-8">
+<div class="bento-card p-8 sticky top-24 shadow-lg border-t-4 border-t-primary">
+<h3 class="font-headline-sm text-headline-sm text-primary font-black uppercase tracking-tighter mb-8">Visit Check-In</h3>
+<div class="bg-surface-container-low p-6 mb-8 border border-outline-variant">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-outline uppercase tracking-widest">Last Visit</span>
+<span class="font-data-mono text-sm text-primary font-bold">MAY 20, 2026</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-outline uppercase tracking-widest">Compliance</span>
+<span class="font-data-mono text-sm text-primary font-black bg-white px-2 py-0.5 border border-primary">82%</span>
+</div>
+</div>
+<div class="mb-8">
+<label class="block font-label-md text-label-md text-primary font-bold uppercase tracking-widest mb-3" for="visit-notes">Optional Notes</label>
+<textarea class="w-full bg-white border border-outline-variant rounded-none p-4 text-body-sm focus:outline-none focus:border-primary focus:ring-0 transition-colors resize-none placeholder:text-outline/50" id="visit-notes" placeholder="Arrived on time..." rows="4"></textarea>
+</div>
+<button class="w-full bg-primary text-white font-label-md text-label-md py-4 rounded-none hover:bg-black transition-all duration-200 flex items-center justify-center gap-3 uppercase font-black tracking-[0.2em]">
+<span class="material-symbols-outlined text-[20px]">login</span>
+                        Check In
+                    </button>
+<p class="mt-6 text-center text-[10px] text-on-surface-variant font-medium uppercase tracking-widest">
+                        Data will be synced upon check-in.
+                    </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

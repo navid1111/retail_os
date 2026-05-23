@@ -1,0 +1,18 @@
+info:
+  name: image_fraude
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:5000/api/images/public/:publicId/fraud
+  params:
+    - name: publicId
+      value: ""
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

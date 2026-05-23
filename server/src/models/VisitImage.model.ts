@@ -5,6 +5,7 @@ export type RejectionReason = "blurry" | "duplicate" | "exif_old";
 export interface IVisitImage {
   visitId: Types.ObjectId;
   imageUrl: string;
+  publicId?: string;
   imageHash?: string;
   exifTakenAt?: Date;
   fileSizeKb?: number;
@@ -22,6 +23,7 @@ const VisitImageSchema = new Schema<IVisitImageDocument>(
   {
     visitId: { type: Schema.Types.ObjectId, ref: "Visit", required: true },
     imageUrl: { type: String, required: true },
+    publicId: { type: String, index: true },
     imageHash: { type: String },
     exifTakenAt: { type: Date },
     fileSizeKb: { type: Number },

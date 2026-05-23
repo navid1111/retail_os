@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RetailOS Admin - User Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Geist', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .mono-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom scrollbar for high-density tables */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed": "#e2e2e2",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "inverse-on-surface": "#f1f1f1",
+                      "secondary": "#5e5e5e",
+                      "primary-fixed-dim": "#c6c6c6",
+                      "tertiary-fixed-dim": "#c6c6cf",
+                      "surface-container": "#eeeeee",
+                      "outline": "#7e7576",
+                      "on-tertiary-fixed-variant": "#45464e",
+                      "on-background": "#1a1c1c",
+                      "primary-container": "#1b1b1b",
+                      "tertiary-container": "#1a1b22",
+                      "on-secondary-container": "#626262",
+                      "on-primary-fixed-variant": "#474747",
+                      "surface-tint": "#5e5e5e",
+                      "on-tertiary-fixed": "#1a1b22",
+                      "on-surface": "#1a1c1c",
+                      "on-error": "#ffffff",
+                      "surface-variant": "#e2e2e2",
+                      "surface-dim": "#dadada",
+                      "error": "#ba1a1a",
+                      "tertiary": "#000000",
+                      "on-primary-container": "#848484",
+                      "on-secondary": "#ffffff",
+                      "surface-container-low": "#f3f3f3",
+                      "tertiary-fixed": "#e2e1eb",
+                      "surface": "#f9f9f9",
+                      "surface-container-highest": "#e2e2e2",
+                      "surface-bright": "#f9f9f9",
+                      "secondary-fixed": "#e4e2e2",
+                      "background": "#f9f9f9",
+                      "secondary-container": "#e1dfdf",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed": "#1b1b1b",
+                      "on-surface-variant": "#4c4546",
+                      "on-secondary-fixed-variant": "#464747",
+                      "inverse-surface": "#2f3131",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-high": "#e8e8e8",
+                      "outline-variant": "#cfc4c5",
+                      "secondary-fixed-dim": "#c7c6c6",
+                      "primary": "#000000",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#83838c",
+                      "on-error-container": "#93000a",
+                      "inverse-primary": "#c6c6c6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xl": "80px",
+                      "xs": "4px",
+                      "lg": "48px",
+                      "base": "8px",
+                      "md": "24px",
+                      "gutter": "24px",
+                      "margin": "32px",
+                      "sm": "12px"
+              },
+              "fontFamily": {
+                      "body-md": ["Geist"],
+                      "label-sm": ["Geist"],
+                      "body-lg": ["Geist"],
+                      "mono-code": ["JetBrains Mono"],
+                      "headline-md": ["Geist"],
+                      "display-lg": ["Geist"]
+              },
+              "fontSize": {
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-sm": ["13px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "mono-code": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background antialiased flex">
+<!-- SideNavBar (Predicted Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col bg-surface-container-low border-r border-outline-variant p-md z-40">
+<div class="mb-xl">
+<h1 class="font-headline-md text-headline-md font-black text-primary">RetailOS</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Management Console</p>
+</div>
+<nav class="flex flex-col gap-base flex-grow">
+<!-- Dashboard Tab -->
+<a class="flex items-center gap-sm px-sm py-base text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<!-- AI Assistant Tab -->
+<a class="flex items-center gap-sm px-sm py-base text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-label-sm text-label-sm">AI Assistant</span>
+</a>
+<!-- Users Tab (Active) -->
+<a class="flex items-center gap-sm px-sm py-base bg-primary text-on-primary font-bold rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-sm text-label-sm">User Management</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-base border-t border-outline-variant pt-md">
+<a class="flex items-center gap-sm px-sm py-base text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<a class="flex items-center gap-sm px-sm py-base text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-sm text-label-sm">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TopNavBar (Predicted Component) -->
+<header class="flex justify-between items-center h-16 px-gutter w-full sticky top-0 z-30 bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">RetailOS Admin</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-base">
+<button class="material-symbols-outlined text-secondary hover:bg-surface-container-low p-base transition-colors cursor-pointer active:opacity-80">notifications</button>
+<button class="material-symbols-outlined text-secondary hover:bg-surface-container-low p-base transition-colors cursor-pointer active:opacity-80">settings</button>
+</div>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant">
+<img alt="User Profile" class="h-full w-full object-cover" data-alt="A professional headshot of a corporate administrator in a bright, modern office setting. The person has a neutral, focused expression. The lighting is crisp and even, mirroring a high-end light-mode UI aesthetic. The color palette is composed of soft greys, sharp blacks, and pristine white tones to suggest a serious, data-driven environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_Z9PeXXTZP5WmZblefFP6RNq58WYXj0DV9kMcdJCRngCbWTleXAw0YRYceKfR0pFEIDy-ED_c4wJumSEYFonAYkYzS86Nez-KiyLn8r_mbXAEGVWgG-1YOLIhs0qUqhL7catNtL7vvP7htNpksfEBFpiG7w4xwk9AEm4LQpLqXLw-LSYoEbEZgCZpKVVhN7f_pmN6gdV4r_TXGNMY_sZd1LrL3D1qt1RBKY8TOyhRsUDqwKiAwj1Ljoi-1PTLHNrqyJnsEpb9nkFs"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-gutter max-w-[1440px] w-full mx-auto space-y-md">
+<!-- Today's Overview (Bento Grid Style) -->
+<section>
+<div class="flex justify-between items-end mb-sm">
+<h3 class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Today's Overview</h3>
+<p class="font-mono-code text-label-sm text-secondary">SYSTEM STATUS: <span class="text-primary font-bold">OPERATIONAL</span></p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Metric Card: Visits -->
+<div class="bg-surface border border-outline-variant p-md flex flex-col gap-base group hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-secondary">Visits</span>
+<span class="material-symbols-outlined text-primary">trending_up</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg font-bold">842</span>
+<span class="font-mono-code text-xs text-primary">+12%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-low">
+<div class="h-full bg-primary" style="width: 72%;"></div>
+</div>
+</div>
+<!-- Metric Card: Users -->
+<div class="bg-surface border border-outline-variant p-md flex flex-col gap-base group hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-secondary">Users</span>
+<span class="material-symbols-outlined text-primary">person_add</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg font-bold">58</span>
+<span class="font-mono-code text-xs text-primary">+4.1%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-low">
+<div class="h-full bg-primary" style="width: 45%;"></div>
+</div>
+</div>
+<!-- Metric Card: Fraud -->
+<div class="bg-surface border border-outline-variant p-md flex flex-col gap-base group hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-secondary">Fraud</span>
+<span class="material-symbols-outlined text-error">gpp_maybe</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg font-bold">12</span>
+<span class="font-mono-code text-xs text-error">-2%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-low">
+<div class="h-full bg-error" style="width: 15%;"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Users Section -->
+<section class="bg-surface border border-outline-variant flex flex-col">
+<!-- Toolbar -->
+<div class="p-md border-b border-outline-variant flex flex-wrap justify-between items-center gap-md">
+<div class="flex-1 min-w-[300px]">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-base top-1/2 -translate-y-1/2 text-secondary text-lg">search</span>
+<input class="w-full pl-xl pr-base py-base border border-outline-variant bg-surface-container-low focus:border-primary focus:ring-0 transition-colors font-body-md text-body-md" placeholder="Search system users..." type="text"/>
+</div>
+</div>
+<button class="bg-primary text-on-primary px-md py-base font-label-sm text-label-sm font-bold flex items-center gap-sm active:opacity-80 transition-opacity" onclick="toggleModal('createUserModal')">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Create User
+                    </button>
+</div>
+<!-- High Density Table -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-md py-sm font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Name</th>
+<th class="px-md py-sm font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Role</th>
+<th class="px-md py-sm font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Region</th>
+<th class="px-md py-sm font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-md py-sm font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-base font-body-md text-body-md font-medium">Rahim</td>
+<td class="px-md py-base">
+<span class="px-base py-xs border border-outline-variant bg-surface-container font-label-sm text-xs">Rep</span>
+</td>
+<td class="px-md py-base font-mono-code text-label-sm">Dhaka</td>
+<td class="px-md py-base">
+<div class="flex items-center gap-xs">
+<span class="h-2 w-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm">Active</span>
+</div>
+</td>
+<td class="px-md py-base text-right">
+<button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-base font-body-md text-body-md font-medium">Sarah</td>
+<td class="px-md py-base">
+<span class="px-base py-xs border border-outline-variant bg-surface-container font-label-sm text-xs">Supervisor</span>
+</td>
+<td class="px-md py-base font-mono-code text-label-sm">North</td>
+<td class="px-md py-base">
+<div class="flex items-center gap-xs">
+<span class="h-2 w-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm">Active</span>
+</div>
+</td>
+<td class="px-md py-base text-right">
+<button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-md py-base font-body-md text-body-md font-medium">Admin</td>
+<td class="px-md py-base">
+<span class="px-base py-xs border border-primary bg-primary text-on-primary font-label-sm text-xs">Admin</span>
+</td>
+<td class="px-md py-base font-mono-code text-label-sm">Global</td>
+<td class="px-md py-base">
+<div class="flex items-center gap-xs">
+<span class="h-2 w-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm">Active</span>
+</div>
+</td>
+<td class="px-md py-base text-right">
+<button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-sm bg-surface-container-low flex justify-between items-center px-md border-t border-outline-variant">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Showing 3 of 58 system entities</span>
+<div class="flex gap-xs">
+<button class="p-xs border border-outline-variant hover:bg-surface transition-colors material-symbols-outlined">chevron_left</button>
+<button class="p-xs border border-outline-variant hover:bg-surface transition-colors material-symbols-outlined">chevron_right</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Create User Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-md bg-black/50 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none" id="createUserModal">
+<div class="bg-surface w-full max-w-md border border-outline shadow-xl transform transition-transform scale-95 duration-200">
+<!-- Modal Header -->
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h4 class="font-headline-md text-headline-md font-bold">New User Creation</h4>
+<button class="material-symbols-outlined hover:text-error transition-colors" onclick="toggleModal('createUserModal')">close</button>
+</div>
+<!-- Modal Body -->
+<form class="p-md space-y-md">
+<div class="space-y-base">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase">Full Name</label>
+<input class="w-full p-base border border-outline-variant bg-surface focus:border-primary focus:ring-0 font-body-md" placeholder="e.g. John Doe" type="text"/>
+</div>
+<div class="space-y-base">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase">Email Address</label>
+<input class="w-full p-base border border-outline-variant bg-surface focus:border-primary focus:ring-0 font-body-md" placeholder="john.doe@retailos.com" type="email"/>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="space-y-base">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase">Access Level</label>
+<select class="w-full p-base border border-outline-variant bg-surface focus:border-primary focus:ring-0 font-body-md appearance-none">
+<option>Rep</option>
+<option>Supervisor</option>
+<option>Admin</option>
+</select>
+</div>
+<div class="space-y-base">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase">Operational Region</label>
+<select class="w-full p-base border border-outline-variant bg-surface focus:border-primary focus:ring-0 font-body-md appearance-none">
+<option>Global</option>
+<option>Dhaka</option>
+<option>North</option>
+<option>South</option>
+</select>
+</div>
+</div>
+<div class="space-y-base">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase">Temporary Password</label>
+<div class="relative">
+<input class="w-full p-base border border-outline-variant bg-surface focus:border-primary focus:ring-0 font-body-md" type="password" value="••••••••"/>
+<span class="material-symbols-outlined absolute right-base top-1/2 -translate-y-1/2 text-secondary cursor-pointer">visibility</span>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="pt-md flex gap-base">
+<button class="flex-1 border border-primary px-md py-base font-label-sm text-label-sm font-bold hover:bg-surface-container-low transition-colors" onclick="toggleModal('createUserModal')" type="button">
+                        Cancel
+                    </button>
+<button class="flex-1 bg-primary text-on-primary px-md py-base font-label-sm text-label-sm font-bold active:opacity-90 transition-opacity" type="submit">
+                        Commit Entry
+                    </button>
+</div>
+</form>
+</div>
+</div>
+<script>
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const isHidden = modal.classList.contains('opacity-0');
+            
+            if (isHidden) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100');
+                modal.firstElementChild.classList.remove('scale-95');
+                modal.firstElementChild.classList.add('scale-100');
+            } else {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modal.classList.remove('opacity-100');
+                modal.firstElementChild.classList.add('scale-95');
+                modal.firstElementChild.classList.remove('scale-100');
+            }
+        }
+
+        // Close modal on escape key
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modals = ['createUserModal'];
+                modals.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && !el.classList.contains('opacity-0')) toggleModal(id);
+                });
+            }
+        });
+    </script>
+</body></html>

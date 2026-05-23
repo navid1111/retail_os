@@ -1,0 +1,22 @@
+info:
+  name: Visit Images
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: http://localhost:5000/api/visits/507f1f77bcf86cd799439012/images
+  body:
+    type: json
+    data: |-
+      {
+        "filePath":"E:/im/retail_os/server/media/blury.jpg"
+       }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+​

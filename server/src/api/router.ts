@@ -12,8 +12,10 @@ import { GeminiService } from "../gemini/service";
 const yoloUpload = multer({ storage: multer.memoryStorage() });
 
 import { visitRouter } from "./routes/visit.routes";
-import { imageRouter } from "./routes/image.routes";
+import { imageRouter, visitImageRouter } from "./routes/image.routes";
 import { storeRouter } from "./routes/store.routes";
+import { dashboardRouter } from "./routes/dashboard.routes";
+import { adminRouter } from "./routes/admin.routes";
 import { upload } from "../middleware/upload";
 
 
@@ -21,8 +23,12 @@ const router = Router();
 
 // Register sub-routers under authenticated path
 router.use("/visits", requireAuth, visitRouter);
-router.use("/visits", requireAuth, imageRouter);
+router.use("/visits", requireAuth, visitImageRouter);
+router.use("/images", requireAuth, imageRouter);
 router.use("/stores", requireAuth, storeRouter);
+router.use("/dashboard", requireAuth, dashboardRouter);
+// TODO: Re-enable requireRole("admin") before shipping the admin assistant.
+router.use("/admin", requireAuth, adminRouter);
 
 router.get("/test", async (req: Request, res: Response): Promise<void> => {
   try {

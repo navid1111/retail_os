@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Visit History - RetailOS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#cfc4c5",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#1a1c1c",
+                        "tertiary-fixed-dim": "#c6c6cf",
+                        "primary-fixed-dim": "#c6c6c6",
+                        "primary-container": "#1b1b1b",
+                        "tertiary-container": "#1a1b22",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary-fixed-variant": "#474747",
+                        "on-surface": "#1a1c1c",
+                        "secondary": "#5e5e5e",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "secondary-container": "#e1dfdf",
+                        "surface-tint": "#5e5e5e",
+                        "inverse-primary": "#c6c6c6",
+                        "surface-dim": "#dadada",
+                        "primary": "#000000",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#c7c6c6",
+                        "surface-variant": "#e2e2e2",
+                        "inverse-surface": "#2f3131",
+                        "surface-container": "#eeeeee",
+                        "on-error": "#ffffff",
+                        "outline": "#000000",
+                        "tertiary-fixed": "#e2e1eb",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#45464e",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-fixed": "#e4e2e2",
+                        "tertiary": "#000000",
+                        "on-tertiary-fixed": "#1a1b22",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-fixed-variant": "#464747",
+                        "on-surface-variant": "#4c4546",
+                        "on-primary-container": "#848484",
+                        "on-secondary-container": "#626262",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-container": "#83838c",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#1b1b1b",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "surface": "#f9f9f9",
+                        "background": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "lg": "48px",
+                        "base": "8px",
+                        "margin": "32px",
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "sm": "12px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Geist"],
+                        "body-md": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "mono-code": ["JetBrains Mono"],
+                        "display-lg-mobile": ["Geist"],
+                        "label-sm": ["Geist"],
+                        "headline-md": ["Geist"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "mono-code": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-sm": ["13px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex antialiased">
+<!-- SideNavBar: Standard component from DESIGN_SYSTEM_1 / COMPONENTS_11 -->
+<nav class="w-[240px] h-screen fixed left-0 top-0 flex flex-col py-6 border-r border-primary bg-surface-container-lowest z-50 overflow-y-auto">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary font-bold rounded">R</div>
+<div>
+<h1 class="font-headline-sm text-[20px] font-bold text-primary leading-tight">Ops Control</h1>
+<p class="text-[12px] text-on-surface-variant">Supervisor Portal</p>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full py-2.5 px-4 bg-primary text-on-primary font-label-md text-label-sm rounded hover:bg-black/90 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+            Launch AI Audit
+        </button>
+</div>
+<ul class="flex-1 px-2 space-y-1">
+<li>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-sm">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined">store</span>
+<span class="font-label-md text-label-sm">Store List</span>
+</a>
+</li>
+<li>
+<!-- Active state: Visit Feed (History) -->
+<a class="group flex items-center gap-3 px-4 py-3 text-primary font-bold bg-secondary-container/10 border-r-4 border-primary rounded-r-none transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history_edu</span>
+<span class="font-label-md text-label-sm">Visit Feed</span>
+</a>
+</li>
+<li>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined">gpp_maybe</span>
+<span class="font-label-md text-label-sm">Fraud Panel</span>
+</a>
+</li>
+<li>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined">photo_library</span>
+<span class="font-label-md text-label-sm">Image History</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto px-2 pt-4 border-t border-outline-variant space-y-1">
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined text-[20px]">contact_support</span>
+<span class="font-label-md text-label-sm">Support</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-md text-label-sm">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[240px] min-h-screen flex flex-col bg-surface">
+<!-- Top Bar with Breadcrumbs & Search -->
+<header class="sticky top-0 w-full h-16 px-8 border-b border-primary bg-surface-container-lowest z-40 flex items-center justify-between">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="text-label-sm font-medium">RetailOS</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-label-sm font-bold text-primary">Visit History</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-white border border-primary rounded font-body-md text-body-md w-[320px] focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/50" placeholder="Search visits, stores, or audits..." type="text"/>
+</div>
+<div class="flex items-center gap-4 border-l border-outline-variant pl-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full border border-primary overflow-hidden">
+<img alt="Supervisor Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTQdLLzAMuLd6zdcuE6NTKTeJb_pWSi-Wxxdg9TTc4bw8aDv8hliJXgkaKJrtlq-H_DOnyr3cnl6oCtzKRuL2npKwuKYxMmyqQjt5-vat-pcW0KNxYzIjTDEXOxXfj8dxeUv0Z9zDCnxqchvFFk-b4mES_gTX01dULjtJWvHYTmKtB-H7OCOuxt6m0b9MtKj2wLM0ZA2wMnsgBI2c3LE5-jVUL4QEjSHzZAyl1EphHQP3nPnhkPuzHqBxYNCKS3c5Q6RC5xPHakyIv"/>
+</div>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-[1200px] w-full mx-auto flex flex-col gap-8">
+<!-- Header & Filter Chips -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<a class="w-10 h-10 border border-primary flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">arrow_back</span>
+</a>
+<h2 class="font-display-lg text-[32px] font-bold text-primary">Visit History</h2>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
+<button class="px-5 py-1.5 rounded-full border border-primary bg-white text-label-sm font-bold text-primary hover:bg-surface-container-low transition-colors">Today</button>
+<button class="px-5 py-1.5 rounded-full bg-primary text-white text-label-sm font-bold border border-primary transition-colors">This Week</button>
+<button class="px-5 py-1.5 rounded-full border border-primary bg-white text-label-sm font-bold text-primary hover:bg-surface-container-low transition-colors">Completed</button>
+<button class="px-5 py-1.5 rounded-full border border-primary bg-white text-label-sm font-bold text-primary hover:bg-surface-container-low transition-colors">Flagged</button>
+</div>
+</div>
+<!-- Visit Card List -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Card 1: Completed -->
+<a class="group bg-white border border-primary p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-between" href="#">
+<div class="flex items-center gap-6">
+<div class="w-14 h-14 bg-surface-container flex items-center justify-center border border-primary">
+<span class="material-symbols-outlined text-[32px] text-primary">store</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Dhaka Outlet</h3>
+<div class="flex items-center gap-6 text-on-surface-variant font-body-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>20 May 2026</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">checklist</span>
+<span>Compliance: <span class="font-bold text-primary">82%</span></span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-2 px-3 py-1 border border-primary bg-white text-[11px] font-bold uppercase tracking-wider text-primary">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                            Completed
+                        </span>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</a>
+<!-- Card 2: Flagged -->
+<a class="group bg-white border-2 border-primary p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-between relative overflow-hidden" href="#">
+<div class="flex items-center gap-6">
+<div class="w-14 h-14 bg-surface-container flex items-center justify-center border border-primary">
+<span class="material-symbols-outlined text-[32px] text-primary">store</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Metro Retail</h3>
+<div class="flex items-center gap-6 text-on-surface-variant font-body-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>19 May 2026</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-error">warning</span>
+<span class="text-error font-medium">Missing inventory photos</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-2 px-3 py-1 border border-primary bg-black text-white text-[11px] font-bold uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                            Flagged
+                        </span>
+</div>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</a>
+<!-- Card 3: Processing -->
+<a class="group bg-surface-container-low border border-primary border-dashed p-6 hover:bg-white transition-all flex items-center justify-between" href="#">
+<div class="flex items-center gap-6">
+<div class="w-14 h-14 bg-white/50 flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-[32px] text-primary/40">store</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary/60 mb-1">Jamuna Store</h3>
+<div class="flex items-center gap-6 text-on-surface-variant/60 font-body-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>18 May 2026</span>
+</div>
+<div class="flex items-center gap-2 italic">
+                                Syncing encrypted data package...
+                            </div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-2 px-3 py-1 border border-primary/40 bg-white text-[11px] font-bold uppercase tracking-wider text-primary/40">
+<svg class="animate-spin h-3 w-3 text-primary/40" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+</svg>
+                            Processing
+                        </span>
+</div>
+<span class="material-symbols-outlined text-primary/20">arrow_forward</span>
+</div>
+</a>
+</div>
+<!-- Footer Action -->
+<div class="flex justify-center mt-4">
+<button class="px-8 py-3 border-2 border-primary bg-white font-bold text-primary hover:bg-black hover:text-white transition-all transform active:translate-y-0.5">
+                LOAD PREVIOUS RECORDS
+            </button>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,9 +1,26 @@
 import { describe, expect, it, vi } from "vitest";
-import { uploadImageHandler } from "./image.routes";
-import { uploadVisitImage } from "../../services/image.service";
+import {
+  getImageFraudByIdHandler,
+  listImagesHandler,
+  listMyImagesHandler,
+  listRepImagesHandler,
+  uploadImageHandler,
+} from "./image.routes";
+import { listImagesByRep, uploadVisitImage } from "../../services/image.service";
+import { getImageFraudByImageId, listVisitImages } from "../../services/fraud.service";
 
 vi.mock("../../services/image.service", () => ({
+  listImagesByRep: vi.fn(),
   uploadVisitImage: vi.fn(),
+}));
+
+vi.mock("../../services/fraud.service", () => ({
+  getImageFraudByImageId: vi.fn(),
+  listVisitImages: vi.fn(),
+}));
+
+vi.mock("../../db/mongo", () => ({
+  getDB: vi.fn(() => ({})),
 }));
 
 const createRes = () => {
@@ -43,5 +60,87 @@ describe("image routes", () => {
       publicId: undefined,
     });
     expect(res.status).toHaveBeenCalledWith(201);
+  });
+
+  it("returns fraud status for an image", async () => {
+    vi.mocked(getImageFraudByImageId).mockResolvedValue({
+      publicId: "visit-public-id",
+      imageId: "507f1f77bcf86cd799439011" as any,
+      hasFraudFlag: true,
+      fraudFlags: [{ fraudType: "blurry_image" }] as any,
+    });
+
+    const req: any = {
+      params: { imageId: "507f1f77bcf86cd799439011" },
+      user: { _id: "507f1f77bcf86cd799439012" },
+    };
+    const res = createRes();
+
+    await getImageFraudByIdHandler(req, res);
+
+    expect(getImageFraudByImageId).toHaveBeenCalledWith({}, "507f1f77bcf86cd799439011");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        hasFraudFlag: true,
+      })
+    );
+  });
+
+  it("lists visit images with fraud filter", async () => {
+    vi.mocked(listVisitImages).mockResolvedValue([{ _id: "img", hasFraudFlag: false }] as any);
+
+    const req: any = {
+      query: { fraud: "false", isRejected: "false" },
+      user: { _id: "507f1f77bcf86cd799439012" },
+    };
+    const res = createRes();
+
+    await listImagesHandler(req, res);
+
+    expect(listVisitImages).toHaveBeenCalledWith({}, { fraud: false, isRejected: false });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith([{ _id: "img", hasFraudFlag: false }]);
+  });
+
+  it("lists images clicked by a sales representative", async () => {
+    vi.mocked(listImagesByRep).mockResolvedValue([{ _id: "img" }]);
+
+    const req: any = {
+      params: { repId: "507f1f77bcf86cd799439012" },
+      query: { isRejected: "false" },
+      user: { _id: "507f1f77bcf86cd799439013" },
+    };
+    const res = createRes();
+
+    await listRepImagesHandler(req, res);
+
+    expect(listImagesByRep).toHaveBeenCalledWith({
+      repId: "507f1f77bcf86cd799439012",
+      isRejected: false,
+      rejectionReason: undefined,
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith([{ _id: "img" }]);
+  });
+
+  it("lists images clicked by the authenticated sales representative", async () => {
+    vi.mocked(listImagesByRep).mockResolvedValue([{ _id: "img" }]);
+
+    const req: any = {
+      params: {},
+      query: { rejectionReason: "blurry" },
+      user: { _id: "507f1f77bcf86cd799439012" },
+    };
+    const res = createRes();
+
+    await listMyImagesHandler(req, res);
+
+    expect(listImagesByRep).toHaveBeenCalledWith({
+      repId: "507f1f77bcf86cd799439012",
+      isRejected: undefined,
+      rejectionReason: "blurry",
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
   });
 });

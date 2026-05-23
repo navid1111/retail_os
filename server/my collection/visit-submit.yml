@@ -1,0 +1,16 @@
+info:
+  name: visit-submit
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:5000/api/visits/6a0f1ed53481d78f2c6fd2be/submit
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+​

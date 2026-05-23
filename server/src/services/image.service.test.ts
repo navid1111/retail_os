@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ObjectId } from "mongodb";
 import { uploadVisitImage } from "./image.service";
+import { detectBlur, computePHash, hammingDistance } from "./fraud.service";
+import path from "path";
 import { getDB } from "../db/mongo";
 import { CloudinaryService } from "../cloudinary/service";
 import { addJobToQueue } from "../queues/queues";
@@ -23,6 +25,15 @@ vi.mock("../queues/queues", () => ({
 
 vi.mock("./audit.service", () => ({
   auditLog: vi.fn(),
+}));
+
+vi.mock("fs/promises", () => ({
+  default: {
+    copyFile: vi.fn(),
+    unlink: vi.fn(),
+  },
+  copyFile: vi.fn(),
+  unlink: vi.fn(),
 }));
 
 type CollectionMock = {
@@ -96,7 +107,7 @@ describe("image.service", () => {
     });
 
     expect(result._id).toEqual(imageId);
-    expect(result.imageUrl).toBe("https://cdn.example.com/image.jpg");
+    expect(result.imageUrl).toBe(""); // Backgrounded
     expect(collections.visit_images.insertOne).toHaveBeenCalled();
     expect(collections.visits.updateOne).toHaveBeenCalledWith(
       { _id: visitId, repId, deletedAt: null },
@@ -109,7 +120,7 @@ describe("image.service", () => {
         imageId: imageId.toHexString(),
         visitId: visitId.toHexString(),
         storeId: storeId.toHexString(),
-        imageUrl: "https://cdn.example.com/image.jpg",
+        filePath: expect.any(String),
       }),
       undefined
     );
@@ -156,8 +167,12 @@ describe("image.service", () => {
     });
 
     expect(result._id).toEqual(imageId);
-    expect(CloudinaryService.uploadFromUrl).toHaveBeenCalledWith(
-      "https://example.com/image.jpg",
+    expect(addJobToQueue).toHaveBeenCalledWith(
+      "PROCESS_IMAGE",
+      "process-image",
+      expect.objectContaining({
+        sourceUrl: "https://example.com/image.jpg",
+      }),
       undefined
     );
   });
@@ -193,3 +208,66 @@ describe("image.service", () => {
     ).rejects.toThrow("Image source is required");
   });
 });
+
+describe("detectBlur", () => {
+  it("should detect that media/blury.jpg is blurry", async () => {
+    // Determine the absolute path to the blurry image
+    const imagePath = path.resolve(__dirname, "../../media/blury.jpg");
+    
+    const result = await detectBlur(imagePath);
+
+    expect(result).toBeDefined();
+    expect(typeof result.variance).toBe("number");
+    expect(result.isBlurry).toBe(true);
+    expect(result.variance).toBeLessThan(50);
+    expect(typeof result.confidence).toBe("number");
+  });
+
+  it("should detect that media/dup1.jpeg and media/dup2.jpeg are NOT blurry", async () => {
+    const dup1Path = path.resolve(__dirname, "../../media/dup1.jpeg");
+    const dup2Path = path.resolve(__dirname, "../../media/dup2.jpeg");
+    
+    const result1 = await detectBlur(dup1Path);
+    const result2 = await detectBlur(dup2Path);
+
+    expect(result1.isBlurry).toBe(false);
+    expect(result1.variance).toBeGreaterThanOrEqual(50);
+    
+    expect(result2.isBlurry).toBe(false);
+    expect(result2.variance).toBeGreaterThanOrEqual(50);
+  });
+});
+
+describe("duplicate image detection", () => {
+  it("should compute pHash and detect duplicates with low hamming distance", async () => {
+    const dup1Path = path.resolve(__dirname, "../../media/dup1.jpeg");
+    const dup2Path = path.resolve(__dirname, "../../media/dup2.jpeg");
+
+    const hash1 = await computePHash(dup1Path);
+    const hash2 = await computePHash(dup2Path);
+
+    expect(hash1).toBeDefined();
+    expect(hash2).toBeDefined();
+    expect(hash1.length).toBe(16);
+    expect(hash2.length).toBe(16);
+
+    const distance = hammingDistance(hash1, hash2);
+    
+    // For duplicates, the hamming distance should be very low (we'll assert <= 20)
+    expect(distance).toBeLessThanOrEqual(20);
+  });
+
+  it("should NOT detect dup1 and blury as duplicates", async () => {
+    const dup1Path = path.resolve(__dirname, "../../media/dup1.jpeg");
+    const bluryPath = path.resolve(__dirname, "../../media/blury.jpg");
+
+    const hash1 = await computePHash(dup1Path);
+    const hash2 = await computePHash(bluryPath);
+
+    const distance = hammingDistance(hash1, hash2);
+    
+    // For non-duplicates, the hamming distance should be high
+    expect(distance).toBeGreaterThan(20);
+  });
+});
+

@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { getDB } from "../db/mongo";
 import { auditLog } from "./audit.service";
+import { haversineDistanceM } from "../utils/haversine";
 
 export type VisitStatus =
   | "pending"
@@ -57,6 +58,12 @@ export interface SubmitVisitInput {
   repId: string;
 }
 
+export interface ListVisitsByRepInput {
+  repId: string;
+  status?: VisitStatus;
+  limit?: number;
+}
+
 const toObjectId = (
   value: string,
   fieldName: string
@@ -66,37 +73,6 @@ const toObjectId = (
   }
 
   return new ObjectId(value);
-};
-
-const toRadians = (value: number): number =>
-  (value * Math.PI) / 180;
-
-const haversineDistanceM = (
-  lat1: number,
-  lng1: number,
-  lat2: number,
-  lng2: number
-): number => {
-  const earthRadiusM = 6371000;
-
-  const dLat = toRadians(lat2 - lat1);
-  const dLng = toRadians(lng2 - lng1);
-
-  const originLat = toRadians(lat1);
-  const destLat = toRadians(lat2);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(originLat) *
-      Math.cos(destLat) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
-
-  return (
-    earthRadiusM *
-    2 *
-    Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  );
 };
 
 const resolveGpsMismatchDistance = (
@@ -120,10 +96,14 @@ const resolveGpsMismatchDistance = (
   }
 
   const distanceM = haversineDistanceM(
-    store.latitude,
-    store.longitude,
-    input.gpsLat,
-    input.gpsLng
+    {
+      latitude: store.latitude,
+      longitude: store.longitude,
+    },
+    {
+      latitude: input.gpsLat,
+      longitude: input.gpsLng,
+    }
   );
 
   const limitM = store.gpsRadiusM ?? 300;
@@ -203,6 +183,15 @@ export const checkInVisit = async (
       detail: {
         distanceM: Math.round(mismatch.distanceM),
         limitM: mismatch.limitM,
+        storeGps: {
+          lat: store.latitude,
+          lng: store.longitude,
+        },
+        checkInGps: {
+          lat: input.gpsLat,
+          lng: input.gpsLng,
+          accuracyM: input.gpsAccuracyM,
+        },
       },
       resolution: "pending",
       deletedAt: null,
@@ -306,4 +295,68 @@ export const submitVisit = async (
     status: "processing",
     checkOutTime,
   };
+};
+
+export const listVisitsByRep = async (
+  input: ListVisitsByRepInput
+): Promise<unknown[]> => {
+  const db = getDB();
+  const repId = toObjectId(input.repId, "repId");
+
+  const match: Record<string, unknown> = {
+    repId,
+    deletedAt: null,
+  };
+
+  if (input.status) {
+    match.status = input.status;
+  }
+
+  return db
+    .collection<VisitRecord>("visits")
+    .aggregate([
+      { $match: match },
+      { $sort: { checkInTime: -1, createdAt: -1 } },
+      { $limit: input.limit ?? 50 },
+      {
+        $lookup: {
+          from: "stores",
+          localField: "storeId",
+          foreignField: "_id",
+          as: "store",
+        },
+      },
+      {
+        $unwind: {
+          path: "$store",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          repId: 1,
+          storeId: 1,
+          checkInTime: 1,
+          checkOutTime: 1,
+          gpsLat: 1,
+          gpsLng: 1,
+          gpsAccuracyM: 1,
+          status: 1,
+          overallScore: 1,
+          repNotes: 1,
+          images: 1,
+          fraudFlags: 1,
+          createdAt: 1,
+          store: {
+            _id: "$store._id",
+            storeCode: "$store.storeCode",
+            storeName: "$store.storeName",
+            address: "$store.address",
+            region: "$store.region",
+          },
+        },
+      },
+    ])
+    .toArray();
 };

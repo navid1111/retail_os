@@ -19,7 +19,7 @@ export interface IVisit {
   createdAt: Date;
 }
 
-export interface IVisitDocument extends IVisit, Document {}
+export interface IVisitDocument extends IVisit, Document { }
 
 const VisitSchema = new Schema<IVisitDocument>(
   {
@@ -49,11 +49,11 @@ VisitSchema.index({ storeId: 1, checkInTime: -1 });
 VisitSchema.index({ status: 1 }, { partialFilterExpression: { deletedAt: null } });
 VisitSchema.index({ deletedAt: 1 });
 
-VisitSchema.pre(/^find/, function (this: mongoose.Query<unknown, IVisitDocument>, next: any) {
+
+VisitSchema.pre(/^find/, function (this: mongoose.Query<unknown, IVisitDocument>) {
   if (this.getFilter().deletedAt === undefined) {
     this.where({ deletedAt: null });
   }
-  next();
 });
 
 export const Visit: Model<IVisitDocument> = mongoose.model<IVisitDocument>("Visit", VisitSchema);

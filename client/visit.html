@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Active Visit - Monochrome Precision</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#d8e2ff",
+                    "on-secondary-fixed": "#001a42",
+                    "inverse-primary": "#bec6e0",
+                    "primary-fixed-dim": "#bec6e0",
+                    "inverse-surface": "#213145",
+                    "secondary": "#000000",
+                    "primary-fixed": "#dae2fd",
+                    "on-surface": "#000000",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#574425",
+                    "surface-tint": "#000000",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#000000",
+                    "on-surface-variant": "#666666",
+                    "tertiary-container": "#271901",
+                    "surface-bright": "#ffffff",
+                    "surface-container-high": "#f5f5f5",
+                    "on-primary-fixed": "#131b2e",
+                    "on-error": "#ffffff",
+                    "primary-container": "#000000",
+                    "on-secondary-fixed-variant": "#000000",
+                    "background": "#ffffff",
+                    "tertiary": "#000000",
+                    "surface-container": "#f5f5f5",
+                    "surface-container-low": "#fafafa",
+                    "error-container": "#000000",
+                    "outline": "#000000",
+                    "surface": "#ffffff",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "secondary-container": "#000000",
+                    "on-tertiary-fixed": "#271901",
+                    "on-secondary-container": "#ffffff",
+                    "surface-variant": "#f0f0f0",
+                    "on-primary-container": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "error": "#000000",
+                    "on-error-container": "#ffffff",
+                    "outline-variant": "#000000",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#98805d",
+                    "primary": "#000000",
+                    "inverse-on-surface": "#ffffff",
+                    "surface-container-highest": "#e5e5e5",
+                    "tertiary-fixed": "#fcdeb5",
+                    "tertiary-fixed-dim": "#dec29a",
+                    "surface-dim": "#f5f5f5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.125rem",
+                    "xl": "0.125rem",
+                    "full": "0.125rem"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "touch-target-min": "44px",
+                    "container-padding-desktop": "32px",
+                    "gutter": "16px",
+                    "container-padding-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Geist", "Inter", "sans-serif"],
+                    "headline-sm": ["Geist", "sans-serif"],
+                    "headline-md": ["Geist", "sans-serif"],
+                    "body-md": ["Geist", "Inter", "sans-serif"],
+                    "label-md": ["Geist", "sans-serif"],
+                    "data-mono": ["Geist", "monospace"],
+                    "body-lg": ["Geist", "Inter", "sans-serif"],
+                    "headline-lg": ["Geist", "sans-serif"]
+            },
+            "fontSize": {
+                    "body-sm": ["13px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
+                    "headline-sm": ["18px", {"lineHeight": "1.4", "letterSpacing": "0", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "data-mono": ["14px", {"lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .timer {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Sharp borders for Monochrome Precision */
+        .card-sharp {
+            border: 1px solid #000000;
+            border-radius: 0px !important;
+        }
+        
+        .btn-sharp {
+            border: 1px solid #000000;
+            border-radius: 0px !important;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col text-body-md overflow-x-hidden">
+<!-- TopNavBar (Updated: Centered Header with Back button and Store Name) -->
+<header class="bg-surface border-b border-outline w-full h-16 flex items-center px-container-padding-mobile md:px-container-padding-desktop sticky top-0 z-10">
+<div class="max-w-[1400px] w-full mx-auto flex justify-between items-center">
+<div class="flex items-center gap-6">
+<button class="flex items-center gap-2 hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+<span class="font-label-md text-label-md uppercase">Back</span>
+</button>
+<div class="h-6 w-[1px] bg-outline"></div>
+<div class="flex flex-col">
+<h1 class="font-headline-sm text-headline-sm uppercase tracking-tight">Dhaka Outlet</h1>
+<span class="text-[10px] text-on-surface-variant font-data-mono">STORE ID: DHK-001</span>
+</div>
+</div>
+<button class="btn-sharp px-4 py-2 hover:bg-surface-container transition-colors font-label-md text-label-md text-on-surface-variant">
+                Cancel Visit
+            </button>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-container-padding-mobile md:p-container-padding-desktop max-w-[1400px] w-full mx-auto">
+<!-- Section Header -->
+<div class="mb-10 flex flex-col items-center text-center">
+<div class="inline-block border border-outline px-3 py-1 mb-4">
+<span class="font-label-md text-[11px] uppercase tracking-[0.2em] text-on-surface-variant">Session: Active Audit</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg uppercase tracking-tighter">Field Visit Data Entry</h2>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- 1. Visit Progress/Timer (Left, span 3) -->
+<div class="lg:col-span-3 card-sharp p-6 flex flex-col gap-8 bg-surface">
+<div class="flex flex-col gap-4 border-b border-outline pb-6">
+<span class="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Time Elapsed</span>
+<div class="font-data-mono text-[32px] font-bold timer" id="visitTimer">00:01:23</div>
+<div class="flex items-center gap-2 text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>Started 11:05 AM</span>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<span class="text-[11px] uppercase tracking-widest text-on-surface-variant font-semibold">Progress</span>
+<div class="space-y-4">
+<!-- Step 1: Done -->
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 bg-on-background flex items-center justify-center text-surface">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-label-md text-label-md">Check-in</span>
+</div>
+<!-- Step 2: Active -->
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 border border-on-background flex items-center justify-center">
+<div class="w-2 h-2 bg-on-background"></div>
+</div>
+<span class="font-label-md text-label-md font-bold">Photo Documentation</span>
+</div>
+<!-- Step 3: Pending -->
+<div class="flex items-center gap-3 opacity-30">
+<div class="w-5 h-5 border border-on-background"></div>
+<span class="font-label-md text-label-md">Review &amp; Submit</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. Photo Upload zone (Center, span 6) -->
+<div class="lg:col-span-6 card-sharp p-8 flex flex-col gap-6 bg-surface">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm uppercase tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined">photo_camera</span>
+                        Shelf Documentation
+                    </h3>
+<div class="border border-outline px-2 py-0.5">
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface">Required</span>
+</div>
+</div>
+<!-- Empty State Canvas -->
+<div class="border border-dashed border-outline bg-surface-container-low flex flex-col items-center justify-center p-12 text-center min-h-[350px]">
+<div class="w-16 h-16 border border-outline flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[32px]">add_a_photo</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface max-w-sm mb-8 uppercase tracking-wide">
+                        No photographic evidence captured.
+                    </p>
+<button class="btn-sharp bg-on-background text-surface px-8 py-4 font-label-md flex items-center gap-3 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">camera_enhance</span>
+                        Capture Image
+                    </button>
+</div>
+<p class="text-[11px] text-on-surface-variant italic text-center">
+                    Guidelines: Ensure focus on SKUs, pricing tags, and shelf talkers.
+                </p>
+</div>
+<!-- 3. Optional Notes (Right, span 3) -->
+<div class="lg:col-span-3 flex flex-col gap-6">
+<div class="card-sharp p-6 bg-surface flex flex-col gap-4">
+<h3 class="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">notes</span>
+                        Field Notes
+                    </h3>
+<textarea class="w-full bg-surface-container-low border border-outline p-4 text-body-sm font-body-sm text-primary placeholder:text-on-surface-variant/40 resize-none focus:outline-none focus:ring-0 min-h-[180px] rounded-none" placeholder="Enter observations..."></textarea>
+</div>
+<!-- Submission Action -->
+<div class="card-sharp p-6 bg-surface flex flex-col gap-4">
+<button class="btn-sharp w-full bg-on-background text-surface py-5 font-headline-sm text-[16px] flex items-center justify-center gap-2 cursor-pointer hover:opacity-90 transition-all">
+<span class="material-symbols-outlined">check_circle</span>
+                        Submit Visit
+                    </button>
+<div class="flex items-start gap-3 p-3 bg-surface-container">
+<span class="material-symbols-outlined text-[18px] text-on-surface">warning</span>
+<p class="text-[11px] leading-tight font-body-sm uppercase tracking-tight">
+                            Status: Validation Error. Photographic proof required before submission.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Timer Script -->
+<script>
+        let seconds = 83; 
+        const timerEl = document.getElementById('visitTimer');
+        
+        setInterval(() => {
+            seconds++;
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            
+            timerEl.textContent = 
+                `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }, 1000);
+    </script>
+</body></html>

@@ -1,9 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
-import { checkInHandler, submitVisitHandler } from "./visit.routes";
-import { checkInVisit, submitVisit } from "../../services/visit.service";
+import {
+  checkInHandler,
+  listMyVisitsHandler,
+  listRepVisitsHandler,
+  submitVisitHandler,
+} from "./visit.routes";
+import { checkInVisit, listVisitsByRep, submitVisit } from "../../services/visit.service";
 
 vi.mock("../../services/visit.service", () => ({
   checkInVisit: vi.fn(),
+  listVisitsByRep: vi.fn(),
   submitVisit: vi.fn(),
 }));
 
@@ -53,6 +59,43 @@ describe("visit routes", () => {
     expect(submitVisit).toHaveBeenCalledWith({
       repId: "507f1f77bcf86cd799439012",
       visitId: "507f1f77bcf86cd799439011",
+    });
+  });
+
+  it("lists visits for a sales representative", async () => {
+    vi.mocked(listVisitsByRep).mockResolvedValue([{ _id: "visit" }]);
+
+    const req: any = {
+      params: { repId: "507f1f77bcf86cd799439012" },
+      query: { status: "pending", limit: "10" },
+    };
+    const res = createRes();
+
+    await listRepVisitsHandler(req, res);
+
+    expect(listVisitsByRep).toHaveBeenCalledWith({
+      repId: "507f1f77bcf86cd799439012",
+      status: "pending",
+      limit: 10,
+    });
+    expect(res.json).toHaveBeenCalledWith([{ _id: "visit" }]);
+  });
+
+  it("lists visits for the authenticated sales representative", async () => {
+    vi.mocked(listVisitsByRep).mockResolvedValue([{ _id: "visit" }]);
+
+    const req: any = {
+      query: {},
+      user: { _id: "507f1f77bcf86cd799439012" },
+    };
+    const res = createRes();
+
+    await listMyVisitsHandler(req, res);
+
+    expect(listVisitsByRep).toHaveBeenCalledWith({
+      repId: "507f1f77bcf86cd799439012",
+      status: undefined,
+      limit: 50,
     });
   });
 });

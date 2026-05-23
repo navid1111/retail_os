@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import type { ParamsDictionary } from "express-serve-static-core";
 import type { ZodSchema } from "zod";
 
 export const validateBody = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction): void => {
@@ -19,6 +20,6 @@ export const validateParams = (schema: ZodSchema) => (req: Request, res: Respons
     return;
   }
 
-  req.params = result.data as any;
+  req.params = result.data as ParamsDictionary;
   next();
 };

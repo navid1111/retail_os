@@ -1,0 +1,527 @@
+{
+  "users": [
+    {
+      "_id": "664ca7d80000000000000001",
+      "fullName": "Navid Kamal",
+      "email": "navid@retailos.com",
+      "passwordHash": "$2b$10$xyz123abc456def789ghi.hashedpassword",
+      "role": "rep",
+      "phone": "+8801711111111",
+      "region": "Dhaka",
+      "isActive": true,
+      "createdAt": "2026-05-21T10:00:00.000Z"
+    },
+    {
+      "_id": "664ca7d80000000000000002",
+      "fullName": "Shadman Samin",
+      "email": "shadman@retailos.com",
+      "passwordHash": "$2b$10$xyz123abc456def789ghi.hashedpassword",
+      "role": "supervisor",
+      "phone": "+8801722222222",
+      "region": "Dhaka",
+      "isActive": true,
+      "createdAt": "2026-05-21T10:00:00.000Z"
+    },
+    {
+      "_id": "664ca7d80000000000000003",
+      "fullName": "Admin User",
+      "email": "admin@retailos.com",
+      "passwordHash": "$2b$10$xyz123abc456def789ghi.hashedpassword",
+      "role": "admin",
+      "phone": "+8801733333333",
+      "isActive": true,
+      "createdAt": "2026-05-21T10:00:00.000Z"
+    }
+  ],
+  "stores": [
+    {
+      "_id": "507f1f77bcf86cd799439011",
+      "storeCode": "DHK-001",
+      "storeName": "Dhaka Outlet",
+      "address": "123 Main St, Dhaka",
+      "region": "Dhaka",
+      "latitude": 23.7806,
+      "longitude": 90.2794,
+      "gpsRadiusM": 300,
+      "isActive": true,
+      "skus": [
+        {
+          "_id": "664ca7d8a000000000000001",
+          "skuName": "Olympic Soyabean 1L",
+          "brand": "Olympic",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 2
+        },
+        {
+          "_id": "664ca7d8a000000000000002",
+          "skuName": "Olympic Soyabean 2L",
+          "brand": "Olympic",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 1
+        },
+        {
+          "_id": "664ca7d8a000000000000003",
+          "skuName": "Coca-Cola 500ml",
+          "brand": "Coca-Cola",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 3
+        },
+        {
+          "_id": "664ca7d8a000000000000004",
+          "skuName": "Coca-Cola Banner",
+          "brand": "Coca-Cola",
+          "isRequired": false,
+          "isPosm": true,
+          "minFacing": 1
+        }
+      ],
+      "createdAt": "2026-05-21T09:00:00.000Z"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439012",
+      "storeCode": "CTG-001",
+      "storeName": "Chittagong Central",
+      "address": "456 CDA Ave, Chittagong",
+      "region": "Chittagong",
+      "latitude": 22.3569,
+      "longitude": 91.7832,
+      "gpsRadiusM": 300,
+      "isActive": true,
+      "skus": [
+        {
+          "_id": "664ca7d8a000000000000005",
+          "skuName": "Pepsi 500ml",
+          "brand": "Pepsi",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 2
+        },
+        {
+          "_id": "664ca7d8a000000000000006",
+          "skuName": "7Up 500ml",
+          "brand": "Pepsi",
+          "isRequired": false,
+          "isPosm": false,
+          "minFacing": 1
+        },
+        {
+          "_id": "664ca7d8a000000000000007",
+          "skuName": "Pepsi Poster",
+          "brand": "Pepsi",
+          "isRequired": true,
+          "isPosm": true,
+          "minFacing": 1
+        }
+      ],
+      "createdAt": "2026-05-21T09:00:00.000Z"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439013",
+      "storeCode": "DHK-002",
+      "storeName": "Gulshan Market",
+      "address": "Road 79, Gulshan 2, Dhaka",
+      "region": "Dhaka",
+      "latitude": 23.7925,
+      "longitude": 90.4078,
+      "gpsRadiusM": 250,
+      "isActive": true,
+      "skus": [
+        {
+          "_id": "664ca7d8a000000000000008",
+          "skuName": "Pran Mango Juice 250ml",
+          "brand": "Pran",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 3
+        },
+        {
+          "_id": "664ca7d8a000000000000009",
+          "skuName": "Pran Mango Juice 1L",
+          "brand": "Pran",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 2
+        },
+        {
+          "_id": "664ca7d8a00000000000000a",
+          "skuName": "Pran Shelf Talker",
+          "brand": "Pran",
+          "isRequired": false,
+          "isPosm": true,
+          "minFacing": 1
+        }
+      ],
+      "createdAt": "2026-05-21T09:05:00.000Z"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439014",
+      "storeCode": "DHK-003",
+      "storeName": "Mirpur Super Shop",
+      "address": "Section 10, Mirpur, Dhaka",
+      "region": "Dhaka",
+      "latitude": 23.8067,
+      "longitude": 90.3686,
+      "gpsRadiusM": 300,
+      "isActive": true,
+      "skus": [
+        {
+          "_id": "664ca7d8a00000000000000b",
+          "skuName": "Fresh Atta 2kg",
+          "brand": "Fresh",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 2
+        },
+        {
+          "_id": "664ca7d8a00000000000000c",
+          "skuName": "Fresh Flour 1kg",
+          "brand": "Fresh",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 2
+        },
+        {
+          "_id": "664ca7d8a00000000000000d",
+          "skuName": "Fresh Promo Wobbler",
+          "brand": "Fresh",
+          "isRequired": false,
+          "isPosm": true,
+          "minFacing": 1
+        }
+      ],
+      "createdAt": "2026-05-21T09:10:00.000Z"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439015",
+      "storeCode": "SYL-001",
+      "storeName": "Sylhet City Mart",
+      "address": "Zindabazar, Sylhet",
+      "region": "Sylhet",
+      "latitude": 24.8949,
+      "longitude": 91.8687,
+      "gpsRadiusM": 300,
+      "isActive": true,
+      "skus": [
+        {
+          "_id": "664ca7d8a00000000000000e",
+          "skuName": "Aarong Milk 500ml",
+          "brand": "Aarong",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 3
+        },
+        {
+          "_id": "664ca7d8a00000000000000f",
+          "skuName": "Aarong Yogurt 500g",
+          "brand": "Aarong",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 2
+        },
+        {
+          "_id": "664ca7d8a000000000000010",
+          "skuName": "Aarong Chiller Sticker",
+          "brand": "Aarong",
+          "isRequired": false,
+          "isPosm": true,
+          "minFacing": 1
+        }
+      ],
+      "createdAt": "2026-05-21T09:15:00.000Z"
+    },
+    {
+      "_id": "507f1f77bcf86cd799439016",
+      "storeCode": "RAJ-001",
+      "storeName": "Rajshahi Trade Center",
+      "address": "Shaheb Bazar, Rajshahi",
+      "region": "Rajshahi",
+      "latitude": 24.3745,
+      "longitude": 88.6042,
+      "gpsRadiusM": 350,
+      "isActive": false,
+      "skus": [
+        {
+          "_id": "664ca7d8a000000000000011",
+          "skuName": "ACI Salt 1kg",
+          "brand": "ACI",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 4
+        },
+        {
+          "_id": "664ca7d8a000000000000012",
+          "skuName": "ACI Pure Spice 200g",
+          "brand": "ACI",
+          "isRequired": true,
+          "isPosm": false,
+          "minFacing": 2
+        },
+        {
+          "_id": "664ca7d8a000000000000013",
+          "skuName": "ACI Shelf Strip",
+          "brand": "ACI",
+          "isRequired": false,
+          "isPosm": true,
+          "minFacing": 1
+        }
+      ],
+      "createdAt": "2026-05-21T09:20:00.000Z"
+    }
+  ],
+  "visits": [
+    {
+      "_id": "664ca7d81000000000000001",
+      "repId": "664ca7d80000000000000001",
+      "storeId": "507f1f77bcf86cd799439011",
+      "checkInTime": "2026-05-21T11:00:00.000Z",
+      "checkOutTime": "2026-05-21T11:15:00.000Z",
+      "gpsLat": 23.7806,
+      "gpsLng": 90.2794,
+      "gpsAccuracyM": 10,
+      "status": "completed",
+      "overallScore": 85,
+      "repNotes": "Check compliance on all top shelves.",
+      "images": ["664ca7d82000000000000001", "664ca7d82000000000000005"],
+      "fraudFlags": [],
+      "deletedAt": null,
+      "createdAt": "2026-05-21T11:00:00.000Z"
+    },
+    {
+      "_id": "664ca7d81000000000000002",
+      "repId": "664ca7d80000000000000001",
+      "storeId": "507f1f77bcf86cd799439011",
+      "checkInTime": "2026-05-21T12:00:00.000Z",
+      "checkOutTime": "2026-05-21T12:10:00.000Z",
+      "gpsLat": 23.7806,
+      "gpsLng": 90.2794,
+      "gpsAccuracyM": 15,
+      "status": "completed",
+      "overallScore": 40,
+      "repNotes": "Main shelf section.",
+      "images": ["664ca7d82000000000000002"],
+      "fraudFlags": [],
+      "deletedAt": null,
+      "createdAt": "2026-05-21T12:00:00.000Z"
+    },
+    {
+      "_id": "664ca7d81000000000000003",
+      "repId": "664ca7d80000000000000001",
+      "storeId": "507f1f77bcf86cd799439012",
+      "checkInTime": "2026-05-21T13:00:00.000Z",
+      "gpsLat": 24.3569,
+      "gpsLng": 91.7832,
+      "gpsAccuracyM": 8,
+      "status": "flagged",
+      "repNotes": "Visit from distant location to test GPS flagging.",
+      "images": ["664ca7d82000000000000003"],
+      "fraudFlags": ["664ca7d84000000000000001"],
+      "deletedAt": null,
+      "createdAt": "2026-05-21T13:00:00.000Z"
+    },
+    {
+      "_id": "664ca7d81000000000000004",
+      "repId": "664ca7d80000000000000001",
+      "storeId": "507f1f77bcf86cd799439011",
+      "checkInTime": "2026-05-21T14:00:00.000Z",
+      "gpsLat": 23.7806,
+      "gpsLng": 90.2794,
+      "gpsAccuracyM": 12,
+      "status": "pending",
+      "repNotes": "Check-in completed, image upload in progress.",
+      "images": [],
+      "fraudFlags": [],
+      "deletedAt": null,
+      "createdAt": "2026-05-21T14:00:00.000Z"
+    },
+    {
+      "_id": "664ca7d81000000000000005",
+      "repId": "664ca7d80000000000000001",
+      "storeId": "507f1f77bcf86cd799439011",
+      "checkInTime": "2026-05-21T14:30:00.000Z",
+      "checkOutTime": "2026-05-21T14:35:00.000Z",
+      "gpsLat": 23.7806,
+      "gpsLng": 90.2794,
+      "gpsAccuracyM": 9,
+      "status": "processing",
+      "repNotes": "Submitted. Awaiting AI model analysis pipeline.",
+      "images": ["664ca7d82000000000000004"],
+      "fraudFlags": [],
+      "deletedAt": null,
+      "createdAt": "2026-05-21T14:30:00.000Z"
+    }
+  ],
+  "visit_images": [
+    {
+      "_id": "664ca7d82000000000000001",
+      "visitId": "664ca7d81000000000000001",
+      "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1684ca7d8/shelf1.jpg",
+      "imageHash": "a3b4c5d6e7f8g9h0",
+      "exifTakenAt": "2026-05-21T11:02:00.000Z",
+      "fileSizeKb": 1240,
+      "widthPx": 1920,
+      "heightPx": 1080,
+      "blurScore": 180.5,
+      "isRejected": false,
+      "uploadedAt": "2026-05-21T11:03:00.000Z"
+    },
+    {
+      "_id": "664ca7d82000000000000002",
+      "visitId": "664ca7d81000000000000002",
+      "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1684ca7d8/shelf2.jpg",
+      "imageHash": "b3c4d5e6f7g8h9i0",
+      "exifTakenAt": "2026-05-21T12:02:00.000Z",
+      "fileSizeKb": 1420,
+      "widthPx": 1920,
+      "heightPx": 1080,
+      "blurScore": 145.2,
+      "isRejected": false,
+      "uploadedAt": "2026-05-21T12:03:00.000Z"
+    },
+    {
+      "_id": "664ca7d82000000000000003",
+      "visitId": "664ca7d81000000000000003",
+      "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1684ca7d8/shelf3.jpg",
+      "imageHash": "c3d4e5f6g7h8i9j0",
+      "exifTakenAt": "2026-05-21T13:02:00.000Z",
+      "fileSizeKb": 1100,
+      "widthPx": 1920,
+      "heightPx": 1080,
+      "blurScore": 160.0,
+      "isRejected": false,
+      "uploadedAt": "2026-05-21T13:03:00.000Z"
+    },
+    {
+      "_id": "664ca7d82000000000000004",
+      "visitId": "664ca7d81000000000000005",
+      "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1684ca7d8/shelf4.jpg",
+      "imageHash": "d3e4f5g6h7i8j9k0",
+      "exifTakenAt": "2026-05-21T14:31:00.000Z",
+      "fileSizeKb": 1350,
+      "widthPx": 1920,
+      "heightPx": 1080,
+      "blurScore": 175.0,
+      "isRejected": false,
+      "uploadedAt": "2026-05-21T14:32:00.000Z"
+    },
+    {
+      "_id": "664ca7d82000000000000005",
+      "visitId": "664ca7d81000000000000001",
+      "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1684ca7d8/blurry_shelf.jpg",
+      "imageHash": "e3f4g5h6i7j8k9l0",
+      "exifTakenAt": "2026-05-21T11:05:00.000Z",
+      "fileSizeKb": 980,
+      "widthPx": 1920,
+      "heightPx": 1080,
+      "blurScore": 45.0,
+      "isRejected": true,
+      "rejectionReason": "blurry",
+      "uploadedAt": "2026-05-21T11:06:00.000Z"
+    }
+  ],
+  "ai_analyses": [
+    {
+      "_id": "664ca7d83000000000000001",
+      "imageId": "664ca7d82000000000000001",
+      "visitId": "664ca7d81000000000000001",
+      "provider": "gemini",
+      "modelName": "gemini-1.5-flash",
+      "complianceScore": 85,
+      "productsDetected": [
+        { "name": "Olympic Soyabean 1L", "brand": "Olympic", "confidence": 0.95 },
+        { "name": "Olympic Soyabean 2L", "brand": "Olympic", "confidence": 0.92 },
+        { "name": "Coca-Cola 500ml", "brand": "Coca-Cola", "confidence": 0.98 }
+      ],
+      "competitorsDetected": [
+        { "brand": "Pepsi", "count": 1 }
+      ],
+      "posmPresent": true,
+      "missingSkus": [],
+      "issues": [],
+      "supervisorSummary": "The shelf compliance is excellent. All expected Olympic SKUs and Coca-Cola SKUs are well positioned with adequate facings. One Pepsi competitor bottle was detected on the right shelf section. Coca-Cola POSM signage is present and clearly visible.",
+      "processingMs": 4200,
+      "createdAt": "2026-05-21T11:05:00.000Z"
+    },
+    {
+      "_id": "664ca7d83000000000000002",
+      "imageId": "664ca7d82000000000000002",
+      "visitId": "664ca7d81000000000000002",
+      "provider": "gemini",
+      "modelName": "gemini-1.5-flash",
+      "complianceScore": 40,
+      "productsDetected": [
+        { "name": "Olympic Soyabean 1L", "brand": "Olympic", "confidence": 0.91 }
+      ],
+      "competitorsDetected": [
+        { "brand": "Pepsi", "count": 4 },
+        { "brand": "Pran", "count": 2 }
+      ],
+      "posmPresent": false,
+      "missingSkus": ["Olympic Soyabean 2L", "Coca-Cola 500ml"],
+      "issues": [
+        "Missing essential products: Olympic Soyabean 2L and Coca-Cola 500ml.",
+        "Competitor dominance on center shelf.",
+        "No brand POSM signage present."
+      ],
+      "supervisorSummary": "Compliance is very low at 40%. The shelf is dominated by competitor brands (Pepsi and Pran). Major required items (Olympic Soyabean 2L and Coca-Cola 500ml) are completely missing. There is also no brand POSM visible.",
+      "processingMs": 4800,
+      "createdAt": "2026-05-21T12:05:00.000Z"
+    }
+  ],
+  "fraud_flags": [
+    {
+      "_id": "664ca7d84000000000000001",
+      "visitId": "664ca7d81000000000000003",
+      "imageId": "664ca7d82000000000000003",
+      "fraudType": "gps_mismatch",
+      "confidence": 1.0,
+      "detail": {
+        "distanceM": 221500,
+        "limitM": 300
+      },
+      "resolution": "pending",
+      "deletedAt": null,
+      "createdAt": "2026-05-21T13:01:00.000Z"
+    }
+  ],
+  "notifications": [
+    {
+      "_id": "664ca7d85000000000000001",
+      "visitId": "664ca7d81000000000000002",
+      "recipientId": "664ca7d80000000000000002",
+      "channel": "email",
+      "triggerEvent": "low_compliance",
+      "messageBody": "Alert: Store Dhaka Outlet (DHK-001) got a low compliance score of 40% in visit by Rep Navid Kamal.",
+      "status": "sent",
+      "sentAt": "2026-05-21T12:06:00.000Z",
+      "createdAt": "2026-05-21T12:05:30.000Z"
+    }
+  ],
+  "audit_logs": [
+    {
+      "actorId": "664ca7d80000000000000001",
+      "action": "visit_create",
+      "entityType": "visit",
+      "entityId": "664ca7d81000000000000001",
+      "meta": { "storeCode": "DHK-001" },
+      "createdAt": "2026-05-21T11:00:05.000Z"
+    },
+    {
+      "actorId": "664ca7d80000000000000001",
+      "action": "image_upload",
+      "entityType": "image",
+      "entityId": "664ca7d82000000000000001",
+      "meta": { "visitId": "664ca7d81000000000000001" },
+      "createdAt": "2026-05-21T11:03:05.000Z"
+    },
+    {
+      "actorId": "664ca7d80000000000000001",
+      "action": "visit_submit",
+      "entityType": "visit",
+      "entityId": "664ca7d81000000000000001",
+      "createdAt": "2026-05-21T11:15:05.000Z"
+    }
+  ]
+}

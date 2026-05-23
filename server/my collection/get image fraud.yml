@@ -1,0 +1,15 @@
+info:
+  name: get image fraud
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:5000/api/visits/images/{{imageId}}/fraud
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+​
