@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 export type FraudResolution = 'pending' | 'confirmed' | 'dismissed'
 
 export type FraudFlag = {
@@ -52,8 +54,6 @@ export type ResolveFraudVisitInput = {
   resolution: Exclude<FraudResolution, 'pending'>
   notes?: string
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 const readErrorMessage = async (response: Response): Promise<string> => {
   try {

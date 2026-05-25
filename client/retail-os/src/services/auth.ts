@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 type SignInInput = {
   email: string
   password: string
@@ -18,8 +20,6 @@ export type CurrentUser = {
   email?: string
   role?: 'rep' | 'supervisor' | 'admin'
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 const readErrorMessage = async (response: Response): Promise<string> => {
   try {

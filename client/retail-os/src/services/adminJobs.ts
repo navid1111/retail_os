@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 export type AdminJobSummary = {
   id?: string
   name: string
@@ -24,8 +26,6 @@ export type AdminJobDashboard = {
   queues: AdminQueueSummary[]
   generatedAt: string
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export async function getAdminJobs(): Promise<AdminJobDashboard> {
   const response = await fetch(`${API_BASE_URL}/api/admin/jobs`, {

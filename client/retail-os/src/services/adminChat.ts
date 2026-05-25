@@ -1,11 +1,11 @@
+import { API_BASE_URL } from './apiBase'
+
 export type AdminChatResult = {
   answer: string
   query?: Record<string, unknown>
   rows?: unknown[]
   rawResult?: unknown
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export async function askAdminChat(message: string): Promise<AdminChatResult> {
   const response = await fetch(`${API_BASE_URL}/api/admin/chat`, {

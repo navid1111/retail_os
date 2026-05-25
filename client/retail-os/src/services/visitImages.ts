@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 export type UploadedVisitImage = {
   _id: string
   visitId: string
@@ -6,8 +8,6 @@ export type UploadedVisitImage = {
   isRejected: boolean
   uploadedAt: string
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export const uploadVisitImageFile = async (
   visitId: string,

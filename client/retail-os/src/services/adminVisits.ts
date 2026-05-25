@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 export type AdminVisitImage = {
   _id: string
   imageUrl?: string
@@ -63,8 +65,6 @@ export type AdminVisitListResult = {
   total: number
   totalPages: number
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export async function getAdminVisits(filters: AdminVisitFilters = {}): Promise<AdminVisitListResult> {
   const params = new URLSearchParams()

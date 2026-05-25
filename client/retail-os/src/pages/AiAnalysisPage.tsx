@@ -1,8 +1,7 @@
+import { API_BASE_URL } from '../services/apiBase'
 import { useEffect, useMemo, useState } from 'react'
 import { Icon } from '../components/dashboard/Icon'
 import { getStoreById, type Store } from '../services/stores'
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 type AiAnalysisPageProps = {
   storeId: string

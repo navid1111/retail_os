@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 export type StoreSku = {
   _id: string
   skuName: string
@@ -26,8 +28,6 @@ export type StoreFilters = {
   region?: string
   isActive?: boolean
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export const getStores = async ({
   search,

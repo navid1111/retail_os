@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 export type VisitStore = {
   _id?: string
   storeCode?: string
@@ -20,8 +22,6 @@ export type VisitRecord = {
   createdAt: string
   store?: VisitStore
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export type CheckInVisitInput = {
   storeId: string

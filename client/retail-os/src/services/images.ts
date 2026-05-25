@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 export type RepImageFraudFlag = {
   _id: string
   fraudType: string
@@ -36,8 +38,6 @@ export type RepImage = {
     region?: string
   }
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export const getMyImages = async (): Promise<RepImage[]> => {
   const response = await fetch(`${API_BASE_URL}/api/images/mine`, {

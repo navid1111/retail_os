@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiBase'
+
 export type AdminUserRole = 'rep' | 'supervisor' | 'admin'
 
 export type AdminUser = {
@@ -19,8 +21,6 @@ export type CreateAdminUserInput = {
   region: string
   phone?: string
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
 
 export async function getAdminUsers(): Promise<AdminUser[]> {
   const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
