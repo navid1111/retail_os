@@ -65,6 +65,8 @@ REDIS_URL=<external Redis connection string>
 FRONTEND_URL=<deployed frontend origin>
 BETTER_AUTH_BASE_URL=<deployed backend origin>
 BETTER_AUTH_TRUSTED_ORIGINS=<deployed frontend origin>
+ADMIN_EMAIL=<initial admin email>
+ADMIN_PASSWORD=<initial admin password>
 ```
 
 ### 3. Start Frontend

@@ -4,6 +4,7 @@ import type { Request, Response, NextFunction } from "express";
 import { app } from "./app";
 import { connectDB, closeDB } from "./db/mongo";
 import { connectRedis, closeRedis } from "./db/redis";
+import { ensureBootstrapAdmin } from "./db/admin";
 import { initializeCloudinary } from "./cloudinary/client";
 import { startQueueScheduler, closeQueueScheduler } from "./queues/schedular";
 
@@ -13,6 +14,7 @@ const startServer = async (): Promise<void> => {
 
     // Connect to MongoDB, Redis, and Cloudinary on startup
     await connectDB();
+    await ensureBootstrapAdmin();
     await connectRedis();
     initializeCloudinary(); // Initialize Cloudinary
     const scheduler = startQueueScheduler();
