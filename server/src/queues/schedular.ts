@@ -2,9 +2,10 @@ import { Worker } from "bullmq";
 import * as Sentry from "@sentry/node";
 import { QUEUE_NAMES } from "./queues";
 import { AuditLog } from "../models/AuditLog.model";
+import { getRedisUrl } from "../config/env";
 
 const buildConnectionOptions = () => {
-	const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+	const redisUrl = getRedisUrl();
 	const url = new URL(redisUrl);
 
 	const db = url.pathname && url.pathname !== "/" ? Number(url.pathname.slice(1)) : undefined;

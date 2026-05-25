@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 import mongoose from "mongoose";
+import { getMongoUri } from "../config/env";
 
 // Eagerly import all models to register their schemas with Mongoose
 import "../models/User.model";
@@ -12,7 +13,7 @@ import "../models/Notification.model";
 import "../models/AuditLog.model";
 import "../models/Job.model";
 
-const uri = process.env.MONGODB_URI || "mongodb://localhost:27017";
+const uri = getMongoUri();
 const client = new MongoClient(uri);
 
 export { client as mongoClient };

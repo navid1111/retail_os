@@ -55,6 +55,18 @@ cd server
 docker compose up --build -d
 ```
 
+For Render or any single-container host, do not use `localhost` for backing
+services. Create/provision MongoDB and Redis separately, then set:
+
+```text
+MONGODB_URI=<external MongoDB connection string>
+MONGODB_DB=retailos
+REDIS_URL=<external Redis connection string>
+FRONTEND_URL=<deployed frontend origin>
+BETTER_AUTH_BASE_URL=<deployed backend origin>
+BETTER_AUTH_TRUSTED_ORIGINS=<deployed frontend origin>
+```
+
 ### 3. Start Frontend
 
 Open a second terminal:

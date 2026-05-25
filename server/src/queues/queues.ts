@@ -1,5 +1,6 @@
 import { Queue } from 'bullmq';
 import * as Sentry from '@sentry/node';
+import { getRedisUrl } from '../config/env';
 
 // Define queue names as constants
 export const QUEUE_NAMES = {
@@ -14,7 +15,7 @@ type QueueKey = keyof typeof QUEUE_NAMES;
 type QueueInstance = Queue<any, any, string>;
 
 const buildConnectionOptions = () => {
-  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+  const redisUrl = getRedisUrl();
   const url = new URL(redisUrl);
 
   const db = url.pathname && url.pathname !== '/' ? Number(url.pathname.slice(1)) : undefined;
