@@ -1,47 +1,39 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import * as fs from "fs";
-import * as path from "path";
 import { ObjectId } from "mongodb";
 import { connectDB, getDB, closeDB } from "./mongo";
-import { ensureBootstrapAdmin } from "./admin";
+import mockData from "./data/mockData.json";
 
-const seed = async () => {
-  try {
-    console.log("Connecting to MongoDB for seeding...");
-    await connectDB();
-    const db = getDB();
+const SEED_RUN_ID = "mock-compliance-v1";
+const SEED_STORE_CODES = ["DHK-001", "CTG-001"];
 
-    // 1. Load mock data from JSON file
-    const mockDataPath = path.join(__dirname, "data", "mockData.json");
-    if (!fs.existsSync(mockDataPath)) {
-      throw new Error(`Mock data file not found at: ${mockDataPath}`);
-    }
-    
-    console.log(`Loading mock data from ${mockDataPath}...`);
-    const mockDataRaw = fs.readFileSync(mockDataPath, "utf-8");
-    const mockData = JSON.parse(mockDataRaw);
+type SeedRunDocument = {
+  _id: string;
+  createdAt: Date;
+  completedAt: Date;
+  inferredFromExistingData?: boolean;
+  seedStoreCodes: string[];
+};
 
-    // 2. Clear existing collections
-    console.log("Clearing existing data from all collections...");
-    await db.collection("users").deleteMany({});
-    await db.collection("user").deleteMany({});
-    await db.collection("account").deleteMany({});
-    await db.collection("session").deleteMany({});
-    await db.collection("stores").deleteMany({});
-    await db.collection("visits").deleteMany({});
-    await db.collection("visit_images").deleteMany({});
-    await db.collection("ai_analyses").deleteMany({});
-    await db.collection("aianalyses").deleteMany({}); // legacy Mongoose default collection
-    await db.collection("fraud_flags").deleteMany({});
-    await db.collection("notifications").deleteMany({});
-    // Since audit_logs has a pre hook on Mongoose preventing updates/deletes,
-    // we bypass Mongoose and delete using MongoDB driver directly, which is allowed.
-    await db.collection("audit_logs").deleteMany({});
+export const runSeed = async (): Promise<void> => {
+  const db = getDB();
 
-    // 3. Map and parse JSON data to proper MongoDB types
-    console.log("Parsing mock data to MongoDB types...");
+  // 1. Clear existing domain seed collections. User/auth collections are intentionally preserved.
+  console.log("Clearing existing seed data from domain collections...");
+  await db.collection("stores").deleteMany({});
+  await db.collection("visits").deleteMany({});
+  await db.collection("visit_images").deleteMany({});
+  await db.collection("ai_analyses").deleteMany({});
+  await db.collection("aianalyses").deleteMany({}); // legacy Mongoose default collection
+  await db.collection("fraud_flags").deleteMany({});
+  await db.collection("notifications").deleteMany({});
+  // Since audit_logs has a pre hook on Mongoose preventing updates/deletes,
+  // we bypass Mongoose and delete using MongoDB driver directly, which is allowed.
+  await db.collection("audit_logs").deleteMany({});
+
+  // 2. Map and parse JSON data to proper MongoDB types
+  console.log("Parsing mock data to MongoDB types...");
 
     const additionalStores = [
       {
@@ -198,39 +190,6 @@ const seed = async () => {
       },
     ];
 
-    const { hashPassword } = await import("better-auth/crypto");
-    const defaultPasswordHash = await hashPassword("Password123!");
-
-    const users = mockData.users.map((u: any) => ({
-      ...u,
-      _id: new ObjectId(u._id),
-      createdAt: new Date(u.createdAt),
-    }));
-
-    const betterAuthUsers = mockData.users.map((u: any) => ({
-      _id: new ObjectId(u._id),
-      name: u.fullName,
-      fullName: u.fullName,
-      email: u.email.toLowerCase(),
-      emailVerified: false,
-      role: u.role,
-      region: u.region || "Global",
-      phone: u.phone,
-      isActive: u.isActive !== false,
-      createdAt: new Date(u.createdAt),
-      updatedAt: new Date(u.createdAt),
-    }));
-
-    const betterAuthAccounts = mockData.users.map((u: any) => ({
-      _id: new ObjectId(),
-      accountId: u._id,
-      providerId: "credential",
-      userId: new ObjectId(u._id),
-      password: defaultPasswordHash,
-      createdAt: new Date(u.createdAt),
-      updatedAt: new Date(u.createdAt),
-    }));
-
     const storesByCode = new Map(
       [...mockData.stores, ...additionalStores].map((store: any) => [store.storeCode, store])
     );
@@ -301,15 +260,8 @@ const seed = async () => {
       createdAt: new Date(al.createdAt),
     }));
 
-    // 4. Insert seed data into MongoDB
-    console.log("Inserting seed documents...");
-    
-    if (users.length > 0) {
-      await db.collection("users").insertMany(users);
-      await db.collection("user").insertMany(betterAuthUsers);
-      await db.collection("account").insertMany(betterAuthAccounts);
-      console.log(`✓ Seeded ${users.length} users (and Better Auth accounts)`);
-    }
+  // 3. Insert seed data into MongoDB
+  console.log("Inserting seed documents...");
 
     if (stores.length > 0) {
       await db.collection("stores").insertMany(stores);
@@ -346,16 +298,74 @@ const seed = async () => {
       console.log(`✓ Seeded ${auditLogs.length} audit logs`);
     }
 
-    await ensureBootstrapAdmin();
+  await db.collection<SeedRunDocument>("seed_runs").updateOne(
+    { _id: SEED_RUN_ID },
+    {
+      $set: {
+        completedAt: new Date(),
+        seedStoreCodes: SEED_STORE_CODES,
+      },
+      $setOnInsert: {
+        createdAt: new Date(),
+      },
+    },
+    { upsert: true }
+  );
 
-    console.log("✓ Database seeded successfully with mock compliance data!");
+  console.log("✓ Database seeded successfully with mock compliance data!");
+};
+
+export const seedIfNeeded = async (): Promise<void> => {
+  const db = getDB();
+  const seedRuns = db.collection<SeedRunDocument>("seed_runs");
+  const existingRun = await seedRuns.findOne({ _id: SEED_RUN_ID });
+
+  if (existingRun) {
+    console.log(`Seed skipped: ${SEED_RUN_ID} already completed.`);
+    return;
+  }
+
+  const existingSeedStore = await db.collection("stores").findOne({
+    storeCode: { $in: SEED_STORE_CODES },
+  });
+
+  if (existingSeedStore) {
+    await seedRuns.updateOne(
+      { _id: SEED_RUN_ID },
+      {
+        $set: {
+          completedAt: new Date(),
+          inferredFromExistingData: true,
+          seedStoreCodes: SEED_STORE_CODES,
+        },
+        $setOnInsert: {
+          createdAt: new Date(),
+        },
+      },
+      { upsert: true }
+    );
+    console.log(`Seed skipped: existing seed data found; marked ${SEED_RUN_ID} complete.`);
+    return;
+  }
+
+  console.log(`Seed marker ${SEED_RUN_ID} not found; running initial seed.`);
+  await runSeed();
+};
+
+const seedCli = async () => {
+  try {
+    console.log("Connecting to MongoDB for seeding...");
+    await connectDB();
+    await runSeed();
   } catch (error) {
     console.error("Failed to seed database:", error);
+    process.exitCode = 1;
   } finally {
     await closeDB();
     console.log("MongoDB connection closed.");
-    process.exit(0);
   }
 };
 
-seed();
+if (require.main === module) {
+  void seedCli();
+}
