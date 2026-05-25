@@ -7,11 +7,19 @@ import { metricsHandler, metricsMiddleware } from "./metrics";
 
 export const app = express();
 
+const parseOriginList = (value?: string): string[] =>
+  value
+    ?.split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean) ?? [];
+
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
+  ...parseOriginList(process.env.FRONTEND_URL),
   "http://localhost:3000",
   "http://localhost:5173",
-].filter(Boolean) as string[];
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:5173",
+];
 
 const isAllowedOrigin = (origin: string): boolean => {
   if (allowedOrigins.includes(origin)) {

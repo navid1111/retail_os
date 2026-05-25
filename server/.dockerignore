@@ -7,3 +7,13 @@ Dockerfile*
 coverage/
 dist/
 build/
+tests/
+admin/
+grafana/
+prometheus/
+media/
+my collection/
+*.md
+api_response_schema.json
+test_images*.ts
+vitest.config.ts

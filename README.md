@@ -48,6 +48,13 @@ Backend runs on:
 http://localhost:5000
 ```
 
+To run the whole backend stack in Docker:
+
+```powershell
+cd server
+docker compose up --build -d
+```
+
 ### 3. Start Frontend
 
 Open a second terminal:

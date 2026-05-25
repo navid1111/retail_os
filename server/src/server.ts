@@ -9,6 +9,8 @@ import { startQueueScheduler, closeQueueScheduler } from "./queues/schedular";
 
 const startServer = async (): Promise<void> => {
   try {
+    const port = Number(process.env.PORT || 5000);
+
     // Connect to MongoDB, Redis, and Cloudinary on startup
     await connectDB();
     await connectRedis();
@@ -25,16 +27,19 @@ const startServer = async (): Promise<void> => {
       });
     });
 
-    process.on("SIGINT", async (): Promise<void> => {
+    const shutdown = async (): Promise<void> => {
       await closeDB();
       await closeRedis();
       await closeQueueScheduler(scheduler);
       process.exit(0);
-    });
+    };
 
-    app.listen(5000, (): void => {
-      console.log("Server running on port 5000");
-      console.log("Better Auth endpoints available at http://localhost:5000/api/auth");
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
+
+    app.listen(port, (): void => {
+      console.log(`Server running on port ${port}`);
+      console.log(`Better Auth endpoints available at http://localhost:${port}/api/auth`);
     });
   } catch (err) {
     console.error("Failed to start server", err);

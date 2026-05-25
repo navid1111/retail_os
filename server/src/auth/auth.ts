@@ -5,6 +5,21 @@ import { getDB, mongoClient } from "../db/mongo";
 
 const db = getDB();
 
+const parseOriginList = (value?: string): string[] =>
+  value
+    ?.split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean) ?? [];
+
+const trustedOrigins = [
+  ...parseOriginList(process.env.FRONTEND_URL),
+  ...parseOriginList(process.env.BETTER_AUTH_TRUSTED_ORIGINS),
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:5173",
+];
+
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client: mongoClient,
@@ -12,6 +27,7 @@ export const auth = betterAuth({
   }),
   baseURL: process.env.BETTER_AUTH_BASE_URL || "http://localhost:5000",
   secret: process.env.BETTER_AUTH_SECRET || "your-dev-secret-key",
+  trustedOrigins,
   emailAndPassword: {
     enabled: true,
   },
