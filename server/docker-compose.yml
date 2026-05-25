@@ -56,13 +56,21 @@ services:
     restart: "no"
     depends_on:
       mongo:
-        condition: service_healthy
+        condition: service_started
     command:
       - mongosh
       - --host
       - mongo:27017
       - --eval
       - |
+        while (true) {
+          try {
+            db.adminCommand({ ping: 1 });
+            break;
+          } catch (error) {
+            sleep(500);
+          }
+        }
         try {
           const status = rs.status();
           if (status.members[0].name !== "mongo:27017") {
