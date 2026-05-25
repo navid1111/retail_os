@@ -5,8 +5,10 @@ export type AdminChatResult = {
   rawResult?: unknown
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
+
 export async function askAdminChat(message: string): Promise<AdminChatResult> {
-  const response = await fetch('/api/admin/chat', {
+  const response = await fetch(`${API_BASE_URL}/api/admin/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

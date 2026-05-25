@@ -20,8 +20,10 @@ export type CreateAdminUserInput = {
   phone?: string
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
+
 export async function getAdminUsers(): Promise<AdminUser[]> {
-  const response = await fetch('/api/admin/users', {
+  const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
     credentials: 'include',
   })
 
@@ -35,7 +37,7 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
 }
 
 export async function createAdminUser(input: CreateAdminUserInput): Promise<AdminUser> {
-  const response = await fetch('/api/admin/users', {
+  const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

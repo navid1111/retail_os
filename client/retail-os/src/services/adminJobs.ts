@@ -25,8 +25,10 @@ export type AdminJobDashboard = {
   generatedAt: string
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
+
 export async function getAdminJobs(): Promise<AdminJobDashboard> {
-  const response = await fetch('/api/admin/jobs', {
+  const response = await fetch(`${API_BASE_URL}/api/admin/jobs`, {
     credentials: 'include',
   })
 

@@ -64,6 +64,8 @@ export type AdminVisitListResult = {
   totalPages: number
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
+
 export async function getAdminVisits(filters: AdminVisitFilters = {}): Promise<AdminVisitListResult> {
   const params = new URLSearchParams()
   params.set('page', String(filters.page ?? 1))
@@ -78,7 +80,7 @@ export async function getAdminVisits(filters: AdminVisitFilters = {}): Promise<A
     params.set('search', filters.search.trim())
   }
 
-  const response = await fetch(`/api/admin/visits?${params.toString()}`, {
+  const response = await fetch(`${API_BASE_URL}/api/admin/visits?${params.toString()}`, {
     credentials: 'include',
   })
 
