@@ -49,6 +49,7 @@ export const ensureBootstrapAdmin = async (): Promise<void> => {
   const config = getBootstrapAdminConfig();
 
   if (!config) {
+    console.log("Bootstrap admin skipped: ADMIN_EMAIL and ADMIN_PASSWORD are not configured.");
     return;
   }
 
@@ -122,4 +123,3 @@ export const ensureBootstrapAdmin = async (): Promise<void> => {
 
   console.log(`Bootstrap admin created: ${config.email}`);
 };
-

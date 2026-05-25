@@ -5,6 +5,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { ObjectId } from "mongodb";
 import { connectDB, getDB, closeDB } from "./mongo";
+import { ensureBootstrapAdmin } from "./admin";
 
 const seed = async () => {
   try {
@@ -344,6 +345,8 @@ const seed = async () => {
       await db.collection("audit_logs").insertMany(auditLogs);
       console.log(`✓ Seeded ${auditLogs.length} audit logs`);
     }
+
+    await ensureBootstrapAdmin();
 
     console.log("✓ Database seeded successfully with mock compliance data!");
   } catch (error) {

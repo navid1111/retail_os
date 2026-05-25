@@ -19,8 +19,8 @@ services:
     ports:
       - "${API_PORT:-5000}:5000"
     depends_on:
-      mongo:
-        condition: service_healthy
+      mongo-init:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     healthcheck:
@@ -45,11 +45,37 @@ services:
           create_host_path: false
     command: ["--replSet", "rs0", "--bind_ip_all"]
     healthcheck:
-      test: ["CMD-SHELL", "mongosh --eval \"try { const status = rs.status(); if (status.members[0].name !== 'mongo:27017') { const cfg = rs.conf(); cfg.members[0].host = 'mongo:27017'; rs.reconfig(cfg, { force: true }); } status.ok } catch (e) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'mongo:27017' }] }).ok }\" --quiet"]
+      test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping').ok\" --quiet"]
       interval: 5s
       timeout: 10s
       retries: 10
       start_period: 40s
+
+  mongo-init:
+    image: mongo:7
+    restart: "no"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    command:
+      - mongosh
+      - --host
+      - mongo:27017
+      - --eval
+      - |
+        try {
+          const status = rs.status();
+          if (status.members[0].name !== "mongo:27017") {
+            const cfg = rs.conf();
+            cfg.members[0].host = "mongo:27017";
+            rs.reconfig(cfg, { force: true });
+          }
+        } catch (error) {
+          rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "mongo:27017" }] });
+        }
+        while (!rs.isMaster().ismaster) {
+          sleep(500);
+        }
 
   redis:
     image: redis:7-alpine
