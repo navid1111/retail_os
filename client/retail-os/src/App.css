@@ -4453,6 +4453,61 @@
   gap: 24px;
 }
 
+.demo-credentials {
+  display: grid;
+  gap: 10px;
+}
+
+.demo-credential {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  padding: 12px;
+}
+
+.demo-credential div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.demo-credential strong {
+  color: var(--primary);
+  font-size: 13px;
+}
+
+.demo-credential span {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.demo-credential button {
+  flex: 0 0 auto;
+  border: 1px solid var(--primary);
+  background: var(--surface);
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 12px;
+  text-transform: uppercase;
+}
+
+.demo-credential button:hover {
+  background: var(--primary);
+  color: var(--primary-text);
+}
+
+.demo-credential button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 .field {
   display: grid;
   gap: 4px;

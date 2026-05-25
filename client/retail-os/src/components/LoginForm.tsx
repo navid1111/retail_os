@@ -4,6 +4,19 @@ import { Button, IconButton } from './Button'
 import { TextField } from './TextField'
 import { getCurrentUser, signInWithEmail } from '../services/auth'
 
+const demoCredentials = [
+  {
+    role: 'Admin',
+    email: 'admin@retailos.local',
+    password: 'Admin#m88uqqFDZG24',
+  },
+  {
+    role: 'Rep',
+    email: 'demo_user@gmail.com',
+    password: 'pass@123',
+  },
+]
+
 export function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -29,8 +42,33 @@ export function LoginForm() {
     }
   }
 
+  const useDemoCredential = (credential: (typeof demoCredentials)[number]) => {
+    setEmail(credential.email)
+    setPassword(credential.password)
+    setFeedback('')
+  }
+
   return (
     <form className="login-form" onSubmit={handleSubmit}>
+      <section className="demo-credentials" aria-label="Demo credentials">
+        {demoCredentials.map((credential) => (
+          <article className="demo-credential" key={credential.role}>
+            <div>
+              <strong>{credential.role}</strong>
+              <span>{credential.email}</span>
+              <span>{credential.password}</span>
+            </div>
+            <button
+              disabled={isSubmitting}
+              onClick={() => useDemoCredential(credential)}
+              type="button"
+            >
+              Use
+            </button>
+          </article>
+        ))}
+      </section>
+
       <TextField
         id="email"
         label="Email Address"
