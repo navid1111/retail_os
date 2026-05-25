@@ -4,7 +4,7 @@ type SignInInput = {
 }
 
 export type SignInResult = {
-  user?: unknown
+  user?: CurrentUser
   token?: string
   redirect?: boolean
   url?: string

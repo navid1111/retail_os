@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Button, IconButton } from './Button'
 import { TextField } from './TextField'
-import { signInWithEmail } from '../services/auth'
+import { getCurrentUser, signInWithEmail } from '../services/auth'
 
 export function LoginForm() {
   const [email, setEmail] = useState('')
@@ -17,8 +17,9 @@ export function LoginForm() {
     setIsSubmitting(true)
 
     try {
-      await signInWithEmail({ email, password })
-      window.location.assign('/')
+      const result = await signInWithEmail({ email, password })
+      const user = result.user?.role ? result.user : await getCurrentUser()
+      window.location.assign(user?.role === 'admin' ? '/admin' : '/')
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Invalid credentials. Please try again.'

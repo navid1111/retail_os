@@ -25,6 +25,15 @@ type PlannedQuery = {
   deterministicAnswer?: boolean;
 };
 
+type AdminChatMemoryItem = {
+  question: string;
+  answer: string;
+  query?: Record<string, unknown>;
+};
+
+const ADMIN_CHAT_MEMORY_LIMIT = 8;
+const adminChatMemory: AdminChatMemoryItem[] = [];
+
 const READ_OPERATIONS = new Set([
   "find",
   "findOne",
@@ -37,13 +46,18 @@ export async function askAdminDatabaseAssistant(
   question: string
 ): Promise<AdminChatResponse> {
   const schema = await dataStoreMcp.inspectDatabase();
-  const plannedQuery = planKnownDatabaseQuery(question) ?? (await planDatabaseQuery(question, schema));
+  const memory = getAdminChatMemory();
+  const plannedQuery =
+    planKnownDatabaseQuery(question) ?? (await planDatabaseQuery(question, schema, memory));
 
   if (!plannedQuery.query) {
+    const answer =
+      plannedQuery.answer ||
+      "I inspected the database, but I could not turn that request into a safe read-only query.";
+    rememberAdminChat({ question, answer });
+
     return {
-      answer:
-        plannedQuery.answer ||
-        "I inspected the database, but I could not turn that request into a safe read-only query.",
+      answer,
     };
   }
 
@@ -52,7 +66,9 @@ export async function askAdminDatabaseAssistant(
   const rows = extractRows(queryResult);
   const answer = plannedQuery.deterministicAnswer
     ? summarizeKnownDatabaseResult(question, queryResult)
-    : await summarizeDatabaseResult(question, schema, query, queryResult);
+    : await summarizeDatabaseResult(question, schema, query, queryResult, memory);
+
+  rememberAdminChat({ question, answer, query });
 
   return {
     answer,
@@ -60,6 +76,39 @@ export async function askAdminDatabaseAssistant(
     rows,
     rawResult: queryResult,
   };
+}
+
+function getAdminChatMemory(): AdminChatMemoryItem[] {
+  return adminChatMemory.slice(-ADMIN_CHAT_MEMORY_LIMIT);
+}
+
+function rememberAdminChat(item: AdminChatMemoryItem): void {
+  adminChatMemory.push(item);
+
+  if (adminChatMemory.length > ADMIN_CHAT_MEMORY_LIMIT) {
+    adminChatMemory.splice(0, adminChatMemory.length - ADMIN_CHAT_MEMORY_LIMIT);
+  }
+}
+
+function formatAdminChatMemory(memory: AdminChatMemoryItem[]): string {
+  if (memory.length === 0) {
+    return "No previous messages in this server session.";
+  }
+
+  return memory
+    .map((item, index) => {
+      const lines = [
+        `${index + 1}. Admin: ${item.question}`,
+        `Assistant: ${item.answer.slice(0, 1200)}`,
+      ];
+
+      if (item.query) {
+        lines.push(`Query: ${JSON.stringify(item.query).slice(0, 1200)}`);
+      }
+
+      return lines.join("\n");
+    })
+    .join("\n\n");
 }
 
 function planKnownDatabaseQuery(question: string): PlannedQuery | undefined {
@@ -173,7 +222,11 @@ function summarizeKnownDatabaseResult(question: string, queryResult: unknown): s
   ].join("\n");
 }
 
-async function planDatabaseQuery(question: string, schema: unknown): Promise<PlannedQuery> {
+async function planDatabaseQuery(
+  question: string,
+  schema: unknown,
+  memory: AdminChatMemoryItem[]
+): Promise<PlannedQuery> {
   const today = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Dhaka",
     year: "numeric",
@@ -188,12 +241,14 @@ async function planDatabaseQuery(question: string, schema: unknown): Promise<Pla
     "Allowed operations: find, findOne, aggregate, countDocuments, distinct.",
     "Never create update/delete/insert/drop commands.",
     "For find queries, include a limit of 100 or less.",
+    "Use the conversation memory to resolve follow-up phrases like 'that store', 'those visits', 'same period', or 'previous result'.",
     "Use ISO date strings inside $date wrappers when dates are needed.",
     `Current date in Asia/Dhaka is ${today}.`,
     "",
     "Response shape:",
     '{"query":{"operation":"aggregate","collection":"visits","pipeline":[]},"answer":"optional short explanation if no query is needed"}',
     "",
+    `Conversation memory: ${formatAdminChatMemory(memory)}`,
     `Schema: ${JSON.stringify(schema)}`,
     `Question: ${question}`,
   ].join("\n");
@@ -212,11 +267,13 @@ async function summarizeDatabaseResult(
   question: string,
   schema: unknown,
   query: Record<string, unknown>,
-  queryResult: unknown
+  queryResult: unknown,
+  memory: AdminChatMemoryItem[]
 ): Promise<string> {
   const prompt = [
     "You are the RetailOS admin database assistant.",
     "Answer the admin's question using the query result.",
+    "Use conversation memory only for context, not as a source of facts that overrides the query result.",
     "Return a presentation-ready response.",
     "If the result has multiple records, include a compact Markdown table before observations.",
     "Summarize arrays as counts in the table unless the admin specifically asks for raw item details.",
@@ -225,6 +282,7 @@ async function summarizeDatabaseResult(
     "Do not invent values that are not in the result.",
     "Do not dump raw JSON unless the admin specifically asks for raw JSON.",
     "",
+    `Conversation memory: ${formatAdminChatMemory(memory)}`,
     `Question: ${question}`,
     `Schema summary: ${JSON.stringify(schema).slice(0, 12000)}`,
     `Query: ${JSON.stringify(query)}`,
